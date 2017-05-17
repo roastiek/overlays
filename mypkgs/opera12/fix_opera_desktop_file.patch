@@ -1,0 +1,26 @@
+diff -ur opera-12.16-1860.x86_64.linux.orig/install opera-12.16-1860.x86_64.linux/install
+--- opera-12.16-1860.x86_64.linux.orig/install	2013-07-03 10:13:24.000000000 +0200
++++ opera-12.16-1860.x86_64.linux/install	2016-11-20 13:05:42.625880178 +0100
+@@ -17,7 +17,7 @@
+ 	"$@" NX 68a3ae019efd516ed92fd1b5e48d4ae2 lib/opera@@{SUFFIX}/pluginwrapper/operapluginwrapper
+ 	"$@" NX 89f082136df380de9a63e500d0efd784 lib/opera@@{SUFFIX}/pluginwrapper/operapluginwrapper-ia32-linux
+ 	"$@" NX e35dece50628538b9671025ba10304f3 lib/opera@@{SUFFIX}/pluginwrapper/operapluginwrapper-native
+-	"$@" PF 45b63b062396a549264d4774a84d8c58 share/applications/opera@@{SUFFIX}-browser.desktop
++	"$@" PF 770d1f556b4e3564686d8c008c6666ec share/applications/opera@@{SUFFIX}-browser.desktop
+ 	"$@" NF 3214f080875748938ba060314b4f727d share/doc/opera@@{SUFFIX}/LGPL-2
+ 	"$@" NF 6a6a8e020838b23406c81b19c1d46df6 share/doc/opera@@{SUFFIX}/LGPL-3
+ 	"$@" NF d57f31d7938886bed0de6558a31ed3c7 share/doc/opera@@{SUFFIX}/LICENSE
+diff -ur opera-12.16-1860.x86_64.linux.orig/share/applications/opera-browser.desktop opera-12.16-1860.x86_64.linux/share/applications/opera-browser.desktop
+--- opera-12.16-1860.x86_64.linux.orig/share/applications/opera-browser.desktop	2013-07-03 10:13:24.000000000 +0200
++++ opera-12.16-1860.x86_64.linux/share/applications/opera-browser.desktop	2016-11-20 12:38:08.758253705 +0100
+@@ -26,8 +26,8 @@
+ GenericName[zu]=Umkhangeli zincwadi we Web
+ Comment=Fast and secure web browser and Internet suite
+ Icon=opera@@{SUFFIX}-browser
+-TryExec=@@{PREFIX}/bin/opera@@{SUFFIX}
+-Exec=@@{PREFIX}/bin/opera@@{SUFFIX} %U
++TryExec=opera@@{SUFFIX}
++Exec=opera@@{SUFFIX} %U
+ Terminal=false
+ MimeType=text/html;text/xml;application/xhtml+xml;text/vnd.wap.wml;text/wml;application/x-mimearchive;application/mime;application/xml;application/rss+xml;application/rdf+xml;image/svg+xml;application/x-opera-extension;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/mailto;video/ogg;audio/ogg;video/webm;image/webp;
+ Categories=Network;WebBrowser;
