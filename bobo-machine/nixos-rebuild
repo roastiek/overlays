@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+export NIX_PATH="nixpkgs=$(cd $(dirname $0)/../..; pwd)/nixpkgs"
+export NIXOS_CONFIG="$(cd $(dirname $0); pwd)/configuration.nix"
+exec nixos-rebuild "$@"
