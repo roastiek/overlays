@@ -54,24 +54,19 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../modules/common.nix
     ];
 
 
-  nix = {
-    # nixPath = [ "/etc/nixos" "nixos-config=/etc/nixos/configuration.nix" ];
-    daemonNiceLevel = 19;
-    daemonIONiceLevel = 7;
-  };
-
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = false;
+  # boot.loader.systemd-boot.enable = false;
   boot.loader.grub.enable = true;
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.device = "nodev";
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
   boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.grub.efiBootloaderId = "NixOS";
-  #boot.kernelPackages = pkgs.linuxPackages_4_8;
+  # boot.loader.grub.efiBootloaderId = "NixOS";
+  # boot.kernelPackages = pkgs.linuxPackages_4_8;
   boot.kernelParams = [ "systemd.restore_state=0" ];
 
   boot.kernel.sysctl = {
@@ -83,7 +78,6 @@ in
     enable = true;
     extraCommands = mkMerge [ (mkBefore flushNat) setupNat ];
     extraStopCommands = flushNat;
-    allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
   };
 
   networking.hostName = "bobo-laptop"; # Define your hostname.
@@ -113,43 +107,6 @@ in
     externalInterface = "enp0s31f6";
     internalInterfaces = [ "lxcbr0" ];
   };
-
-  # networking.wireless.enable = true;  # Enables wireless  support via wpa_supplicant.
-
-  # Select internationalisation properties.
-  # i18n = {
-  #   consoleFont = "Lat2-Terminus16";
-  #   consoleKeyMap = "us";
-  #   defaultLocale = "en_US.UTF-8";
-  # };
-
-  # Set your time zone.
-  time.timeZone = "Europe/Prague";
-
-  # List packages installed in system profile. To search by name, run:
-  # $ nix-env -qaP | grep wget
-  # environment.systemPackages = with pkgs; [
-  #   wget
-  # ];
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-  services.openssh.forwardX11 = true;
-  programs.ssh.setXAuthLocation = true;
-
-  security.pki.certificateFiles = [
-    ./cert/seznamca-kancelar-root.crt
-    ./cert/seznamca-logy.crt
-    ./cert/seznamca-root.crt
-    ./cert/seznamca-server.crt
-  ];
-
-  programs.bash.enableCompletion = true;
-
-  programs.zsh.enable = true;
-  environment.etc."profile.local".text = "export __ETC_ZSHENV_SOURCED=1";
 
   virtualisation.lxc = {
     enable  = true;
@@ -189,19 +146,6 @@ in
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  # services.xserver.layout = "us";
-  # services.xserver.xkbOptions = "eurosign:e";
-
-  # Enable the KDE Desktop Environment.
-  # services.xserver.displayManager.kdm.enable = true;
-  # services.xserver.desktopManager.kde4.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome3.enable = true;
-  services.xserver.desktopManager.gnome3.sessionPath = [ pkgs.gnome3.gpaste ];
-  systemd.packages = with pkgs; [ gnome3.gpaste ];
-
   environment.systemPackages = with pkgs; [
     git
     mc
@@ -240,51 +184,6 @@ in
     libreoffice
     eclipses.eclipse-sdk
   ];
-
-  nixpkgs.config.packageOverrides = pkgs: {
-    freetype_subpixel = pkgs.freetype.override {
-      useEncumberedCode = true;
-      useInfinality = false;
-    };
-  };
-
-  fonts = {
-    enableDefaultFonts = false;
-    enableFontDir = true;
-    fonts = with pkgs; [ 
-      #(pkgs.callPackage ./liberation-fonts1 {})
-      liberation1_ttf
-      freefont_ttf
-    ];
-    fontconfig.ultimate.enable = false;
-    fontconfig.ultimate.preset = "ultimate1";
-  };
-
-  system.replaceRuntimeDependencies = with pkgs; [
-    ({ original = dnsmasq;
-       replacement = pkgs.dnsmasq.overrideDerivation (oldAttrs: rec {
-         version = "2.77test4";
-         src = fetchurl {
-           url = "https://github.com/imp/dnsmasq/archive/v2.77test4.tar.gz";
-           sha256 = "1qq2nm7q4mmm04k47yq5xvyallgrrx67s25c3njc24d9byxki8nm";
-         };
-       }); })
-    { original = freetype;
-       replacement = freetype_subpixel; }
-    { original = aspell;
-       replacement = aspellDictDir; }
-    { original = qt48;
-       replacement = qt48gtk; }
-    { original = gnome3.evolution_data_server;
-       replacement = gnome3.evolution_data_server_ids; }
-  ];
-
-  nixpkgs.overlays = [ ( import ../mypkgs ) ];
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.firefox = {
-    enableAdobeFlash = true;
-    icedtea = true;
-  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.bobo = {

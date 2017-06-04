@@ -32,6 +32,12 @@ with super; {
     buildInputs = oldAttrs.buildInputs ++ [ gnupg1 ];
   });
 
+  utillinuxServices = super.utillinux.overrideAttrs (oldAttrs: rec {
+    configureFlags = oldAttrs.configureFlags + ''
+      --with-systemdsystemunitdir=''${bin}/lib/systemd/system/
+    '';
+  });
+
   #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
   #jdtsdk = super.jdtsdk.override { gtk2 = gtk3; };
   #eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { gtk2 = gtk3; webkitgtk2 = webkitgtk; });

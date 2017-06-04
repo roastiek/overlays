@@ -7,6 +7,7 @@ in
 
 {
   networking.networkmanager.unmanaged = [ "mac:00:0e:2e:f1:3c:cf" "interface-name:attwifi" ];
+  networking.usePredictableInterfaceNames = false;
 
   systemd.network.enable = true;
   systemd.network.links."70-edimax1.3" = {
