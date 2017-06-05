@@ -8,7 +8,8 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
+    "hid_microsoft" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
@@ -38,6 +39,6 @@
 
   swapDevices = [ ];
 
-  nix.maxJobs = lib.mkDefault 4;
-  nix.buildCores = lib.mkDefault 8;
+  nix.maxJobs = lib.mkDefault 8;
+  nix.buildCores = lib.mkDefault 4;
 }
