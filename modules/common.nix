@@ -38,7 +38,8 @@
   programs.zsh.enable = true;
   environment.etc."profile.local".text = "export __ETC_ZSHENV_SOURCED=1";
 
-  systemd.services."systemd-vconsole-setup".enable = false;
+  #systemd.services."systemd-vconsole-setup".enable = false;
+  systemd.services."systemd-vconsole-setup".wantedBy = lib.mkForce [];
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
