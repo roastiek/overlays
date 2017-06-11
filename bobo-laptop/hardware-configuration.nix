@@ -12,7 +12,10 @@
     "hid_microsoft" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  boot.kernelParams = [ "systemd.restore_state=0" "button.lid_init_state=method" ];
+  boot.kernelParams = [
+    "systemd.restore_state=0"
+    "button.lid_init_state=method"
+  ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/d4c04bfe-2e89-46f8-b9e2-b87397ee4ccb";
@@ -20,7 +23,10 @@
       options = [ "subvol=nixos" "noatime" "autodefrag" ];
     };
 
-  boot.initrd.luks.devices."crypted".device = "/dev/disk/by-uuid/0e81c49c-157b-40ae-8b2a-78057063a554";
+  boot.initrd.luks.devices."crypted" = {
+    device = "/dev/disk/by-uuid/0e81c49c-157b-40ae-8b2a-78057063a554";
+    allowDiscards = true;
+  };
 
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/91289f45-d8aa-4559-9f4a-522a9996f564";

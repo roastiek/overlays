@@ -199,4 +199,7 @@ in
   system.stateVersion = "17.03";
 
   #systemd.services."systemd-backlight@".enable = false;
+  systemd.services.fstrim.preStart = ''
+    ${pkgs.utillinuxServices.bin}/bin/fstrim -v /
+  '';
 }
