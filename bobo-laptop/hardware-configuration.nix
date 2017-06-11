@@ -12,6 +12,7 @@
     "hid_microsoft" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+  boot.kernelParams = [ "systemd.restore_state=0" "button.lid_init_state=method" ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/d4c04bfe-2e89-46f8-b9e2-b87397ee4ccb";

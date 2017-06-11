@@ -67,7 +67,6 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   # boot.loader.grub.efiBootloaderId = "NixOS";
   # boot.kernelPackages = pkgs.linuxPackages_4_8;
-  boot.kernelParams = [ "systemd.restore_state=0" ];
 
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = 1;
@@ -115,6 +114,8 @@ in
       lxc.network.link = lxcbr0
     '';
   };
+
+  virtualisation.docker.enable = true;
 
   services.dnsmasq = {
     enable = true;
@@ -190,7 +191,7 @@ in
      isNormalUser = true;
      uid = 1000;
      shell = "/run/current-system/sw/bin/zsh";
-     extraGroups = [ "wheel" "networkmanager" ];
+     extraGroups = [ "wheel" "networkmanager" "docker" ];
   };
 
 
