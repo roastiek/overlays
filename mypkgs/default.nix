@@ -1,5 +1,5 @@
 self: super:
-with super; {
+with super; rec {
 
   opera12 = callPackage ./opera12 {};
 
@@ -23,6 +23,7 @@ with super; {
   tango-extras-icon-theme = callPackage ./tango-extras-icon-theme {};
 
   clementine = super.clementine.override {
+    qt4 = qt48gtk;
     libplist = null;
     libgpod = null;
     usbmuxd = null;
