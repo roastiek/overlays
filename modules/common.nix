@@ -54,7 +54,11 @@
 
   services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
 
+  services.journald.rateLimitInterval = "0";
+
   systemd.timers.fstrim.wantedBy = [ "timers.target" ];
+
+  systemd.services."save-hwclock".wantedBy = lib.mkForce [];
 
   fonts = {
     enableDefaultFonts = false;

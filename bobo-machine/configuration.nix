@@ -28,8 +28,6 @@
     10.0.0.149      bobo-laptop.lan bobo-laptop
   '';
 
-  # services.journald.rateLimitInterval = "0";
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.bobo = {
      isNormalUser = true;
