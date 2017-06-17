@@ -25,6 +25,12 @@
       options = [ "subvolid=368" "noatime" "autodefrag" "nofail" ];
     };
 
+  fileSystems."/other" =
+    { device = "/dev/disk/by-uuid/0a08a9e0-1c24-4229-9bf4-f5e7b731625c";
+      fsType = "ext4";
+      options = [ "noatime" ];
+    };
+
 #  fileSystems."/tmp" =
 #    { device = "none";
 #      fsType = "tmpfs";

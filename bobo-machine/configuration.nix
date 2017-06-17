@@ -36,6 +36,11 @@
      shell = "/run/current-system/sw/bin/zsh";
   };
 
+  users.extraUsers.lenka = {
+     isNormalUser = true;
+     uid = 1002;
+  };
+
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.03";
 
@@ -69,6 +74,22 @@
   services.resolved.enable = false;
   services.nscd.enable = false;
   services.unbound.enable = false;
+
+  services.samba = {
+    enable = true;
+    enableNmbd = true;
+    securityType = "user";
+    shares = {
+      inspiron = {
+        path = "/other/backup/inspiron";
+        "read only" = "no";
+        "valid users" = "lenka";
+      };
+    };
+  };
+
+  networking.firewall.allowedTCPPorts = [ 139 445 ];
+  networking.firewall.allowedUDPPorts = [ 137 138 ];
 
 /*
   systemd.services."sa" = {
