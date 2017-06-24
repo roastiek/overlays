@@ -39,6 +39,12 @@ with super; rec {
     '';
   });
 
+  lxc = super.lxc.overrideAttrs (oldAttrs: rec {
+    postPatch = ''
+      sed -e '/chmod u+s/d' -i src/lxc/Makefile.am
+    '';
+  });
+
   #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
   #jdtsdk = super.jdtsdk.override { gtk2 = gtk3; };
   #eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { gtk2 = gtk3; webkitgtk2 = webkitgtk; });
