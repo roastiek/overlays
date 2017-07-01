@@ -73,6 +73,12 @@ in
     "net.ipv4.ip_forward" = 1;
   };
 
+#  nix.binaryCaches = [
+#    "http://szn-nix-cache.s3-eu-central-1.amazonaws.com"
+#  ];
+
+  nix.binaryCachePublicKeys = [ "hydra.szn:s5RJc+u3wLOO/0+svaLaB8rG34Ok4C8kanIOPH6KQ5U=" ];
+
   networking.firewall = with lib; {
     enable = true;
     extraCommands = mkMerge [ (mkBefore flushNat) setupNat ];

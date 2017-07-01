@@ -90,6 +90,9 @@
     { original = aspell;
       replacement = aspellDictDir;
     }
+    { original = openjdk8;
+      replacement = openjdk8_clean;
+    }
     { original = gnome3.evolution_data_server;
       replacement = gnome3.evolution_data_server_ids;
     }
