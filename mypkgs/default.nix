@@ -50,6 +50,10 @@ with super; rec {
 
   openjdk8_clean = (super.openjdk8.override { enableGnome2 = false; }).overrideAttrs (oldAttrs: {
     buildInputs = oldAttrs.buildInputs ++ [ xorg.libXrandr ];
+    passthru = {
+      inherit architecture;
+      home = "${openjdk8_clean}/lib/openjdk";
+    };
   });
 
 }
