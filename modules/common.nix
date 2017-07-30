@@ -5,9 +5,14 @@
   nix = {
     daemonNiceLevel = 19;
     daemonIONiceLevel = 7;
+    extraOptions = ''
+      gc-keep-outputs = true
+      gc-keep-derivations = true
+      env-keep-derivations = true
+    '';
     gc = {
       automatic = true;
-      dates = "daily";
+      dates = "weekly";
       options = "--delete-older-than 30d --max-freed $((64 * 1024**3))";
     };
   };
