@@ -56,4 +56,23 @@ with super; rec {
     };
   });
 
+  keepassxc = callPackage ./keepassxc {};
+
+  python-grpc = callPackage ./python-grpc {
+    pythonPackages = python35Packages;
+    protobuf = python-protobuf3_3;
+  };
+
+  protobuf3_3 = lib.overrideDerivation (callPackage <nixpkgs/pkgs/development/libraries/protobuf/generic-v3.nix> {
+    version = "3.3.0";
+    sha256 = "1258yz9flyyaswh3izv227kwnhwcxn4nwavdz9iznqmh24qmi59w";
+  }) (attrs: { NIX_CFLAGS_COMPILE = "-Wno-error"; });
+
+  python-protobuf3_3 = callPackage <nixpkgs/pkgs/development/python-modules/protobuf.nix> {
+    inherit (python35Packages) python buildPythonPackage google_apputils pyext;
+    disabled = false;
+    doCheck = false;
+    protobuf = protobuf3_3;
+  };
+
 }
