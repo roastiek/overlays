@@ -58,6 +58,8 @@ with super; rec {
 
   keepassxc = callPackage ./keepassxc {};
 
+  yed = callPackage ./yed {};
+
   python-grpc = callPackage ./python-grpc {
     pythonPackages = python35Packages;
     protobuf = python-protobuf3_3;
