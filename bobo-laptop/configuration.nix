@@ -190,6 +190,7 @@ in
     aspellDicts.en
     libreoffice
     eclipses.eclipse-sdk
+    yed
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
