@@ -136,6 +136,9 @@ in
       bind-dynamic
       #interface=lxcbr0
       listen-address=192.168.121.1
+
+      enable-ra
+      dhcp-range=::100,::1ff,constructor:lxcbr0
     '';
   };
 
