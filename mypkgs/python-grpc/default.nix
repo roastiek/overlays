@@ -2,20 +2,20 @@
 
 with pythonPackages; buildPythonPackage rec {
   name = "grpc-${version}";
-  version = "1.4.0";
+  version = "1.6.0";
 
   src = fetchurl {
-    url = "https://pypi.python.org/packages/1b/40/3e89d778c9a5a5a59bc6ef80c8f096ea8b9e02a30e163479d1501257b8a6/grpcio-${version}.tar.gz";
-    sha256 = "0d7grnkg6fgscrhpph03bpxbiwd3fhxjwxbd70mmfp2bqaj178m3";
+    url = "https://pypi.python.org/packages/bd/4f/c6bc9d402ac9042853ec36d732d9de0a0a399ceb64a317f7eaacc10957eb/grpcio-1.6.0.tar.gz";
+    sha256 = "0l0yir0lf7iwgql0vgh6mmirfi7i8wvabwk8i5x5hlzc2par7mvc";
   };
 
-  patches = [ ./custom.patch ];
+  # patches = [ ./custom.patch ];
 
   propagatedBuildInputs = [ protobuf ];
 
-  buildInputs = [ cython zlib c-ares six ];
+  buildInputs = [ zlib c-ares six ];
 
-  GRPC_PYTHON_BUILD_WITH_CYTHON = "True";
+  #GRPC_PYTHON_BUILD_WITH_CYTHON = "True";
 
   dontStrip = true;
 }
