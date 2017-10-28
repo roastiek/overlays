@@ -13,14 +13,16 @@
     ];
 
   nix = {
-    #binaryCaches =  [ "http://bobo-laptop:4080/" ];
-    #trustedBinaryCaches = [ "http://bobo-laptop:4080/" ];
-    #binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
+    #binaryCaches =  [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
+    trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
+    binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
+    #useSandbox = true;
   };
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
+  boot.consoleLogLevel = 6;
 
   networking.hostName = "bobo-machine"; # Define your hostname.
   networking.extraHosts = ''
@@ -58,6 +60,7 @@
     clementine
     opera12
     keepassx
+    keepassxc
     hostapd
     jdk
     icedtea_web
@@ -69,6 +72,7 @@
     aspellDicts.en
     eclipses.eclipse-sdk
     geany
+    streamlink
   ];
 
   services.resolved.enable = false;
@@ -91,6 +95,16 @@
   networking.firewall.allowedTCPPorts = [ 139 445 ];
   networking.firewall.allowedUDPPorts = [ 137 138 ];
 
+  virtualisation.docker.enable = true;
+
+/*
+  nixpkgs.config.packageOverrides = pkgs:
+  {
+    gnome3 = pkgs.gnome3 // { gdm = pkgs.gnome3.gdm.overrideAttrs ( oldAttrs: {
+      configureFlags = oldAttrs.configureFlags ++ [ "--with-initial-vt=7" ];
+    });};
+  };
+*/
 /*
   systemd.services."sa" = {
     script = "echo service-a";

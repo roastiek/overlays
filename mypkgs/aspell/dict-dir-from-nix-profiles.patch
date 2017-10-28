@@ -1,5 +1,5 @@
 diff --git a/common/info.cpp b/common/info.cpp
-index 8291cc7..d1dcecc 100644
+index 8291cc7..6216326 100644
 --- a/common/info.cpp
 +++ b/common/info.cpp
 @@ -36,6 +36,7 @@
@@ -14,7 +14,7 @@ index 8291cc7..d1dcecc 100644
      lst.clear();
      lst.add(config->retrieve("data-dir"));
      lst.add(config->retrieve("dict-dir"));
-+    if (config->lookup("dict-dir") == NULL) {
++    if (config->lookup("data-dir") == NULL && config->lookup("dict-dir") == NULL) {
 +        const char* cprofiles = getenv("NIX_PROFILES");
 +        if (cprofiles != NULL) {
 +            char* profiles = strdup(cprofiles);

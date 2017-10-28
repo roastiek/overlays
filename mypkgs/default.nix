@@ -18,6 +18,10 @@ with super; rec {
     '';
   });
 
+  aspellWithDicts = callPackage ./aspell/aspell-with-dicts.nix {
+    aspellDicts = [ aspellDicts.cs aspellDicts.en ];
+  };
+
   liberation1_ttf = callPackage ./liberation-fonts1 {};
 
   tango-extras-icon-theme = callPackage ./tango-extras-icon-theme {};
@@ -77,4 +81,28 @@ with super; rec {
     protobuf = protobuf3_3;
   };
 
+  streamlink__ = super.streamlink.overrideAttrs ( oldAttrs: rec {
+    version = "0.8.1";
+    name = "streamlink-${version}";
+
+    src = fetchFromGitHub {
+      owner = "streamlink";
+      repo = "streamlink";
+      rev = "${version}";
+      sha256 = "0l09vp108dw6d9d9rri2xwlr49mr5nkrlxbivr4kk5jbaczjp9xm";
+    };
+
+    STREAMLINK_USE_PYCOUNTRY="1";
+    doCheck = false;
+
+    propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ ( with super.python3Packages;[ websocket_client pycountry pysocks ]);
+  });
+
+  properties-cpp = callPackage ./properties-cpp {};
+
+  process-cpp = callPackage ./process-cpp {};
+
+  libdbus-cpp = callPackage ./libdbus-cpp {};
+
+  anbox = callPackage ./anbox {};
 }
