@@ -47,7 +47,7 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-  #systemd.services.display-manager.conflicts = lib.mkForce [];
+  systemd.services.display-manager.conflicts = lib.mkForce [ "getty@tty1.service" ];
   systemd.targets.getty.unitConfig.RefuseManualStart = "yes";
 
   services.xserver.desktopManager.default = "gnome3";
