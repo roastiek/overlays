@@ -44,14 +44,15 @@
   };
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.03";
+  system.stateVersion = "17.09";
 
   environment.systemPackages = with pkgs; [
     git
     mc
     htop
     firefox
-    vivaldi
+    #vivaldi
+    #chromium
     vlc
     gnome3.gpaste
     gnome3.gtk
@@ -59,8 +60,7 @@
     tango-extras-icon-theme
     clementine
     opera12
-    keepassx
-    keepassxc
+    keepassx-community
     hostapd
     jdk
     icedtea_web
@@ -96,7 +96,7 @@
   networking.firewall.allowedUDPPorts = [ 137 138 ];
 
   virtualisation.docker.enable = true;
-
+  systemd.tmpfiles.rules = [ "d /tmp 1777 root root 10d" ];
 /*
   nixpkgs.config.packageOverrides = pkgs:
   {

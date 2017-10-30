@@ -30,6 +30,7 @@
   time.timeZone = "Europe/Prague";
 
   networking.firewall.allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
+  networking.networkmanager.useDnsmasq = true;
 
   # List services that you want to enable:
 
@@ -43,55 +44,48 @@
   programs.zsh.enable = true;
   environment.etc."profile.local".text = "export __ETC_ZSHENV_SOURCED=1";
 
-  #systemd.services."systemd-vconsole-setup".enable = false;
-  systemd.services."systemd-vconsole-setup".wantedBy = lib.mkForce [];
-
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
+  #systemd.services.display-manager.conflicts = lib.mkForce [];
+  systemd.targets.getty.unitConfig.RefuseManualStart = "yes";
 
   services.xserver.desktopManager.default = "gnome3";
   services.xserver.desktopManager.gnome3 = {
     enable = true;
-    sessionPath = [ pkgs.gnome3.gpaste ];
   };
-  systemd.packages = with pkgs; [ gnome3.gpaste utillinuxServices.bin ];
+  services.gnome3.gpaste.enable = true;
 
   services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
 
   services.journald.rateLimitInterval = "0";
 
-  systemd.timers.fstrim.wantedBy = [ "timers.target" ];
+  services.fstrim.enable = true;
 
   systemd.services."save-hwclock".wantedBy = lib.mkForce [];
 
   fonts = {
     enableDefaultFonts = false;
-    enableFontDir = true;
+    #enableFontDir = true;
+    #enableCoreFonts = true;
     fonts = with pkgs; [
-      liberation1_ttf
+      liberation_ttf_v1_binary
+      #liberation_ttf
       freefont_ttf
+      #gyre-fonts # TrueType substitutes for standard PostScript fonts
+      unifont
     ];
-    fontconfig.ultimate.enable = false;
-    fontconfig.ultimate.preset = "ultimate1";
+    #fontconfig.penultimate.enable = false;
   };
 
+  environment.extraInit = ''
+    export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
+  '';
+
   system.replaceRuntimeDependencies = with pkgs; [
-    { original = dnsmasq;
-      replacement = pkgs.dnsmasq.overrideDerivation (oldAttrs: rec {
-        version = "2.77test4";
-        src = fetchurl {
-          url = "https://github.com/imp/dnsmasq/archive/v2.77test4.tar.gz";
-          sha256 = "1qq2nm7q4mmm04k47yq5xvyallgrrx67s25c3njc24d9byxki8nm";
-        };
-      });
-    }
-    { original = freetype;
-      replacement = freetype_subpixel;
-    }
-    { original = qt48;
-      replacement = qt48gtk;
-    }
+  #  { original = freetype;
+  #    replacement = freetype_subpixel;
+  #  }
     { original = aspell;
       replacement = aspellDictDir;
     }
