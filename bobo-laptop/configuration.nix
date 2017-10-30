@@ -138,9 +138,14 @@ in
       listen-address=192.168.121.1
 
       enable-ra
-      dhcp-range=::100,::1ff,constructor:lxcbr0
+      #dhcp-range=::100,::1ff,constructor:lxcbr0
+
+      log-dhcp
+      log-queries
     '';
   };
+
+  services.nscd.enable = false;
 
   networking.extraResolvconfConf = ''
     prepend_nameservers=192.168.121.1
@@ -173,6 +178,7 @@ in
     clementine
     opera12
     keepassx
+    keepassxc
     #jre
     jdk
     icedtea_web
