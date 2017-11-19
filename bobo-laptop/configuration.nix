@@ -79,6 +79,10 @@ in
 
   nix.binaryCachePublicKeys = [ "hydra.szn:s5RJc+u3wLOO/0+svaLaB8rG34Ok4C8kanIOPH6KQ5U=" ];
 
+#  nixpkgs.config.wine = {
+#    build = "wine32";
+#  };
+
   networking.firewall = with lib; {
     enable = true;
     extraCommands = mkMerge [ (mkBefore flushNat) setupNat ];
@@ -166,7 +170,7 @@ in
     mc
     htop
     firefox
-    vivaldi
+    #vivaldi
     vlc
     gnome3.gpaste
     gnome3.gnome-tweak-tool
@@ -177,8 +181,7 @@ in
     geany
     clementine
     opera12
-    keepassx
-    keepassxc
+    keepassx-community
     #jre
     jdk
     icedtea_web
@@ -200,6 +203,8 @@ in
     libreoffice
     eclipses.eclipse-sdk
     yed
+    streamlink
+    wineStaging
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -212,10 +217,10 @@ in
 
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.03";
+  system.stateVersion = "17.09";
 
   #systemd.services."systemd-backlight@".enable = false;
   systemd.services.fstrim.preStart = ''
-    ${pkgs.utillinuxServices.bin}/bin/fstrim -v /
+    ${pkgs.utillinux.bin}/bin/fstrim -v /
   '';
 }

@@ -48,4 +48,8 @@
 
   nix.maxJobs = lib.mkDefault 8;
   nix.buildCores = lib.mkDefault 4;
+
+  hardware.opengl.driSupport32Bit = true;
+  hardware.opengl.s3tcSupport = true;
+
 }
