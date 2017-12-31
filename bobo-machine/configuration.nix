@@ -17,6 +17,15 @@
     trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
     binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
     #useSandbox = true;
+
+/*    buildMachines = [
+      { hostName = "localhost";
+        maxJobs = 2;
+        systems = [ "x86_64-linux" "i686-linux" ];
+        supportedFeatures = [ "big-parallel" ];
+        speedFactor = 2;
+      }
+    ];*/
   };
 
   # Use the GRUB 2 boot loader.
@@ -44,7 +53,7 @@
   };
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.09";
+  system.stateVersion = "17.03";
 
   environment.systemPackages = with pkgs; [
     git
@@ -73,6 +82,8 @@
     eclipses.eclipse-sdk
     geany
     streamlink
+    wineStaging
+    docker-gc
   ];
 
   services.resolved.enable = false;
@@ -96,19 +107,21 @@
   networking.firewall.allowedUDPPorts = [ 137 138 ];
 
   virtualisation.docker.enable = true;
+
   systemd.tmpfiles.rules = [ "d /tmp 1777 root root 10d" ];
-/*
-  nixpkgs.config.packageOverrides = pkgs:
-  {
-    gnome3 = pkgs.gnome3 // { gdm = pkgs.gnome3.gdm.overrideAttrs ( oldAttrs: {
-      configureFlags = oldAttrs.configureFlags ++ [ "--with-initial-vt=7" ];
-    });};
+
+  services.hydra = {
+    #enable = true;
+    hydraURL = "http://bobo-machine/";
+    notificationSender = "hydra@hydra.dev";
   };
-*/
+
 /*
   systemd.services."sa" = {
     script = "echo service-a";
     wantedBy = [ "multi-user.target" ];
+    #wantedBy = [ "basic.target" ];
+    #wantedBy = [ "graphical.target" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;

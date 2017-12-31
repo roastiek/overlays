@@ -39,16 +39,16 @@
   services.openssh.forwardX11 = true;
   programs.ssh.setXAuthLocation = true;
 
+  programs.command-not-found.enable = true;
   programs.bash.enableCompletion = true;
-
   programs.zsh.enable = true;
+
   environment.etc."profile.local".text = "export __ETC_ZSHENV_SOURCED=1";
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-  systemd.services.display-manager.conflicts = lib.mkForce [ "getty@tty1.service" ];
-  systemd.targets.getty.unitConfig.RefuseManualStart = "yes";
+
 
   services.xserver.desktopManager.default = "gnome3";
   services.xserver.desktopManager.gnome3 = {
@@ -61,6 +61,25 @@
   services.journald.rateLimitInterval = "0";
 
   services.fstrim.enable = true;
+
+  services.snapper = {
+    snapshotInterval = "*-*-* *:0/15:00";
+    configs = {
+      home = {
+        subvolume = "/home";
+        extraConfig = ''
+          TIMELINE_CREATE="yes"
+          TIMELINE_CLEANUP="yes"
+          TIMELINE_LIMIT_HOURLY="32-192"
+          TIMELINE_LIMIT_DAILY="2-14"
+          TIMELINE_LIMIT_WEEKLY="1-8"
+          TIMELINE_LIMIT_MONTHLY="0-12"
+          TIMELINE_LIMIT_YEARLY="0-2"
+          SYNC_ACL="yes"
+        '';
+      };
+    };
+  };
 
   systemd.services."save-hwclock".wantedBy = lib.mkForce [];
 
@@ -110,5 +129,10 @@
     ./cert/seznamca-root.crt
     ./cert/seznamca-server.crt
   ];
+
+  virtualisation.docker = {
+    autoPrune.enable = true;
+    autoPrune.flags = "--volumes";
+  };
 
 }

@@ -54,6 +54,8 @@
   hardware.opengl.extraPackages = [ pkgs.libvdpau-va-gl pkgs.libvdpau ];
   hardware.opengl.extraPackages32 = [ pkgs.libvdpau-va-gl ];
   hardware.opengl.driSupport32Bit = true;
+  hardware.opengl.s3tcSupport = true;
+  hardware.opengl.enable = true;
 
   hardware.pulseaudio.extraConfig = ''
     set-sink-port alsa_output.pci-0000_00_1b.0.analog-stereo analog-output-headphones
