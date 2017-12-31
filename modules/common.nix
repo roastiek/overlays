@@ -132,7 +132,7 @@
 
   virtualisation.docker = {
     autoPrune.enable = true;
-    autoPrune.flags = "--volumes";
+    autoPrune.flags = [ "--volumes" ];
   };
 
 }
