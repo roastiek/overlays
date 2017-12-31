@@ -68,4 +68,6 @@ with super; rec {
   libdbus-cpp = callPackage ./libdbus-cpp {};
 
   anbox = callPackage ./anbox {};
+
+  goenvtemplator = callPackage ./goenvtemplator {};
 }
