@@ -64,13 +64,15 @@
 
   services.snapper = {
     snapshotInterval = "*-*-* *:0/15:00";
+    cleanupInterval = "1h";
     configs = {
       home = {
         subvolume = "/home";
         extraConfig = ''
           TIMELINE_CREATE="yes"
           TIMELINE_CLEANUP="yes"
-          TIMELINE_LIMIT_HOURLY="32-192"
+          TIMELINE_MIN_AGE="28800"
+          TIMELINE_LIMIT_HOURLY="8-48"
           TIMELINE_LIMIT_DAILY="2-14"
           TIMELINE_LIMIT_WEEKLY="1-8"
           TIMELINE_LIMIT_MONTHLY="0-12"
