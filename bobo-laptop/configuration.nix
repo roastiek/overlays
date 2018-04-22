@@ -151,9 +151,12 @@ in
 
   services.nscd.enable = false;
 
+  networking.resolvconfOptions = [ "ndots:2" ];
+
   networking.extraResolvconfConf = ''
     prepend_nameservers=192.168.121.1
     prepend_search=lan
+    append_search="dev.dszn.cz test.dszn.cz dszn.cz"
   '';
 
   services.nix-serve = {
