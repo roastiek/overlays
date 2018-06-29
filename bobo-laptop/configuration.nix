@@ -103,7 +103,7 @@ in
     interfaces = [ "lxcbr0-nic" ];
   };
   networking.interfaces.lxcbr0 = {
-    ip4 = [ { address = "192.168.121.1"; prefixLength=24; }];
+    ipv4.addresses = [ { address = "192.168.121.1"; prefixLength=24; }];
   };
   networking.interfaces.lxcbr0-nic = {
     virtual = true;
@@ -169,12 +169,33 @@ in
   services.printing.enable = true;
 
   environment.systemPackages = with pkgs; [
+    # systools
+    tcpdump
+    bridge-utils
+    tunctl
+    iptables
+    debootstrap
+
+    # work tools
     git
     mc
     htop
+    dpkg
+    zip
+    unzip
+    kubernetes
+    gnumake
+    tree
+    wget
+    file
+    gocode
+    godef
+    gotools
+    jq
+
     firefox
-    #vivaldi
     vlc
+    mpv
     gnome3.gpaste
     gnome3.gnome-tweak-tool
     gnome3.gtk
@@ -188,16 +209,10 @@ in
     #jre
     jdk
     icedtea_web
-    debootstrap
-    wget
     gnupg1
     openssl
-    tcpdump
-    bridge-utils
-    tunctl
-    iptables
-    enchant
-    gnome3.gspell
+    #enchant
+    #gnome3.gspell
     #hunspell
     #hunspellDicts.en-us
     #aspell
@@ -207,7 +222,8 @@ in
     eclipses.eclipse-sdk
     yed
     streamlink
-    wineStaging
+    gimp
+    #wineStaging
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

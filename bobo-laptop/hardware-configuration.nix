@@ -52,4 +52,5 @@
   hardware.opengl.driSupport32Bit = true;
   hardware.opengl.s3tcSupport = true;
 
+  hardware.cpu.intel.updateMicrocode = true;
 }
