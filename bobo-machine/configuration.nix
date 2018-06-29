@@ -16,7 +16,7 @@
     #binaryCaches =  [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
     trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
     binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
-    #useSandbox = true;
+    useSandbox = true;
 
 /*    buildMachines = [
       { hostName = "localhost";
@@ -53,37 +53,57 @@
   };
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.03";
+  system.stateVersion = "18.03";
 
   environment.systemPackages = with pkgs; [
+    # sys tools
+    bridge-utils
+    tcpdump
+    hostapd
+    xboxdrv
+    docker-gc
+
+    # work tools
     git
     mc
+    file
+    dpkg
     htop
+    zip
+    unzip
+    wget
+    tree
+    gnumake
+
+    # gui
     firefox
     #vivaldi
     #chromium
     vlc
-    gnome3.gpaste
-    gnome3.gtk
+    mpv
+    #gnome3.gpaste
+    #gnome3.gtk
+    gnome3.gnome-tweak-tool
     tango-icon-theme
     tango-extras-icon-theme
     clementine
-    opera12
     keepassx-community
-    hostapd
-    jdk
-    icedtea_web
-    enchant
-    gnome3.gspell
-    hunspell
-    hunspellDicts.en-us
-    aspellDicts.cs
-    aspellDicts.en
+    streamlink
     eclipses.eclipse-sdk
     geany
-    streamlink
-    wineStaging
-    docker-gc
+    gimp
+
+    # java
+    jdk
+    icedtea_web
+
+    #enchant
+    #gnome3.gspell
+    #hunspell
+    #hunspellDicts.en-us
+    aspellDicts.cs
+    aspellDicts.en
+    winePackages.unstable
   ];
 
   services.resolved.enable = false;

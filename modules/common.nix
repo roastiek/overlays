@@ -1,7 +1,5 @@
 { config, pkgs, lib, ... }:
-
 {
-
   nix = {
     daemonNiceLevel = 19;
     daemonIONiceLevel = 7;
@@ -53,10 +51,17 @@
   services.xserver.desktopManager.default = "gnome3";
   services.xserver.desktopManager.gnome3 = {
     enable = true;
+    sessionPath = [ pkgs.chrome-gnome-shell ];
   };
   services.gnome3.gpaste.enable = true;
 
-  services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
+  #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
+
+  systemd.packages = [ pkgs.chrome-gnome-shell ];
+  environment.systemPackages = [ pkgs.chrome-gnome-shell ];
+  services.dbus.packages = [ pkgs.chrome-gnome-shell ];
+  environment.etc."chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
+  environment.etc."opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
 
   services.journald.rateLimitInterval = "0";
 
@@ -107,21 +112,22 @@
   #  { original = freetype;
   #    replacement = freetype_subpixel;
   #  }
-    { original = aspell;
-      replacement = aspellDictDir;
-    }
+    #{ original = aspell;
+    #  replacement = aspellDictDir;
+    #}
     { original = openjdk8;
       replacement = openjdk8_clean;
     }
-    { original = gnome3.evolution_data_server;
-      replacement = gnome3.evolution_data_server_ids;
-    }
+    #{ original = gnome3.evolution_data_server;
+    #  replacement = gnome3.evolution_data_server_ids;
+    #}
   ];
 
   nixpkgs.overlays = [ ( import ../mypkgs) ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox = {
-    enableAdobeFlash = true;
+    enableAdobeFlash = false;
+    enableGnomeExtensions = true;
     icedtea = true;
   };
 
