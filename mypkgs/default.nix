@@ -1,6 +1,6 @@
 self: super:
 let
-  inherit (self) callPackage;
+  inherit (super) callPackage;
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
 in rec {
 
@@ -47,4 +47,5 @@ in rec {
 
   winePackages = recurseIntoAttrs (callPackage ./wine-packages.nix { });
 
+  volume-mixer = callPackage ./volume-mixer {};
 }

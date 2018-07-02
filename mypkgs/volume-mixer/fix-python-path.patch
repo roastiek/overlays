@@ -1,0 +1,12 @@
+diff -ru result/shell-volume-mixer@derhofbauer.at/utils.js result.fix/shell-volume-mixer@derhofbauer.at/utils.js
+--- result/shell-volume-mixer@derhofbauer.at/utils.js	1970-01-01 01:00:01.000000000 +0100
++++ result.fix/shell-volume-mixer@derhofbauer.at/utils.js	2018-07-02 09:56:52.031987688 +0200
+@@ -90,7 +90,7 @@
+         return null;
+     }
+ 
+-    let [success, output] = GLib.spawn_command_line_sync('python ' + pautil);
++    let [success, output] = GLib.spawn_command_line_sync(pautil);
+ 
+     if (success !== true || !output) {
+         return null;
