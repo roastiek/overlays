@@ -19,10 +19,14 @@ let
     iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 53 -j ACCEPT || true
     iptables -w -D INPUT -i lxcbr0 -p udp -m udp --dport 67 -j ACCEPT || true
     iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 67 -j ACCEPT || true
+    iptables -w -D INPUT -i docker0 -p udp -m udp --dport 53 -j ACCEPT || true
+    iptables -w -D INPUT -i docker0 -p tcp -m tcp --dport 53 -j ACCEPT || true
 
     iptables -D FORWARD -d 192.168.121.0/24 -o lxcbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT || true
     iptables -D FORWARD -s 192.168.121.0/24 -i lxcbr0 -j ACCEPT || true
     iptables -D FORWARD -i lxcbr0 -o lxcbr0 -j ACCEPT || true
+    iptables -D FORWARD -i docker0 -o lxcbr0 -j ACCEPT || true
+    iptables -D FORWARD -i docker0 -o docker -j ACCEPT || true
     iptables -D FORWARD -o lxcbr0 -j REJECT --reject-with icmp-port-unreachable || true
     iptables -D FORWARD -i lxcbr0 -j REJECT --reject-with icmp-port-unreachable || true
   '';
@@ -40,10 +44,14 @@ let
     iptables -w -A INPUT -i lxcbr0 -p tcp -m tcp --dport 53 -j ACCEPT
     iptables -w -A INPUT -i lxcbr0 -p udp -m udp --dport 67 -j ACCEPT
     iptables -w -A INPUT -i lxcbr0 -p tcp -m tcp --dport 67 -j ACCEPT
+    iptables -w -A INPUT -i docker0 -p udp -m udp --dport 53 -j ACCEPT
+    iptables -w -A INPUT -i docker0 -p tcp -m tcp --dport 53 -j ACCEPT
 
     iptables -A FORWARD -d 192.168.121.0/24 -o lxcbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
     iptables -A FORWARD -s 192.168.121.0/24 -i lxcbr0 -j ACCEPT
     iptables -A FORWARD -i lxcbr0 -o lxcbr0 -j ACCEPT
+    iptables -A FORWARD -i docker0 -o lxcbr0 -j ACCEPT
+    iptables -A FORWARD -i docker0 -o docker -j ACCEPT
     iptables -A FORWARD -o lxcbr0 -j REJECT --reject-with icmp-port-unreachable
     iptables -A FORWARD -i lxcbr0 -j REJECT --reject-with icmp-port-unreachable
   '';
