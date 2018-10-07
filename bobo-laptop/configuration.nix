@@ -231,7 +231,7 @@ in
     yed
     streamlink
     gimp
-    #wineStaging
+    winePackages.unstable
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -241,7 +241,6 @@ in
      shell = "/run/current-system/sw/bin/zsh";
      extraGroups = [ "wheel" "networkmanager" "docker" ];
   };
-
 
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.09";
