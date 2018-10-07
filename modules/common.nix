@@ -66,6 +66,7 @@
   services.journald.rateLimitInterval = "0";
 
   services.fstrim.enable = true;
+  systemd.services.fstrim.after = [ "nix-gc.service" ];
 
   services.snapper = {
     snapshotInterval = "*-*-* *:0/15:00";
@@ -80,8 +81,8 @@
           TIMELINE_LIMIT_HOURLY="8-48"
           TIMELINE_LIMIT_DAILY="2-14"
           TIMELINE_LIMIT_WEEKLY="1-8"
-          TIMELINE_LIMIT_MONTHLY="0-12"
-          TIMELINE_LIMIT_YEARLY="0-2"
+          TIMELINE_LIMIT_MONTHLY="1-3"
+          TIMELINE_LIMIT_YEARLY="0"
           SYNC_ACL="yes"
         '';
       };
