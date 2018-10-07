@@ -74,6 +74,7 @@
     wget
     tree
     gnumake
+    kubectl
 
     # gui
     firefox
