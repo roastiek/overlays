@@ -28,7 +28,7 @@
   time.timeZone = "Europe/Prague";
 
   networking.firewall.allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
-  networking.networkmanager.useDnsmasq = true;
+  networking.networkmanager.dns = "dnsmasq";
 
   # List services that you want to enable:
 
@@ -48,7 +48,7 @@
   services.xserver.displayManager.gdm.enable = true;
 
 
-  services.xserver.desktopManager.default = "gnome3";
+  services.xserver.desktopManager.default = "none";
   services.xserver.desktopManager.gnome3 = {
     enable = true;
     sessionPath = [ pkgs.chrome-gnome-shell ];

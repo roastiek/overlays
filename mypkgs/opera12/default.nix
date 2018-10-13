@@ -2,7 +2,6 @@
 , freetype, fontconfig, libXft, libXrender, libxcb, expat, libXau, libXdmcp
 , libuuid, cups, xz
 , gstreamer, gst_plugins_base, gst_plugins_good, libxml2
-, flashplayer
 , gtkSupport ? true, glib, gtk2, pango, gdk_pixbuf, cairo, atk
 }:
 
@@ -81,7 +80,6 @@ stdenv.mkDerivation rec {
     # This file should normally require a gtk-update-icon-cache -q /usr/share/icons/hicolor command
     # It have no reasons to exist in a redistribuable package
     rm $out/share/icons/hicolor/icon-theme.cache
-    echo ${flashplayer}${flashplayer.mozillaPlugin}=1 >> $out/share/opera/defaults/pluginpath.ini
     mv $out/share/applications/opera-browser.desktop $out/share/applications/opera.desktop
     '';
 

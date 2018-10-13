@@ -20,7 +20,7 @@ in rec {
 
   #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
   #jdtsdk = super.jdtsdk.override { gtk2 = gtk3; };
-  eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { gtk2 = self.gtk3; webkitgtk24x-gtk2 = self.webkitgtk; });
+  #eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { gtk2 = self.gtk3; webkitgtk24x-gtk2 = self.webkitgtk; });
 
   #eclipse = with super.eclipses; eclipseWithPlugins {
   #  eclipse = eclipse-platform;
