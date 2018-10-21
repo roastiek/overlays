@@ -45,7 +45,7 @@ in rec {
     runScript = "firefox";
   };
 
-  winePackages = recurseIntoAttrs (callPackage ./wine-packages.nix { });
+  wine = super.winePackages.unstable;
 
   volume-mixer = callPackage ./volume-mixer {};
 }
