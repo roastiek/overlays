@@ -57,6 +57,7 @@
   hardware.opengl.s3tcSupport = true;
   hardware.opengl.enable = true;
 
+  hardware.pulseaudio.support32Bit = true;
   hardware.pulseaudio.extraConfig = ''
     set-sink-port alsa_output.pci-0000_00_1b.0.analog-stereo analog-output-headphones
     set-sink-mute alsa_output.pci-0000_00_1b.0.analog-stereo 0

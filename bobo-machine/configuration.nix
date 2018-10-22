@@ -16,7 +16,7 @@
     #binaryCaches =  [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
     trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
     binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
-    useSandbox = true;
+    useSandbox = false;
 
 /*    buildMachines = [
       { hostName = "localhost";
@@ -104,7 +104,11 @@
     #hunspellDicts.en-us
     aspellDicts.cs
     aspellDicts.en
-    winePackages.unstable
+    wine
+    winetricks
+    zoom-us
+    steam
+    steam-run
   ];
 
   services.resolved.enable = false;
