@@ -183,6 +183,7 @@ in
     tunctl
     iptables
     debootstrap
+    lxc-templates
 
     # work tools
     git
@@ -233,6 +234,7 @@ in
     gimp
     wine
     winetricks
+    zoom-us
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

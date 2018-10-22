@@ -48,4 +48,6 @@ in rec {
   wine = super.winePackages.unstable;
 
   volume-mixer = callPackage ./volume-mixer {};
+
+  lxc-templates = callPackage ./lxc-templates {};
 }
