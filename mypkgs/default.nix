@@ -20,12 +20,12 @@ in rec {
 
   #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
   #jdtsdk = super.jdtsdk.override { gtk2 = gtk3; };
-  #eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { gtk2 = self.gtk3; webkitgtk24x-gtk2 = self.webkitgtk; });
+  eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { jdk = openjdk8_clean; });
 
-  #eclipse = with super.eclipses; eclipseWithPlugins {
-  #  eclipse = eclipse-platform;
-  #  plugins = with plugins; [ cdt jdt ];
-  #};
+  eclipse = with super.eclipses; eclipseWithPlugins {
+    eclipse = eclipse-platform;
+    plugins = with plugins; [ cdt jdt ];
+  };
 
   openjdk8_clean = (super.openjdk8.override { enableGnome2 = false; }).overrideAttrs (oldAttrs: {
     buildInputs = oldAttrs.buildInputs ++ [ self.xorg.libXrandr ];
