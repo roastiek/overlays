@@ -15,7 +15,7 @@ in rec {
   tango-extras-icon-theme = callPackage ./tango-extras-icon-theme {};
 
   debootstrap = super.debootstrap.overrideAttrs (oldAttrs: rec {
-    buildInputs = oldAttrs.buildInputs ++ [ self.gnupg1 ];
+    buildInputs = [ self.gnupg1 ];
   });
 
   #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
