@@ -4,18 +4,20 @@
     daemonNiceLevel = 19;
     daemonIONiceLevel = 7;
     extraOptions = ''
-      gc-keep-outputs = true
-      gc-keep-derivations = true
-      env-keep-derivations = true
+      keep-outputs = true
+      keep-derivations = true
+      keep-env-derivations = true
     '';
     gc = {
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 30d --max-freed $((64 * 1024**3))";
     };
+    optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
+    };
   };
-
-  systemd.timers."nix-gc".timerConfig.Persistent = true;
 
   # Select internationalisation properties.
   # i18n = {
@@ -66,7 +68,22 @@
   services.journald.rateLimitInterval = "0";
 
   services.fstrim.enable = true;
-  systemd.services.fstrim.after = [ "nix-gc.service" ];
+
+  systemd.timers.nix-gc.before = [ "nix-optimise.timer" "nix-optimise.service" "fstrim.timer" "fstrim.service" ];
+  systemd.timers.nix-gc.timerConfig = {
+    Persistent = true;
+    #RandomizedDelaySec = "6h";
+  };
+
+  systemd.timers.nix-optimise.before = [ "fstrim.timer" "fstrim.service" ];
+  systemd.timers.nix-optimise.timerConfig = {
+    Persistent = true;
+    #RandomizedDelaySec = "6h";
+  };
+
+  systemd.timers.fstrim.timerConfig = {
+    #RandomizedDelaySec = "6h";
+  };
 
   services.snapper = {
     snapshotInterval = "*-*-* *:0/15:00";
@@ -142,6 +159,12 @@
   virtualisation.docker = {
     autoPrune.enable = true;
     autoPrune.flags = [ "--volumes" ];
+  };
+
+  systemd.timers.docker-prune.before = [ "fstrim.timer" "fstrim.service" ];
+  systemd.timers.docker-prune.timerConfig = {
+    Persistent = true;
+    #RandomizedDelaySec = "6h";
   };
 
 }

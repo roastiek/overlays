@@ -128,8 +128,10 @@ in
   virtualisation.lxc = {
     enable  = true;
     defaultConfig = ''
-      lxc.network.type = veth
-      lxc.network.link = lxcbr0
+      lxc.net.0.type = veth
+      lxc.net.0.link = lxcbr0
+      # When using LXC with apparmor, uncomment the next line to run unconfined:
+      lxc.apparmor.profile = unconfined
     '';
   };
 
@@ -142,7 +144,7 @@ in
       server=127.0.0.1
       no-resolv
       auth-zone=lan
-      dhcp-range=192.168.121.100,192.168.121.150
+      dhcp-range=192.168.121.100,192.168.121.150,60s
       dhcp-no-override
       dhcp-option=option:domain-name,lan
       bind-dynamic
@@ -249,7 +251,7 @@ in
   system.stateVersion = "17.09";
 
   #systemd.services."systemd-backlight@".enable = false;
-  systemd.services.fstrim.preStart = ''
-    ${pkgs.utillinux.bin}/bin/fstrim -v /
-  '';
+  #systemd.services.fstrim.preStart = ''
+  #  ${pkgs.utillinux.bin}/bin/fstrim -v /
+  #'';
 }
