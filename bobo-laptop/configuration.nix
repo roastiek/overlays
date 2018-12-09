@@ -81,11 +81,11 @@ in
     "net.ipv4.ip_forward" = 1;
   };
 
-#  nix.binaryCaches = [
-#    "http://szn-nix-cache.s3-eu-central-1.amazonaws.com"
-#  ];
+  nix.binaryCaches = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
 
-  nix.binaryCachePublicKeys = [ "hydra.szn:s5RJc+u3wLOO/0+svaLaB8rG34Ok4C8kanIOPH6KQ5U=" ];
+  nix.trustedBinaryCaches = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
+
+  nix.binaryCachePublicKeys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
 
 #  nixpkgs.config.wine = {
 #    build = "wine32";

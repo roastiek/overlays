@@ -19,6 +19,7 @@
     };
   };
 
+
   # Select internationalisation properties.
   # i18n = {
   #   consoleFont = "Lat2-Terminus16";
@@ -69,21 +70,16 @@
 
   services.fstrim.enable = true;
 
-  systemd.timers.nix-gc.before = [ "nix-optimise.timer" "nix-optimise.service" "fstrim.timer" "fstrim.service" ];
-  systemd.timers.nix-gc.timerConfig = {
-    Persistent = true;
-    #RandomizedDelaySec = "6h";
+  systemd.timers.nix-gc.timerConfig.Persistent = true;
+  systemd.services.nix-gc.serviceConfig.Type = "oneshot";
+
+  systemd.timers.nix-optimise.timerConfig.Persistent = true;
+  systemd.services.nix-optimise = {
+    serviceConfig.Type = "oneshot";
+    after = [ "nix-gc.service" ];
   };
 
-  systemd.timers.nix-optimise.before = [ "fstrim.timer" "fstrim.service" ];
-  systemd.timers.nix-optimise.timerConfig = {
-    Persistent = true;
-    #RandomizedDelaySec = "6h";
-  };
-
-  systemd.timers.fstrim.timerConfig = {
-    #RandomizedDelaySec = "6h";
-  };
+  systemd.services.fstrim.after = [ "nix-optimise.service" ];
 
   services.snapper = {
     snapshotInterval = "*-*-* *:0/15:00";
@@ -161,10 +157,7 @@
     autoPrune.flags = [ "--volumes" ];
   };
 
-  systemd.timers.docker-prune.before = [ "fstrim.timer" "fstrim.service" ];
-  systemd.timers.docker-prune.timerConfig = {
-    Persistent = true;
-    #RandomizedDelaySec = "6h";
-  };
+  systemd.timers.docker-prune.timerConfig.Persistent = true;
+  systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
 }
