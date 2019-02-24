@@ -140,7 +140,7 @@
   nixpkgs.overlays = [ ( import ../mypkgs) ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox = {
-    enableAdobeFlash = false;
+    enableAdobeFlash = true;
     enableGnomeExtensions = true;
     icedtea = true;
   };
@@ -160,4 +160,7 @@
   systemd.timers.docker-prune.timerConfig.Persistent = true;
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
+  hardware.pulseaudio.daemon.config = {
+    flat-volumes = "no";
+  };
 }
