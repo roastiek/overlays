@@ -7,28 +7,28 @@
 let
 
   flushNat = ''
-    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 -d 224.0.0.0/24 -j RETURN || true
-    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 -d 255.255.255.255/32 -j RETURN || true
-    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -p tcp -j MASQUERADE --to-ports 1024-65535 || true
-    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -p udp -j MASQUERADE --to-ports 1024-65535 || true
-    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -j MASQUERADE || true
+    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 -d 224.0.0.0/24 -j RETURN 2>/dev/null || true
+    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 -d 255.255.255.255/32 -j RETURN  2>/dev/null || true
+    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -p tcp -j MASQUERADE --to-ports 1024-65535 2>/dev/null || true
+    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -p udp -j MASQUERADE --to-ports 1024-65535 2>/dev/null || true
+    iptables -w -t nat -D POSTROUTING -s 192.168.121.0/24 ! -d 192.168.121.0/24 -j MASQUERADE 2>/dev/null || true
 
-    iptables -w -t mangle -D POSTROUTING -o lxcbr0 -p udp -m udp --dport 68 -j CHECKSUM --checksum-fill || true
+    iptables -w -t mangle -D POSTROUTING -o lxcbr0 -p udp -m udp --dport 68 -j CHECKSUM --checksum-fill 2>/dev/null || true
 
-    iptables -w -D INPUT -i lxcbr0 -p udp -m udp --dport 53 -j ACCEPT || true
-    iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 53 -j ACCEPT || true
-    iptables -w -D INPUT -i lxcbr0 -p udp -m udp --dport 67 -j ACCEPT || true
-    iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 67 -j ACCEPT || true
-    iptables -w -D INPUT -i docker0 -p udp -m udp --dport 53 -j ACCEPT || true
-    iptables -w -D INPUT -i docker0 -p tcp -m tcp --dport 53 -j ACCEPT || true
+    iptables -w -D INPUT -i lxcbr0 -p udp -m udp --dport 53 -j ACCEPT 2>/dev/null || true
+    iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 53 -j ACCEPT 2>/dev/null || true
+    iptables -w -D INPUT -i lxcbr0 -p udp -m udp --dport 67 -j ACCEPT 2>/dev/null || true
+    iptables -w -D INPUT -i lxcbr0 -p tcp -m tcp --dport 67 -j ACCEPT 2>/dev/null || true
+    iptables -w -D INPUT -i docker0 -p udp -m udp --dport 53 -j ACCEPT 2>/dev/null || true
+    iptables -w -D INPUT -i docker0 -p tcp -m tcp --dport 53 -j ACCEPT 2>/dev/null || true
 
-    iptables -D FORWARD -d 192.168.121.0/24 -o lxcbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT || true
-    iptables -D FORWARD -s 192.168.121.0/24 -i lxcbr0 -j ACCEPT || true
-    iptables -D FORWARD -i lxcbr0 -o lxcbr0 -j ACCEPT || true
-    iptables -D FORWARD -i docker0 -o lxcbr0 -j ACCEPT || true
-    iptables -D FORWARD -i docker0 -o docker -j ACCEPT || true
-    iptables -D FORWARD -o lxcbr0 -j REJECT --reject-with icmp-port-unreachable || true
-    iptables -D FORWARD -i lxcbr0 -j REJECT --reject-with icmp-port-unreachable || true
+    iptables -D FORWARD -d 192.168.121.0/24 -o lxcbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -s 192.168.121.0/24 -i lxcbr0 -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -i lxcbr0 -o lxcbr0 -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -i docker0 -o lxcbr0 -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -i docker0 -o docker -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -o lxcbr0 -j REJECT --reject-with icmp-port-unreachable 2>/dev/null || true
+    iptables -D FORWARD -i lxcbr0 -j REJECT --reject-with icmp-port-unreachable 2>/dev/null || true
   '';
 
   setupNat = ''
@@ -87,6 +87,10 @@ in
 
   nix.binaryCachePublicKeys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
 
+  nix.extraOptions = ''
+    narinfo-cache-negative-ttl = 300
+  '';
+
 #  nixpkgs.config.wine = {
 #    build = "wine32";
 #  };
@@ -99,8 +103,8 @@ in
 
   networking.hostName = "bobo-laptop"; # Define your hostname.
   networking.extraHosts = ''
-    10.0.0.140      bobo-machine.lan bobo-machine
-    10.0.0.149      bobo-laptop.lan bobo-laptop
+    10.0.0.140      bobo-machine
+    10.0.0.149      bobo-laptop
   '';
 
   networking.networkmanager.unmanaged = [
@@ -143,10 +147,9 @@ in
     extraConfig = ''
       server=127.0.0.1
       no-resolv
-      auth-zone=lan
       dhcp-range=192.168.121.100,192.168.121.150,60s
       dhcp-no-override
-      dhcp-option=option:domain-name,lan
+      dhcp-option=option:domain-search,dev.dszn.cz,kancelar.seznam.cz,ko.seznam.cz,ng.seznam.cz
       bind-dynamic
       #interface=lxcbr0
       listen-address=192.168.121.1
@@ -161,11 +164,11 @@ in
 
   services.nscd.enable = false;
 
-  networking.resolvconfOptions = [ "ndots:2" ];
+  # networking.resolvconfOptions = [ "ndots:2" ];
 
   networking.extraResolvconfConf = ''
     prepend_nameservers=192.168.121.1
-    prepend_search=lan
+    # prepend_search=lan
     append_search="dev.dszn.cz test.dszn.cz dszn.cz"
   '';
 

@@ -109,7 +109,7 @@
     #enableFontDir = true;
     #enableCoreFonts = true;
     fonts = with pkgs; [
-      liberation_ttf_v1_binary
+      liberation_ttf_v1
       #liberation_ttf
       freefont_ttf
       #gyre-fonts # TrueType substitutes for standard PostScript fonts
