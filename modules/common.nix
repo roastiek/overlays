@@ -140,7 +140,7 @@
   nixpkgs.overlays = [ ( import ../mypkgs) ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox = {
-    enableAdobeFlash = true;
+    enableAdobeFlash = false;
     enableGnomeExtensions = true;
     icedtea = true;
   };
