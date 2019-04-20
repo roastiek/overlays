@@ -71,6 +71,7 @@
     htop
     zip
     unzip
+    unrar
     wget
     tree
     gnumake
