@@ -49,7 +49,7 @@
   nix.maxJobs = lib.mkDefault 2;
   nix.buildCores = lib.mkDefault 3;
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [ "nvidiaLegacy390" ];
 
   hardware.opengl.extraPackages = [ pkgs.libvdpau-va-gl pkgs.libvdpau ];
   hardware.opengl.extraPackages32 = [ pkgs.libvdpau-va-gl ];
