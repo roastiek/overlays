@@ -102,6 +102,8 @@ in
   };
 
   networking.hostName = "bobo-laptop"; # Define your hostname.
+  #networking.hosts."10.0.0.149" = [ config.networking.hostName ];
+  #networking.hosts."127.0.1.1" = [ ];
   networking.extraHosts = ''
     10.0.0.140      bobo-machine
     10.0.0.149      bobo-laptop
@@ -197,25 +199,25 @@ in
     dpkg
     zip
     unzip
-    kubernetes
+    kubectl
     gnumake
     tree
     wget
     file
-    gocode
-    godef
-    gotools
+    #gocode
+    #godef
+    #gotools
     jq
 
     firefox
     vlc
     mpv
-    gnome3.gpaste
+    #gnome3.gpaste
     gnome3.gnome-tweak-tool
-    gnome3.gtk
+    #gnome3.gtk
     tango-icon-theme
     tango-extras-icon-theme
-    pidgin
+    #pidgin
     geany
     clementine
     opera12
@@ -240,6 +242,9 @@ in
     wine
     winetricks
     zoom-us
+
+    ( vscode-with-extensions )
+    vscodium
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
