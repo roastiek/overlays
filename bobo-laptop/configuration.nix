@@ -168,7 +168,7 @@ in
 
   # networking.resolvconfOptions = [ "ndots:2" ];
 
-  networking.extraResolvconfConf = ''
+  networking.resolvconf.extraConfig = ''
     prepend_nameservers=192.168.121.1
     # prepend_search=lan
     append_search="dev.dszn.cz test.dszn.cz dszn.cz"
@@ -256,7 +256,7 @@ in
   };
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.09";
+  system.stateVersion = "19.09";
 
   #systemd.services."systemd-backlight@".enable = false;
   #systemd.services.fstrim.preStart = ''

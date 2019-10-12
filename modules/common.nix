@@ -56,7 +56,7 @@
     enable = true;
     sessionPath = [ pkgs.chrome-gnome-shell ];
   };
-  services.gnome3.gpaste.enable = true;
+  programs.gpaste.enable = true;
   services.gnome3.tracker.enable = false;
 
   #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
