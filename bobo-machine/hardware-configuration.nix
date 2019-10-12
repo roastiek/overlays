@@ -63,4 +63,5 @@
     set-sink-mute alsa_output.pci-0000_00_1b.0.analog-stereo 0
   '';
 
+  hardware.cpu.intel.updateMicrocode = true;
 }

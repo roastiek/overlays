@@ -94,6 +94,7 @@
     eclipses.eclipse-sdk
     geany
     gimp
+    mcomix
 
     # java
     jdk
@@ -110,6 +111,8 @@
     zoom-us
     steam
     steam-run
+    vscode
+    vscodium
   ];
 
   services.resolved.enable = false;

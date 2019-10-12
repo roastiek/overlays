@@ -17,7 +17,7 @@ in
       Path = "pci-0000:00:1d.7-usb-0:1.3:1.0";
     };
     linkConfig = {
-      Name = "attwifi";
+      OriginalName = "attwifi";
     };
   };
   services.udev.extraRules = ''
