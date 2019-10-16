@@ -58,11 +58,12 @@
   };
   programs.gpaste.enable = true;
   services.gnome3.tracker.enable = false;
+  services.gnome3.evolution-data-server.enable = true;
 
   #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
 
   systemd.packages = [ pkgs.chrome-gnome-shell ];
-  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.volume-mixer ];
+  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.volume-mixer pkgs.gnome3.evolution ];
   services.dbus.packages = [ pkgs.chrome-gnome-shell ];
   environment.etc."chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
   environment.etc."opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";

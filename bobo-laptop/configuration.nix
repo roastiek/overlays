@@ -105,7 +105,7 @@ in
   #networking.hosts."10.0.0.149" = [ config.networking.hostName ];
   #networking.hosts."127.0.1.1" = [ ];
   networking.extraHosts = ''
-    10.0.0.140      bobo-machine
+    10.0.0.151      bobo-machine
     10.0.0.149      bobo-laptop
   '';
 
