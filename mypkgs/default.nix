@@ -50,4 +50,14 @@ in rec {
   volume-mixer = callPackage ./volume-mixer {};
 
   lxc-templates = callPackage ./lxc-templates {};
+
+  vscodium = super.vscodium.overrideAttrs (oldAttrs: {
+    installPhase = oldAttrs.installPhase + ''
+      p=$(cat $out/lib/vscode/resources/app/product.json)
+      echo "$p" | ${self.jq}/bin/jq ' . + { "checksumFailMoreInfoUrl": "https://go.microsoft.com/fwlink/?LinkId=828886" }' > $out/lib/vscode/resources/app/product.json
+      for s in $(find $out -name "*.js" -print); do
+        substituteInPlace "$s" --replace 'sensitivity:"base"' 'sensitivity:"base",ignorePunctuation:1'
+      done
+    '';
+  });
 }

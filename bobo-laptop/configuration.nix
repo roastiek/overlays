@@ -208,6 +208,7 @@ in
     #godef
     #gotools
     jq
+    direnv
 
     firefox
     vlc
