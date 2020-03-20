@@ -9,13 +9,13 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../modules/common.nix
-      ./attwifi
+      #./attwifi
     ];
 
   nix = {
     #binaryCaches =  [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
-    trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
-    binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
+    #trustedBinaryCaches = [ "https://cache.nixos.org/" "http://bobo-laptop:4080/" ];
+    #binaryCachePublicKeys = [ "bobo-laptop:uGO5vW8RLbZn0oKYw/0E2YMoIhfnXGlWyJl6XKintmw=" ];
     useSandbox = false;
 
 /*    buildMachines = [
@@ -36,7 +36,7 @@
   networking.hostName = "bobo-machine"; # Define your hostname.
   networking.extraHosts = ''
     10.0.0.140      bobo-machine.lan bobo-machine
-    10.0.0.149      bobo-laptop.lan bobo-laptop
+    10.0.0.139      bobo-laptop.lan bobo-laptop
   '';
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -113,6 +113,11 @@
     steam-run
     vscode
     vscodium
+    libreoffice
+
+    virtualgl
+
+    # idrive
   ];
 
   services.resolved.enable = false;
