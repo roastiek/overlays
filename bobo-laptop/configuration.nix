@@ -246,6 +246,9 @@ in
 
     ( vscode-with-extensions )
     vscodium
+
+    virtualgl
+    xorg.xhost
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -263,4 +266,5 @@ in
   #systemd.services.fstrim.preStart = ''
   #  ${pkgs.utillinux.bin}/bin/fstrim -v /
   #'';
+
 }
