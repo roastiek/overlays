@@ -33,6 +33,11 @@
   boot.loader.grub.version = 2;
   boot.consoleLogLevel = 6;
 
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.all.forwarding" = 1;
+    "net.ipv4.ip_forward" = 1;
+  };
+
   networking.hostName = "bobo-machine"; # Define your hostname.
   networking.extraHosts = ''
     10.0.0.140      bobo-machine.lan bobo-machine
@@ -138,7 +143,13 @@
   };
 
   networking.firewall.allowedTCPPorts = [ 139 445 ];
-  networking.firewall.allowedUDPPorts = [ 137 138 ];
+  networking.firewall.allowedUDPPorts = [ 137 138 53 ];
+
+  networking.nat ={
+    enable = true;
+    externalInterface = "tun0";
+    internalInterfaces = [ "enp2s0" ];
+  };
 
   virtualisation.docker.enable = true;
 
@@ -150,6 +161,18 @@
     notificationSender = "hydra@hydra.dev";
   };
 
+  services.dnsmasq = {
+    enable = true;
+    resolveLocalQueries = false;
+    extraConfig = ''
+      server=127.0.0.1
+      no-resolv
+      no-hosts
+      no-negcache
+      except-interface=lo
+      bind-dynamic
+    '';
+  };
 /*
   systemd.services."sa" = {
     script = "echo service-a";
