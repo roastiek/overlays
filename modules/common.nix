@@ -124,20 +124,14 @@
     export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
   '';
 
-  system.replaceRuntimeDependencies = with pkgs; [
-  #  { original = freetype;
-  #    replacement = freetype_subpixel;
-  #  }
-    #{ original = aspell;
-    #  replacement = aspellDictDir;
-    #}
-    { original = openjdk8;
-      replacement = openjdk8_clean;
-    }
-    #{ original = gnome3.evolution_data_server;
-    #  replacement = gnome3.evolution_data_server_ids;
-    #}
-  ];
+  # system.replaceRuntimeDependencies = with pkgs; [
+  #   { original = openjdk8;
+  #     replacement = openjdk8_clean;
+  #   }
+  #   { original = gnome3.evolution_data_server;
+  #     replacement = gnome3.evolution_data_server_ids;
+  #   }
+  # ];
 
   nixpkgs.overlays = [ ( import ../mypkgs) ];
   nixpkgs.config.allowUnfree = true;

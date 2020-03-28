@@ -18,23 +18,6 @@ in rec {
     buildInputs = [ self.gnupg1 ];
   });
 
-  #ecj = super.ecj.override { gtk2 = gtk3; webkitgtk2 = webkitgtk; };
-  #jdtsdk = super.jdtsdk.override { gtk2 = gtk3; };
-  eclipses = recurseIntoAttrs (callPackage <nixpkgs/pkgs/applications/editors/eclipse> { jdk = openjdk8_clean; });
-
-  eclipse = with super.eclipses; eclipseWithPlugins {
-    eclipse = eclipse-platform;
-    plugins = with plugins; [ cdt jdt ];
-  };
-
-  openjdk8_clean = (super.openjdk8.override { enableGnome2 = false; }).overrideAttrs (oldAttrs: {
-    buildInputs = oldAttrs.buildInputs ++ [ self.xorg.libXrandr ];
-    passthru = {
-      inherit (super) architecture;
-      home = "${openjdk8_clean}/lib/openjdk";
-    };
-  });
-
   yed = callPackage ./yed {};
 
   goenvtemplator = callPackage ./goenvtemplator {};
