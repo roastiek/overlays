@@ -1,6 +1,6 @@
 self: super:
 let
-  inherit (super) callPackage;
+  inherit (self) callPackage;
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
 in rec {
 
@@ -43,4 +43,38 @@ in rec {
       done
     '';
   });
+
+  linux_5_5 = let
+    kernelPatches = callPackage ./kernel/patches.nix { };
+  in callPackage ./kernel/linux-5.5.nix {
+    kernelPatches = [
+      kernelPatches.bridge_stp_helper
+      kernelPatches.request_key_helper
+      kernelPatches.export_kernel_fpu_functions."5.3"
+    ];
+  };
+
+  linuxPackages_5_5 = recurseIntoAttrs (super.linuxPackagesFor self.linux_5_5);
+
+  alsa-sof-firmware = callPackage ./alsa-sof-firmware {};
+
+  alsa-ucm-conf = callPackage ./alsa-ucm-conf {};
+
+  alsa-topology-conf = callPackage ./alsa-topology-conf {};
+
+  alsa-lib = callPackage ./alsa-lib {};
+
+  pulseaudio99Full = callPackage ./pulseaudio {
+    inherit (self.gnome3) dconf;
+    inherit (self.darwin.apple_sdk.frameworks) CoreServices AudioUnit Cocoa;
+    alsaLib = self.alsa-lib;
+    x11Support = true;
+    jackaudioSupport = true;
+    airtunesSupport = true;
+    bluetoothSupport = true;
+    remoteControlSupport = true;
+    zeroconfSupport = true;
+  };
+
+  # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
 }

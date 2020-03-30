@@ -139,6 +139,7 @@
 
     i7z
     ethtool
+    powertop
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
@@ -151,6 +152,8 @@
      shell = "/run/current-system/sw/bin/zsh";
      extraGroups = [ "wheel" "networkmanager" "docker" "lxd" ];
   };
+
+  hardware.pulseaudio.package = pkgs.pulseaudio99Full;
 
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "19.09";
