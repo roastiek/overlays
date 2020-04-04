@@ -76,5 +76,7 @@ in rec {
     zeroconfSupport = true;
   };
 
+  intel-undervolt = callPackage ./intel-undervolt { };
+
   # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
 }
