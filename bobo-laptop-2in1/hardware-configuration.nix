@@ -188,12 +188,16 @@
 
     DISK_DEVICES="nvme0n1"
 
-    USB_AUTOSUSPEND=0
+    USB_AUTOSUSPEND=1
   '';
 
   services.undervolt = {
     enable = true;
-    coreOffset = "-50";
-    gpuOffset = "-50";
+    coreOffset = "-60";
+  };
+
+  services.thermald = {
+    enable = true;
+    configFile = ./thermal-conf.xml.default;
   };
 }

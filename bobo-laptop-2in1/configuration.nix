@@ -140,6 +140,9 @@
     i7z
     ethtool
     powertop
+    sysbench
+    intel-undervolt
+    thermald
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
