@@ -11,7 +11,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_5_5;
+  boot.kernelPackages = pkgs.linuxPackages_5_6;
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
@@ -188,7 +188,8 @@
 
     DISK_DEVICES="nvme0n1"
 
-    USB_AUTOSUSPEND=1
+    USB_AUTOSUSPEND=0
+    USB_BLACKLIST="0bda:8153"
   '';
 
   services.undervolt = {
@@ -200,4 +201,5 @@
     enable = true;
     configFile = ./thermal-conf.xml.default;
   };
+
 }

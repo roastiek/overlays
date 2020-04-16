@@ -4,7 +4,7 @@
  <Platform>
 	<Name> Auto generated </Name>
 	<ProductName>Inspiron 7391 2n1</ProductName>
-	<Preference>PERFORMANCE</Preference>
+	<Preference>QUIET</Preference>
 	<PPCC>
 		<PowerLimitIndex>0</PowerLimitIndex>
 		<PowerLimitMinimum>12000</PowerLimitMinimum>

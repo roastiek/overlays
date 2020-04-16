@@ -96,6 +96,7 @@
     #gotools
     jq
     direnv
+    goenvtemplator
 
     firefox
     vlc
@@ -143,6 +144,7 @@
     sysbench
     intel-undervolt
     thermald
+    gnome3.dconf-editor
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
