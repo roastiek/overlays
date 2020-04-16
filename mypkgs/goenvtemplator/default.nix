@@ -2,14 +2,14 @@
 
 buildGoPackage rec {
   name = "goenvtemplator-${version}";
-  version = "v2.0.0-rc3";
+  version = "v2.0.0";
   goPackagePath = "github.com/seznam/goenvtemplator";
 
   src = fetchFromGitHub {
     owner = "seznam";
     repo = "goenvtemplator";
     rev = version;
-    sha256 = "179ki9vdxav88lwv26k2qdja3sq0gnmklrd8i88vxn18g6jxgjrv";
+    sha256 = "1m8ly6gcabkncdj3q4vzkqrnx7dcbgh3wk80wx41mwy7b2rv4fq0";
   };
 
   goDeps = ./deps.nix;

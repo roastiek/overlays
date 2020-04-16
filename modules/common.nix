@@ -44,14 +44,12 @@
   programs.bash.enableCompletion = true;
   programs.zsh.enable = true;
 
-  environment.etc."profile.local".text = "export __ETC_ZSHENV_SOURCED=1";
-
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
 
 
-  services.xserver.desktopManager.default = "none";
+  services.xserver.displayManager.defaultSession = "gnome-xorg";
   services.xserver.desktopManager.gnome3 = {
     enable = true;
     sessionPath = [ pkgs.chrome-gnome-shell ];
@@ -125,14 +123,17 @@
     export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
   '';
 
-  # system.replaceRuntimeDependencies = with pkgs; [
+  system.replaceRuntimeDependencies = with pkgs; [
+  #  { original = freetype;
+  #    replacement = freetype29;
+  #  }
   #   { original = openjdk8;
   #     replacement = openjdk8_clean;
   #   }
   #   { original = gnome3.evolution_data_server;
   #     replacement = gnome3.evolution_data_server_ids;
   #   }
-  # ];
+  ];
 
   nixpkgs.overlays = [ ( import ../mypkgs) ];
   nixpkgs.config.allowUnfree = true;
@@ -161,3 +162,4 @@
     flat-volumes = "no";
   };
 }
+
