@@ -99,7 +99,7 @@
     eclipses.eclipse-sdk
     geany
     gimp
-    mcomix
+    # mcomix
 
     # java
     jdk
