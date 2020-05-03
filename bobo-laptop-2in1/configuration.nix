@@ -161,6 +161,7 @@
   hardware.pulseaudio.package = pkgs.pulseaudio99Full;
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "19.09";
+  system.stateVersion = "20.03";
 
+  system.nixos.revision = "20.03";
 }

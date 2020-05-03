@@ -44,29 +44,6 @@ in rec {
     '';
   });
 
-  linux_5_5 = let
-    kernelPatches = callPackage ./kernel/patches.nix { };
-  in callPackage ./kernel/linux-5.5.nix {
-    kernelPatches = [
-      kernelPatches.bridge_stp_helper
-      kernelPatches.request_key_helper
-      kernelPatches.export_kernel_fpu_functions."5.3"
-    ];
-  };
-
-  linuxPackages_5_5 = recurseIntoAttrs (super.linuxPackagesFor self.linux_5_5);
-
-  linux_5_6 = let
-    kernelPatches = callPackage ./kernel/patches.nix { };
-  in callPackage ./kernel/linux-5.6.nix {
-    kernelPatches = [
-      kernelPatches.bridge_stp_helper
-      kernelPatches.request_key_helper
-      kernelPatches.export_kernel_fpu_functions."5.3"
-    ];
-  };
-
-  linuxPackages_5_6 = ( recurseIntoAttrs (super.linuxPackagesFor self.linux_5_6) ) // { wireguard = null; };
 
   alsa-sof-firmware = callPackage ./alsa-sof-firmware {};
 
@@ -90,9 +67,9 @@ in rec {
 
   intel-undervolt = callPackage ./intel-undervolt { };
 
-  # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
-
   freetype29 = callPackage ./freetype { };
+
+  # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
 
   # freetype = freetype29;
 }
