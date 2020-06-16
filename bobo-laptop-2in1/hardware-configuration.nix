@@ -177,6 +177,8 @@
 
   hardware.firmware = with pkgs; [ alsa-sof-firmware ];
 
+  hardware.pulseaudio.extraModules = with pkgs; [ pulseaudio-modules-bt ];
+
   services.tlp.enable = true;
   services.tlp.extraConfig = ''
     CPU_SCALING_GOVERNOR_ON_AC=powersave
