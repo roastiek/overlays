@@ -65,6 +65,10 @@ in rec {
     zeroconfSupport = true;
   };
 
+  pulseaudio-modules-bt = super.pulseaudio-modules-bt.override {
+    pulseaudio = self.pulseaudio99Full;
+  };
+
   intel-undervolt = callPackage ./intel-undervolt { };
 
   freetype29 = callPackage ./freetype { };

@@ -8,7 +8,7 @@
 	<PPCC>
 		<PowerLimitIndex>0</PowerLimitIndex>
 		<PowerLimitMinimum>12000</PowerLimitMinimum>
-		<PowerLimitMaximum>25000</PowerLimitMaximum>
+		<PowerLimitMaximum>22000</PowerLimitMaximum>
 		<TimeWindowMinimum>28000</TimeWindowMinimum>
 		<TimeWindowMaximum>28000</TimeWindowMaximum>
 		<StepSize>250</StepSize>

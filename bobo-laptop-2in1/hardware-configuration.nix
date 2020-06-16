@@ -142,6 +142,10 @@
       allowDiscards = true;
     };
 
+  #boot.extraModprobeConfig = ''
+  #  options cfg80211 cfg80211_disable_40mhz_24ghz=1
+  #'';
+
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/9a6fd74c-293b-4190-a458-458421d1a910";
       fsType = "btrfs";
@@ -161,7 +165,7 @@
 
   swapDevices = [ ];
 
-  nix.maxJobs = lib.mkDefault 8;
+  nix.maxJobs = lib.mkDefault 100;
   nix.buildCores = lib.mkDefault 8;
 
   hardware.opengl.driSupport32Bit = true;
@@ -190,11 +194,16 @@
 
     USB_AUTOSUSPEND=0
     USB_BLACKLIST="0bda:8153"
+
+    DISK_APM_LEVEL_ON_BAT="254"
+
+    DEVICES_TO_DISABLE_ON_LAN_CONNECT="wifi"
+    DEVICES_TO_ENABLE_ON_LAN_DISCONNECT="wifi"
   '';
 
   services.undervolt = {
     enable = true;
-    coreOffset = "-70";
+    coreOffset = "-90";
   };
 
   services.thermald = {

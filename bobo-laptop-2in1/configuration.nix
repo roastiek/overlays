@@ -24,6 +24,7 @@
 
   nix.extraOptions = ''
     narinfo-cache-negative-ttl = 300
+    http-connections = 100
   '';
 
   networking.useDHCP = false;
@@ -145,6 +146,9 @@
     intel-undervolt
     thermald
     gnome3.dconf-editor
+    synergy
+    barrier
+    cifs-utils
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
