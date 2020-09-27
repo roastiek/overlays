@@ -168,4 +168,5 @@
   system.stateVersion = "20.03";
 
   system.nixos.revision = "20.03";
+
 }

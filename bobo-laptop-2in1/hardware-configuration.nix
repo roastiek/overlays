@@ -15,7 +15,8 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
-    "hid_microsoft" ];
+    "hid_microsoft" "intel_wmi_thunderbolt" "r8152" "thunderbolt" "i915" "dell_wmi" "dell_laptop"
+    ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
@@ -205,7 +206,7 @@
 
   services.undervolt = {
     enable = true;
-    coreOffset = "-90";
+    coreOffset = "-100";
   };
 
   services.thermald = {
