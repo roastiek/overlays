@@ -99,6 +99,8 @@
     eclipses.eclipse-sdk
     geany
     gimp
+    viewnior
+    picard
     # mcomix
 
     # java
@@ -115,7 +117,7 @@
     winetricks
     zoom-us
     steam
-    steam-run
+    #steam-run
     vscode
     vscodium
     libreoffice
@@ -123,6 +125,12 @@
     virtualgl
 
     # idrive
+    barrier
+
+    cifs-utils
+    nfs-utils
+    openiscsi
+    lsscsi
   ];
 
   services.resolved.enable = false;
@@ -130,17 +138,23 @@
   services.unbound.enable = false;
 
   services.samba = {
-    enable = true;
+    enable = false;
     enableNmbd = true;
-    securityType = "user";
-    shares = {
-      inspiron = {
-        path = "/other/backup/inspiron";
-        "read only" = "no";
-        "valid users" = "lenka";
-      };
-    };
+    #securityType = "user";
+    #shares = {
+    #  inspiron = {
+    #    path = "/other/backup/inspiron";
+    #    "read only" = "no";
+    #    "valid users" = "lenka";
+    #  };
+    #  bobo = {
+    #    path = "/home/bobo";
+    #    "read only" = "no";
+    #    "valid users" = "bobo";
+    #  };
+    #};
   };
+
 
   networking.firewall.allowedTCPPorts = [ 139 445 ];
   networking.firewall.allowedUDPPorts = [ 137 138 53 ];
@@ -173,6 +187,13 @@
       bind-dynamic
     '';
   };
+
+  environment.etc."iscsi/initiatorname.iscsi".text = ''
+    InitiatorName=iqn.2016-04.com.open-iscsi:bobo-machine
+  '';
+
+  systemd.packages = [ pkgs.openiscsi ];
+
 /*
   systemd.services."sa" = {
     script = "echo service-a";
@@ -196,4 +217,5 @@
     };
   };
 */
+
 }

@@ -28,7 +28,7 @@
   fileSystems."/other" =
     { device = "/dev/disk/by-uuid/0a08a9e0-1c24-4229-9bf4-f5e7b731625c";
       fsType = "ext4";
-      options = [ "noatime" ];
+      options = [ "noatime" "nofail" ];
     };
 
 #  fileSystems."/tmp" =
@@ -42,6 +42,12 @@
       options = [ "subvol=nixos-boot" "noatime" "autodefrag" ];
     };
 
+  fileSystems."/remote/amour" =
+    { device = "ruster:/Amour";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=5min" ];
+    };
+
   swapDevices =
     [ { device = "/dev/disk/by-uuid/a4a524e4-c72d-4275-8d87-ac66b365a77d"; }
     ];
@@ -49,7 +55,7 @@
   nix.maxJobs = lib.mkDefault 2;
   nix.buildCores = lib.mkDefault 3;
 
-  services.xserver.videoDrivers = [ "nvidiaLegacy390" ];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.opengl.extraPackages = [ pkgs.libvdpau-va-gl pkgs.libvdpau ];
   hardware.opengl.extraPackages32 = [ pkgs.libvdpau-va-gl ];
@@ -58,10 +64,13 @@
   hardware.opengl.enable = true;
 
   hardware.pulseaudio.support32Bit = true;
-  hardware.pulseaudio.extraConfig = ''
-    set-sink-port alsa_output.pci-0000_00_1b.0.analog-stereo analog-output-headphones
-    set-sink-mute alsa_output.pci-0000_00_1b.0.analog-stereo 0
-  '';
+  #hardware.pulseaudio.extraConfig = ''
+  #  set-sink-port alsa_output.pci-0000_00_1b.0.analog-stereo analog-output-headphones
+  #  set-sink-mute alsa_output.pci-0000_00_1b.0.analog-stereo 0
+  #'';
 
   hardware.cpu.intel.updateMicrocode = true;
+
+  hardware.pulseaudio.extraModules = with pkgs; [ pulseaudio-modules-bt ];
+
 }
