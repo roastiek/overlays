@@ -101,6 +101,7 @@
     gimp
     viewnior
     picard
+    plex-media-player
     # mcomix
 
     # java

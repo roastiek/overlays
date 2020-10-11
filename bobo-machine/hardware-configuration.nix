@@ -48,6 +48,18 @@
       options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=5min" ];
     };
 
+  fileSystems."/remote/music" =
+    { device = "ruster:/Music";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=5min" ];
+    };
+
+  fileSystems."/remote/download" =
+    { device = "ruster:/Download";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=5min" ];
+    };
+
   swapDevices =
     [ { device = "/dev/disk/by-uuid/a4a524e4-c72d-4275-8d87-ac66b365a77d"; }
     ];
