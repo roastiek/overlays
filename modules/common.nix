@@ -92,11 +92,11 @@
           TIMELINE_CREATE="yes"
           TIMELINE_CLEANUP="yes"
           TIMELINE_MIN_AGE="28800"
-          TIMELINE_LIMIT_HOURLY="8-48"
-          TIMELINE_LIMIT_DAILY="2-14"
-          TIMELINE_LIMIT_WEEKLY="1-8"
-          TIMELINE_LIMIT_MONTHLY="1-3"
-          TIMELINE_LIMIT_YEARLY="0"
+          TIMELINE_LIMIT_HOURLY="0-48"
+          TIMELINE_LIMIT_DAILY="0-14"
+          TIMELINE_LIMIT_WEEKLY="0-8"
+          TIMELINE_LIMIT_MONTHLY="0-3"
+          TIMELINE_LIMIT_YEARLY="0-2"
           SYNC_ACL="yes"
         '';
       };

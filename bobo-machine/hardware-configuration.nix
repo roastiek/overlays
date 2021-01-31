@@ -9,8 +9,6 @@
     ];
 
   boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ahci" "usb_storage" "sd_mod" ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
   boot.loader.grub.device = "/dev/disk/by-id/ata-SanDisk_Ultra_II_960GB_163801800068"; # or "nodev" for efi only
 
   fileSystems."/" =
@@ -72,7 +70,6 @@
   hardware.opengl.extraPackages = [ pkgs.libvdpau-va-gl pkgs.libvdpau ];
   hardware.opengl.extraPackages32 = [ pkgs.libvdpau-va-gl ];
   hardware.opengl.driSupport32Bit = true;
-  hardware.opengl.s3tcSupport = true;
   hardware.opengl.enable = true;
 
   hardware.pulseaudio.support32Bit = true;

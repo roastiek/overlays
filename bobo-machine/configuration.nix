@@ -58,7 +58,7 @@
   };
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "19.09";
+  # system.stateVersion = "20.09";
 
   environment.systemPackages = with pkgs; [
     # sys tools
@@ -84,6 +84,9 @@
 
     # gui
     firefox
+    mailspring
+    minetime
+    gnome3.zenity
     #vivaldi
     #chromium
     vlc
@@ -96,17 +99,22 @@
     clementine
     keepassx-community
     streamlink
-    eclipses.eclipse-sdk
+    # eclipses.eclipse-sdk
     geany
     gimp
     viewnior
     picard
     plex-media-player
+    atomicparsley2
+    kid3
+    easytag
+    gnome3.dconf-editor
+    # dupeguru
     # mcomix
 
     # java
-    jdk
-    icedtea_web
+    #jdk
+    #icedtea_web
 
     #enchant
     #gnome3.gspell
@@ -135,7 +143,7 @@
   ];
 
   services.resolved.enable = false;
-  services.nscd.enable = false;
+  # services.nscd.enable = false;
   services.unbound.enable = false;
 
   services.samba = {

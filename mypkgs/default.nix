@@ -80,4 +80,28 @@ in rec {
   # freetype = freetype29;
 
   # tageditor = callPackage ./tageditor { };
+
+  atomicparsley2 = with super; stdenv.mkDerivation {
+    name = "atomicparsley";
+
+    src = fetchFromGitHub {
+      owner = "wez";
+      repo = "atomicparsley";
+      rev = "20200701.154658.b0d6223";
+      sha256 = "1kym2l5y34nmbrrlkfmxsf1cwrvch64kb34jp0hpa0b89idbhwqh";
+    };
+
+    postPatch = ''
+      substituteInPlace CMakeLists.txt --replace '3.17' '3.16'
+    '';
+
+    buildInputs = [ cmake zlib ];
+
+    installPhase = ''
+      ls
+      mkdir -p $out/bin
+      cp AtomicParsley $out/bin
+    '';
+  };
+
 }
