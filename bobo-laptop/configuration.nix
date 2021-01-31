@@ -60,7 +60,7 @@
 
   virtualisation.docker.enable = true;
 
-  services.nscd.enable = false;
+  # services.nscd.enable = false;
 
   services.nix-serve = {
     enable = true;
@@ -132,6 +132,11 @@
     wine
     winetricks
     zoom-us
+    plex-media-player
+    kid3
+    picard
+    atomicparsley
+    minetime
 
     ( vscode-with-extensions )
     vscodium

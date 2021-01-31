@@ -140,7 +140,6 @@
   nixpkgs.config.firefox = {
     enableAdobeFlash = false;
     enableGnomeExtensions = true;
-    icedtea = true;
   };
 
   security.pki.certificateFiles = [
@@ -161,5 +160,23 @@
   hardware.pulseaudio.daemon.config = {
     flat-volumes = "no";
   };
-}
 
+  fileSystems."/remote/amour" =
+    { device = "ruster:/Amour";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=30min" ];
+    };
+
+  fileSystems."/remote/music" =
+    { device = "ruster:/Music";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=30min" ];
+    };
+
+  fileSystems."/remote/download" =
+    { device = "ruster:/Download";
+      fsType = "nfs";
+      options = [ "user" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=30min" ];
+    };
+
+}

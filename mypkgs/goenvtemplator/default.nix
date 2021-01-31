@@ -15,6 +15,6 @@ buildGoPackage rec {
   goDeps = ./deps.nix;
 
   postInstall = ''
-    mv $bin/bin/goenvtemplator $bin/bin/goenvtemplator2
+    mv $out/bin/goenvtemplator $out/bin/goenvtemplator2
   '';
 }

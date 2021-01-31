@@ -4,7 +4,9 @@ let
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
 in rec {
 
-  opera12 = callPackage ./opera12 { freetype = freetype29; };
+  opera12 = callPackage ./opera12 { freetype = freetype29;
+    inherit (super.gst_all_1) gstreamer gst-plugins-base gst-plugins-good;
+  };
 
   freetype_subpixel = super.freetype.overrideDerivation (old: {
       postPatch = ''
@@ -47,16 +49,16 @@ in rec {
 
   alsa-sof-firmware = callPackage ./alsa-sof-firmware {};
 
-  alsa-ucm-conf = callPackage ./alsa-ucm-conf {};
+  # alsa-ucm-conf = callPackage ./alsa-ucm-conf {};
 
-  alsa-topology-conf = callPackage ./alsa-topology-conf {};
+  # alsa-topology-conf = callPackage ./alsa-topology-conf {};
 
-  alsa-lib = callPackage ./alsa-lib {};
+  # alsa-lib = callPackage ./alsa-lib {};
 
   pulseaudio99Full = callPackage ./pulseaudio {
     inherit (self.gnome3) dconf;
     inherit (self.darwin.apple_sdk.frameworks) CoreServices AudioUnit Cocoa;
-    alsaLib = self.alsa-lib;
+    alsaLib = self.alsaLib;
     x11Support = true;
     jackaudioSupport = true;
     airtunesSupport = true;
@@ -76,4 +78,6 @@ in rec {
   # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
 
   # freetype = freetype29;
+
+  # tageditor = callPackage ./tageditor { };
 }
