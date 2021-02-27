@@ -104,4 +104,31 @@ in rec {
     '';
   };
 
+  kube-login = super.buildGoModule rec {
+    pname = "kube-login";
+    version = "1.2.8";
+
+    src = builtins.fetchGit {
+      url = "git@gitlab.seznam.net:ultra/SCIF/k8s/kube-login.git";
+      ref = version;
+    };
+
+    overrideModAttrs = oldAttrs: oldAttrs // {
+      preConfigure = ''
+        HOME=/build/pkger pkger
+      '';
+
+      postInstall = ''
+        cp pkged.go $out/
+      '';
+    };
+
+    vendorSha256 = "sha256:0aqib09mi4l2n9xaq9by5va95pamx5kxn2b7i7qzkqmcannpiaj3";
+
+    nativeBuildInputs = [ super.pkger ];
+
+    postConfigure = ''
+      cp vendor/pkged.go .
+    '';
+  };
 }

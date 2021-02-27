@@ -98,6 +98,7 @@
     jq
     direnv
     goenvtemplator
+    kube-login
 
     firefox
     vlc
@@ -138,7 +139,7 @@
     atomicparsley
     minetime
 
-    ( vscode-with-extensions )
+    # ( vscode-with-extensions )
     vscodium
 
     virtualgl
@@ -158,6 +159,8 @@
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
   systemd.services.NetworkManager.reloadIfChanged = true;
+
+  services.earlyoom.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.bobo = {

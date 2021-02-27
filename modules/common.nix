@@ -1,5 +1,7 @@
 { config, pkgs, lib, ... }:
 {
+  imports = [ ./channel.nix ];
+
   nix = {
     daemonNiceLevel = 19;
     daemonIONiceLevel = 7;
@@ -135,7 +137,7 @@
   #   }
   ];
 
-  nixpkgs.overlays = [ ( import ../mypkgs) ];
+  nixpkgs.overlays = [ ( import ../mypkgs ) ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox = {
     enableAdobeFlash = false;
