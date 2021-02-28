@@ -87,7 +87,7 @@
     mailspring
     minetime
     gnome3.zenity
-    #vivaldi
+    vivaldi
     #chromium
     vlc
     mpv
@@ -127,7 +127,7 @@
     zoom-us
     steam
     #steam-run
-    vscode
+    #vscode
     vscodium
     libreoffice
 
@@ -196,6 +196,8 @@
       bind-dynamic
     '';
   };
+
+  services.earlyoom.enable = true;
 
   environment.etc."iscsi/initiatorname.iscsi".text = ''
     InitiatorName=iqn.2016-04.com.open-iscsi:bobo-machine
