@@ -138,6 +138,7 @@
     picard
     atomicparsley
     minetime
+    dwarf-fortress-packages.dwarf-fortress-full
 
     # ( vscode-with-extensions )
     vscodium
