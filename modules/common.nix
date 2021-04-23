@@ -58,7 +58,6 @@
   };
   programs.gpaste.enable = true;
   services.xserver.desktopManager.gnome3.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
-  services.gnome3.tracker.enable = false;
   services.gnome3.evolution-data-server.enable = true;
 
   #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];

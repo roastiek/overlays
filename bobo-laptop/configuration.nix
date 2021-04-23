@@ -101,6 +101,7 @@
     kube-login
 
     firefox
+    vivaldi
     vlc
     mpv
     #gnome3.gpaste
