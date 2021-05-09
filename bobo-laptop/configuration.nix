@@ -50,6 +50,8 @@
 
   virtualisation.lxd.enable = true;
 
+  virtualisation.podman.enable = true;
+
   environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
     server=/lxd/172.18.0.1
     rev-server=172.18.0.0/16,172.18.0.1
