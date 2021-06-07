@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../modules/common.nix
+      # ./k8s.nix
     ];
 
   boot.kernel.sysctl = {
@@ -73,6 +74,15 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  services.journald.extraConfig = ''
+    SystemMaxUse=1G
+  '';
+
+  programs.java = {
+    enable = true;
+    package = pkgs.jdk11;
+  };
+
   environment.systemPackages = with pkgs; [
     # systools
     tcpdump
@@ -101,6 +111,8 @@
     direnv
     goenvtemplator
     kube-login
+    #bubblewrap
+    whois
 
     firefox
     vivaldi
@@ -117,8 +129,8 @@
     opera12
     keepassx-community
     #jre
-    jdk
-    icedtea_web
+    #jdk11
+    #icedtea_web
     gnupg1
     openssl
     #enchant
@@ -130,7 +142,10 @@
     aspellDicts.en
     libreoffice
     # eclipses.eclipse-sdk
+    #eclipses.eclipse-java
+    #bazel
     #yed
+    maven
     streamlink
     gimp
     wine
@@ -175,6 +190,32 @@
   };
 
   hardware.pulseaudio.package = pkgs.pulseaudio99Full;
+
+  services.restic.backups = {
+    home = {
+      initialize = true;
+      repository = "sftp:admin@ruster:/share/Backups/2in1/homes";
+
+      rcloneOptions = {
+        "sftp-key-file" = "/etc/restic/ruster_id_rsa";
+      };
+
+      paths = [ "/home" ];
+
+      extraBackupArgs = [
+        "--one-file-system"
+        "--exclude" "Music"
+        "--exclude-caches"
+        #"--exclude-larger-than" "1G"
+      ];
+
+      passwordFile = "/etc/restic/ruster_home.pass";
+
+      extraOptions = [
+        "sftp.command='ssh admin@ruster -i /etc/restic/ruster_id_rsa -s sftp'"
+      ];
+    };
+  };
 
   # The NixOS release to be compatible with for stateful data such as databases.
   # system.stateVersion = "20.03";
