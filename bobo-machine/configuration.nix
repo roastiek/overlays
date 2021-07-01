@@ -140,6 +140,11 @@
     nfs-utils
     openiscsi
     lsscsi
+    gnome40Extensions."pixel-saver@deadalnix.me"
+    gnome40Extensions."bluetooth-quick-connect@bjarosze.gmail.com"
+    gnome40Extensions."caffeine@patapon.info"
+    gnome40Extensions."impatience@gfxmonk.net"
+    gnome40Extensions."vertical-overview@RensAlthuis.github.com"
   ];
 
   services.resolved.enable = false;

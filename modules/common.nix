@@ -52,18 +52,18 @@
 
 
   services.xserver.displayManager.defaultSession = "gnome-xorg";
-  services.xserver.desktopManager.gnome3 = {
+  services.xserver.desktopManager.gnome = {
     enable = true;
     sessionPath = [ pkgs.chrome-gnome-shell ];
   };
   programs.gpaste.enable = true;
-  services.xserver.desktopManager.gnome3.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
-  services.gnome3.evolution-data-server.enable = true;
+  services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
+  services.gnome.evolution-data-server.enable = true;
 
   #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
 
   systemd.packages = [ pkgs.chrome-gnome-shell ];
-  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.volume-mixer pkgs.gnome3.evolution ];
+  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.volume-mixer pkgs.evolution ];
   services.dbus.packages = [ pkgs.chrome-gnome-shell ];
   environment.etc."chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
   environment.etc."opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
@@ -139,7 +139,6 @@
   nixpkgs.overlays = [ ( import ../mypkgs ) ];
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox = {
-    enableAdobeFlash = false;
     enableGnomeExtensions = true;
   };
 
