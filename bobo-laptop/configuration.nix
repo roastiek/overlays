@@ -174,6 +174,8 @@
     synergy
     barrier
     cifs-utils
+
+    vw
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];

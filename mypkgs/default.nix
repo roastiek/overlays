@@ -134,4 +134,22 @@ in rec {
 
   vivaldi = super.vivaldi.override ({ proprietaryCodecs = true; enableWidevine = true; });
 
+  vw = self.stdenv.mkDerivation {
+    name = "vw";
+
+    src = self.fetchFromGitHub {
+      owner = "VowpalWabbit";
+      repo = "vowpal_wabbit";
+      rev = "8.10.2";
+      sha256 = "1f5cps9md0c5nrk3c0q1q94lqi3g64f2h493a408zlj1c1ks754l";
+      fetchSubmodules = true;
+    };
+
+    buildInputs = with self; [ boost zlib ];
+
+    nativeBuildInputs = with self; [ cmake help2man ];
+
+    #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" ];
+  };
+
 }
