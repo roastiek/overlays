@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }:
 {
-  imports = [ ./channel.nix ];
+  imports = [
+    ./channel.nix
+    ./chrome-gnome-shell.nix
+  ];
 
   nix = {
     daemonNiceLevel = 19;
@@ -14,6 +17,7 @@
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 30d --max-freed $((64 * 1024**3))";
+      persistent = true;
     };
     optimise = {
       automatic = true;
@@ -21,6 +25,13 @@
     };
   };
 
+  systemd.services.nix-gc.serviceConfig.Type = "oneshot";
+
+  systemd.timers.nix-optimise.timerConfig.Persistent = true;
+  systemd.services.nix-optimise = {
+    serviceConfig.Type = "oneshot";
+    after = [ "nix-gc.service" ];
+  };
 
   # Select internationalisation properties.
   # i18n = {
@@ -53,16 +64,14 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-
-
   services.xserver.displayManager.defaultSession = lib.mkDefault "gnome-xorg";
-  services.xserver.desktopManager.gnome = {
-    enable = true;
-    sessionPath = [ pkgs.chrome-gnome-shell ];
-  };
-  programs.gpaste.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
   services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
+
   services.gnome.evolution-data-server.enable = true;
+  programs.evolution.enable = true;
+
+  programs.gpaste.enable = true;
 
   # services.usbguard.enable = true;
   # #services.usbguard.implictPolicyTarget = "allow";
@@ -88,27 +97,9 @@
   #   };
   # };
 
-  #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
-
-  systemd.packages = [ pkgs.chrome-gnome-shell ];
-  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.evolution ];
-  services.dbus.packages = [ pkgs.chrome-gnome-shell ];
-  environment.etc."chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
-  environment.etc."opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
-
   services.journald.rateLimitInterval = "0";
 
   services.fstrim.enable = true;
-
-  systemd.timers.nix-gc.timerConfig.Persistent = true;
-  systemd.services.nix-gc.serviceConfig.Type = "oneshot";
-
-  systemd.timers.nix-optimise.timerConfig.Persistent = true;
-  systemd.services.nix-optimise = {
-    serviceConfig.Type = "oneshot";
-    after = [ "nix-gc.service" ];
-  };
-
   systemd.services.fstrim.after = [ "nix-optimise.service" ];
 
   services.snapper = {
@@ -156,19 +147,10 @@
   #  { original = freetype;
   #    replacement = freetype29;
   #  }
-  #   { original = openjdk8;
-  #     replacement = openjdk8_clean;
-  #   }
-  #   { original = gnome3.evolution_data_server;
-  #     replacement = gnome3.evolution_data_server_ids;
-  #   }
   ];
 
   nixpkgs.overlays = [ ( import ../mypkgs ) ];
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.firefox = {
-    enableGnomeExtensions = true;
-  };
 
   security.pki.certificateFiles = [
     ./cert/seznamca-kancelar-root.crt
@@ -185,9 +167,10 @@
   systemd.timers.docker-prune.timerConfig.Persistent = true;
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
-  hardware.pulseaudio.daemon.config = {
-    flat-volumes = "no";
-  };
+  hardware.pulseaudio.enable = false;
+  services.pipewire.enable = true;
+  services.pipewire.pulse.enable = true;
+  security.rtkit.enable = true;
 
   fileSystems."/remote/amour" =
     { device = "ruster:/Amour";

@@ -11,7 +11,6 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  #boot.kernelPackages = pkgs.linuxPackages_5_6;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
@@ -62,15 +61,6 @@
   hardware.cpu.intel.updateMicrocode = true;
 
   hardware.sensor.iio.enable = true;
-
-  # hardware.firmware = with pkgs; [ alsa-sof-firmware ];
-
-  services.pipewire.enable = true;
-  services.pipewire.pulse.enable = true;
-  security.rtkit.enable = true;
-
-  hardware.pulseaudio.enable = false;
-  hardware.pulseaudio.extraModules = with pkgs; [ pulseaudio-modules-bt ];
 
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
