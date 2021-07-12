@@ -127,6 +127,7 @@ in rec {
 
   gnomeExtensions = super.gnomeExtensions // {
     vitals = self.callPackage ./vitals { };
+    volume-mixer = self.callPackage ./volume-mixer { };
   };
 
 }

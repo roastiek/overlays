@@ -181,8 +181,8 @@
     gnome40Extensions."caffeine@patapon.info"
     gnome40Extensions."impatience@gfxmonk.net"
     gnome40Extensions."vertical-overview@RensAlthuis.github.com"
-    gnome40Extensions."volume-mixer@evermiss.net"
     gnomeExtensions.vitals
+    gnomeExtensions.volume-mixer
 
     arc-theme
     beauty-line-icon-theme
