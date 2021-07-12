@@ -1,5 +1,6 @@
 { stdenv
 , gtk3 /*any version*/
+, lib
 }:
 
 stdenv.mkDerivation rec {
@@ -18,6 +19,6 @@ stdenv.mkDerivation rec {
   meta = {
     description = "A basic set of icons";
     homepage = http://tango.freedesktop.org/Tango_Icon_Library;
-    platforms = stdenv.lib.platforms.linux;
+    platforms = lib.platforms.linux;
   };
 }

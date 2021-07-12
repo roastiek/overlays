@@ -34,6 +34,10 @@
 
   networking.firewall.allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
   networking.networkmanager.dns = "dnsmasq";
+  networking.networkmanager.extraConfig = ''
+    [main]
+    systemd-resolved=false
+  '';
 
   # List services that you want to enable:
 
@@ -51,7 +55,7 @@
   services.xserver.displayManager.gdm.enable = true;
 
 
-  services.xserver.displayManager.defaultSession = "gnome-xorg";
+  services.xserver.displayManager.defaultSession = lib.mkDefault "gnome-xorg";
   services.xserver.desktopManager.gnome = {
     enable = true;
     sessionPath = [ pkgs.chrome-gnome-shell ];
@@ -60,10 +64,34 @@
   services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
   services.gnome.evolution-data-server.enable = true;
 
+  # services.usbguard.enable = true;
+  # #services.usbguard.implictPolicyTarget = "allow";
+  # #services.usbguard.presentDevicePolicy = "keep";
+  # services.usbguard.IPCAllowedGroups = [ "wheel" ];
+  # systemd.services.usbguard-dbus = {
+  #   requires = [ "usbguard.service" ];
+  #   description =  "USBGuard D-Bus Service";
+  #   documentation = [ "man:usbguard-dbus(8)" ];
+  #   serviceConfig = {
+  #     Type = "dbus";
+  #     BusName = "org.usbguard1";
+  #     ExecStart="${config.services.usbguard.package}/bin/usbguard-dbus --system";
+  #   };
+  #   wantedBy = [ "multi-user.target" ];
+  #   aliases = [ "dbus-org.usbguard.service" ];
+  # };
+
+  # systemd.services.usbguard = {
+  #   serviceConfig = {
+  #     DevicePolicy = lib.mkForce "closed";
+  #     ReadWritePaths = lib.mkForce "-/dev/shm -/tmp -/var/lib/usbguard -/etc/usbgurad";
+  #   };
+  # };
+
   #services.gnome3.evolution-data-server.plugins = with pkgs; [ gnome3.evolution-rss ];
 
   systemd.packages = [ pkgs.chrome-gnome-shell ];
-  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.volume-mixer pkgs.evolution ];
+  environment.systemPackages = [ pkgs.chrome-gnome-shell pkgs.evolution ];
   services.dbus.packages = [ pkgs.chrome-gnome-shell ];
   environment.etc."chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/chromium/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";
   environment.etc."opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json".source = "${pkgs.chrome-gnome-shell}/etc/opt/chrome/native-messaging-hosts/org.gnome.chrome_gnome_shell.json";

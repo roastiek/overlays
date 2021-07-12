@@ -65,6 +65,8 @@
 
   # services.nscd.enable = false;
 
+  services.xserver.displayManager.defaultSession = "gnome";
+
   services.nix-serve = {
     enable = true;
     port = 4080;
@@ -77,6 +79,8 @@
   services.journald.extraConfig = ''
     SystemMaxUse=1G
   '';
+
+  services.fwupd.enable = true;
 
   programs.java = {
     enable = true;
@@ -126,7 +130,6 @@
     #pidgin
     geany
     clementine
-    opera12
     keepassx-community
     #jre
     #jdk11
@@ -156,7 +159,6 @@
     picard
     atomicparsley
     minetime
-    dwarf-fortress-packages.dwarf-fortress-full
 
     # ( vscode-with-extensions )
     vscodium
@@ -175,6 +177,68 @@
     barrier
     cifs-utils
 
+    gnome40Extensions."bluetooth-quick-connect@bjarosze.gmail.com"
+    gnome40Extensions."caffeine@patapon.info"
+    gnome40Extensions."impatience@gfxmonk.net"
+    gnome40Extensions."vertical-overview@RensAlthuis.github.com"
+    gnome40Extensions."volume-mixer@evermiss.net"
+    gnomeExtensions.vitals
+
+    arc-theme
+    beauty-line-icon-theme
+    elementary-xfce-icon-theme
+    adapta-gtk-theme
+    adwaita-qt
+    albatross
+    amber-theme
+    ant-theme
+    ant-bloody-theme
+    dracula-theme
+    ant-nebula-theme
+    arc-kde-theme
+    blackbird
+    canta-theme
+    clearlooks-phenix
+    e17gtk
+    equilux-theme
+    flat-remix-gtk
+    gnome-breeze
+    greybird
+    gruvbox-dark-gtk
+    juno-theme
+    lounge-gtk-theme
+    marwaita
+    matcha-gtk-theme
+    mojave-gtk-theme
+    nordic
+    nordic-polar
+    numix-gtk-theme
+    numix-solarized-gtk-theme
+    numix-sx-gtk-theme
+    onestepback
+    openzone-cursors
+    orchis
+    orion
+    paper-gtk-theme
+    plano-theme
+    plata-theme
+    pop-gtk-theme
+    qogir-theme
+    shades-of-gray-theme
+    skeu
+    sweet
+    sierra-gtk-theme
+    snowblind
+    solarc-gtk-theme
+    stilo-themes
+    theme-jade1
+    theme-obsidian2
+    theme-vertex
+    ubuntu-themes
+    venta
+    vimix-gtk-themes
+    zuki-themes
+
     vw
   ];
 
@@ -190,8 +254,6 @@
      shell = "/run/current-system/sw/bin/zsh";
      extraGroups = [ "wheel" "networkmanager" "docker" "lxd" ];
   };
-
-  hardware.pulseaudio.package = pkgs.pulseaudio99Full;
 
   services.restic.backups = {
     home = {

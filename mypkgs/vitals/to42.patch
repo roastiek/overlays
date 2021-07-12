@@ -1,0 +1,161 @@
+Only in /home/bobo/nixos/vitals42: .git
+Only in /home/bobo/nixos/vitals42/locale: pt
+diff -ur Vitals@CoreCoding.com/metadata.json /home/bobo/nixos/vitals42/metadata.json
+--- Vitals@CoreCoding.com/metadata.json	1970-01-01 01:00:01.000000000 +0100
++++ /home/bobo/nixos/vitals42/metadata.json	2021-07-09 12:33:32.000000000 +0200
+@@ -9,5 +9,5 @@
+   ],
+   "url": "https://github.com/corecoding/Vitals",
+   "uuid": "Vitals@CoreCoding.com",
+-  "version": 40
++  "version": 42
+ }
+\ No newline at end of file
+diff -ur Vitals@CoreCoding.com/prefs.js /home/bobo/nixos/vitals42/prefs.js
+--- Vitals@CoreCoding.com/prefs.js	1970-01-01 01:00:01.000000000 +0100
++++ /home/bobo/nixos/vitals42/prefs.js	2021-07-01 05:06:34.000000000 +0200
+@@ -111,7 +111,7 @@
+ 
+                 let dialog = new Gtk.Dialog({ title: _(title + ' Preferences'),
+                                               transient_for: this.widget.get_root(),
+-                                              use_header_bar: true,
++                                              use_header_bar: false,
+                                               modal: true });
+ 
+                 let box = this.builder.get_object(sensor + '_prefs');
+Only in Vitals@CoreCoding.com: share
+diff -ur Vitals@CoreCoding.com/schemas/prefs.ui /home/bobo/nixos/vitals42/schemas/prefs.ui
+--- Vitals@CoreCoding.com/schemas/prefs.ui	1970-01-01 01:00:01.000000000 +0100
++++ /home/bobo/nixos/vitals42/schemas/prefs.ui	2021-07-01 05:06:34.000000000 +0200
+@@ -11,6 +11,8 @@
+     <property name="can_focus">0</property>
+     <property name="margin_top">12</property>
+     <property name="margin_bottom">12</property>
++    <property name="margin_start">6</property>
++    <property name="margin_end">6</property>
+     <property name="orientation">vertical</property>
+     <child>
+       <object class="GtkFrame">
+@@ -31,6 +33,7 @@
+                     <property name="margin_bottom">6</property>
+                     <property name="margin_start">6</property>
+                     <property name="margin_end">6</property>
++                    <property name="spacing">12</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+@@ -57,6 +60,8 @@
+                     <property name="can_focus">0</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+@@ -752,6 +757,8 @@
+     <property name="can_focus">0</property>
+     <property name="margin_top">12</property>
+     <property name="margin_bottom">12</property>
++    <property name="margin_start">6</property>
++    <property name="margin_end">6</property>
+     <property name="orientation">vertical</property>
+     <child>
+       <object class="GtkFrame">
+@@ -770,6 +777,9 @@
+                     <property name="can_focus">0</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
++                    <property name="spacing">12</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+@@ -797,6 +807,8 @@
+                     <property name="valign">center</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+@@ -828,6 +840,8 @@
+     <property name="can_focus">0</property>
+     <property name="margin_top">12</property>
+     <property name="margin_bottom">12</property>
++    <property name="margin_start">6</property>
++    <property name="margin_end">6</property>
+     <property name="orientation">vertical</property>
+     <child>
+       <object class="GtkFrame">
+@@ -846,18 +860,22 @@
+                     <property name="can_focus">0</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
++                    <property name="spacing">12</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+                         <property name="can_focus">0</property>
+                         <property name="halign">start</property>
+-                        <property name="label" translatable="yes">Unit</property>
++                        <property name="label" translatable="yes">Unit                </property>
+                       </object>
+                     </child>
+                     <child>
+                       <object class="GtkComboBoxText" id="unit">
+                         <property name="can_focus">0</property>
+                         <property name="active">0</property>
++                        <property name="halign">end</property>
+                         <items>
+                           <item translatable="no">°C</item>
+                           <item translatable="no">°F</item>
+@@ -877,6 +895,8 @@
+     <property name="can_focus">0</property>
+     <property name="margin_top">12</property>
+     <property name="margin_bottom">12</property>
++    <property name="margin_start">6</property>
++    <property name="margin_end">6</property>
+     <property name="orientation">vertical</property>
+     <child>
+       <object class="GtkFrame">
+@@ -895,6 +915,9 @@
+                     <property name="can_focus">0</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
++                    <property name="spacing">12</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+@@ -926,6 +949,8 @@
+     <property name="can_focus">0</property>
+     <property name="margin_top">12</property>
+     <property name="margin_bottom">12</property>
++    <property name="margin_start">6</property>
++    <property name="margin_end">6</property>
+     <property name="orientation">vertical</property>
+     <child>
+       <object class="GtkFrame">
+@@ -944,12 +969,15 @@
+                     <property name="can_focus">0</property>
+                     <property name="margin_top">6</property>
+                     <property name="margin_bottom">6</property>
++                    <property name="margin_start">6</property>
++                    <property name="margin_end">6</property>
++                    <property name="spacing">12</property>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="hexpand">1</property>
+                         <property name="can_focus">0</property>
+                         <property name="halign">start</property>
+-                        <property name="label" translatable="yes">Display battery</property>
++                        <property name="label" translatable="yes">Display Battery</property>
+                       </object>
+                     </child>
+                     <child>

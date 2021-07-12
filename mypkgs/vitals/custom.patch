@@ -1,0 +1,560 @@
+diff --git a/extension.js b/extension.js
+index 1904856..71c6959 100644
+--- a/extension.js
++++ b/extension.js
+@@ -52,6 +52,7 @@ const VitalsMenuButton = new Lang.Class({
+         this._warnings = [];
+         this._sensorMenuItems = {};
+         this._hotLabels = {};
++        this._hotUnits = {};
+         this._hotIcons = {};
+         this._groups = {};
+         this._widths = {};
+@@ -70,8 +71,8 @@ const VitalsMenuButton = new Lang.Class({
+             pack_start: false
+         });
+ 
+-        this._drawMenu();     
+-        this.actor.add_actor(this._menuLayout);
++        this._drawMenu();
++        this.add_actor(this._menuLayout);
+         this._settingChangedSignals = [];
+         this._addSettingChangedSignal('update-time', Lang.bind(this, this._updateTimeChanged));
+         this._addSettingChangedSignal('position-in-panel', Lang.bind(this, this._positionInPanelChanged));
+@@ -190,6 +191,7 @@ const VitalsMenuButton = new Lang.Class({
+             if (!this._sensorMenuItems[sensor]) {
+                 hotSensors.splice(i, 1);
+                 this._removeHotLabel(sensor);
++                this._removeHotUnit(sensor);
+                 this._removeHotIcon(sensor);
+             }
+         }
+@@ -222,8 +224,6 @@ const VitalsMenuButton = new Lang.Class({
+         let css_class = key.replace('__', '_').replace('-','_').split('_')[1];
+         let icon = this._defaultIcon(css_class, gicon);
+ 
+-        this._hotIcons[key] = icon;
+-        this._menuLayout.add_actor(icon)
+ 
+         // don't add a label when no sensors are in the panel
+         if (key == '_default_icon_') return;
+@@ -232,15 +232,28 @@ const VitalsMenuButton = new Lang.Class({
+             style_class: 'vitals-panel-label',
+             text: (value)?value:'\u2026', // ...
+             y_expand: true,
+-            y_align: Clutter.ActorAlign.START
+-            //,width: 10
++            y_align: Clutter.ActorAlign.CENTER,
++        });
++
++        let unit = new St.Label({
++            style_class: 'vitals-panel-unit vitals-panel-unit-' + css_class,
++            text: '\u2026', // ...
++            y_expand: true,
++            y_align: Clutter.ActorAlign.CENTER,
+         });
+ 
+         // attempt to prevent ellipsizes
+         label.get_clutter_text().ellipsize = 0;
++        unit.get_clutter_text().ellipsize = 0;
+ 
+         this._hotLabels[key] = label;
+         this._menuLayout.add_actor(label);
++
++        this._hotUnits[key] = unit;
++        this._menuLayout.add_actor(unit);
++
++        this._hotIcons[key] = icon;
++        this._menuLayout.add_actor(icon);
+     },
+ 
+     _higherPrecisionChanged: function() {
+@@ -281,6 +294,20 @@ const VitalsMenuButton = new Lang.Class({
+             this._removeHotLabel(key);
+     },
+ 
++    _removeHotUnit: function(key) {
++        if (typeof this._hotUnits[key] != 'undefined') {
++            let label = this._hotUnits[key];
++            delete this._hotUnits[key];
++            // make sure set_label is not called on non existant actor
++            label.destroy();
++        }
++    },
++
++    _removeHotUnits: function() {
++        for (let key in this._hotUnits)
++            this._removeHotUnit(key);
++    },
++
+     _removeHotIcon: function(key) {
+         if (typeof this._hotIcons[key] != 'undefined') {
+             this._hotIcons[key].destroy();
+@@ -295,6 +322,7 @@ const VitalsMenuButton = new Lang.Class({
+ 
+     _redrawMenu: function() {
+         this._removeHotIcons();
++        this._removeHotUnits();
+         this._removeHotLabels();
+ 
+         for (let key in this._sensorMenuItems) {
+@@ -330,12 +358,16 @@ const VitalsMenuButton = new Lang.Class({
+         this._settingChangedSignals.push(this._settings.connect('changed::' + key, callback));
+     },
+ 
+-    _updateDisplay: function(label, value, type, key) {
+-        //global.log('...label=' + label, 'value=' + value, 'type=' + type, 'key=' + key);
++    _updateDisplay: function(label, value, unit, type, key) {
++        //global.log('...label=' + label, 'value=' + value, 'unit=' + unit, 'type=' + type, 'key=' + key);
+ 
+         // update sensor value in menubar
+         if (this._hotLabels[key]) {
++            this._hotLabels[key].hide();
+             this._hotLabels[key].set_text(value);
++            this._hotLabels[key].show();
++
++            this._hotUnits[key].set_text(unit);
+ 
+             // support for fixed widths #55 (beta)
+             if (this._settings.get_boolean('fixed-widths')) {
+@@ -362,15 +394,16 @@ const VitalsMenuButton = new Lang.Class({
+         if (item) {
+             // update sensor value in the group
+             item.value = value;
++            item.unit = unit;
+         } else if (type.includes('-group')) {
+             // update text next to group header
+             let group = type.split('-')[0];
+             if (this._groups[group]) {
+-                this._groups[group].status.text = value;
++                this._groups[group].status.text = value + unit;
+                 this._sensorMenuItems[type] = this._groups[group];
+             }
+         } else {
+-            let sensor = { 'label': label, 'value': value, 'type': type }
++            let sensor = { 'label': label, 'value': value, 'unit': unit, 'type': type }
+             this._appendMenuItem(sensor, key);
+         }
+     },
+@@ -381,7 +414,7 @@ const VitalsMenuButton = new Lang.Class({
+         let icon = (typeof split[1] != 'undefined')?'icon-' + split[1]:'icon';
+         let gicon = Gio.icon_new_for_string(Me.path + '/icons/' + this._sensorIcons[type][icon]);
+ 
+-        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value);
++        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value, sensor.unit);
+         item.connect('activate', (self) => {
+             let hotSensors = this._settings.get_strv('hot-sensors');
+ 
+@@ -391,6 +424,7 @@ const VitalsMenuButton = new Lang.Class({
+                 // remove selected sensor from panel
+                 hotSensors.splice(hotSensors.indexOf(self.key), 1);
+                 this._removeHotLabel(self.key);
++                this._removeHotUnit(self.key);
+                 this._removeHotIcon(self.key);
+             } else {
+                 self.checked = true;
+@@ -476,7 +510,7 @@ const VitalsMenuButton = new Lang.Class({
+ 
+             let items = this._values.returnIfDifferent(label, value, type, format, key);
+             for (let item of Object.values(items))
+-                this._updateDisplay(_(item[0]), item[1], item[2], item[3]);
++                this._updateDisplay(_(item[0]), item[1], item[2], item[3], item[4]);
+         }));
+ 
+         if (this._warnings.length > 0) {
+@@ -498,7 +532,7 @@ const VitalsMenuButton = new Lang.Class({
+ 
+         for (let key in this._sensorMenuItems)
+             if (typeof this._sensorMenuItems[key] != 'undefined')
+-                this._sensorMenuItems[key].destroy();
++                delete this._sensorMenuItems[key];
+ 
+         for (let signal of Object.values(this._settingChangedSignals))
+             this._settings.disconnect(signal);
+diff --git a/helpers/file.js b/helpers/file.js
+index bea0c7a..f3469f2 100644
+--- a/helpers/file.js
++++ b/helpers/file.js
+@@ -81,3 +81,7 @@ File.prototype.list = function() {
+         }
+     });
+ };
++
++File.prototype.exists = function() {
++    return this.file.query_exists(null);
++};
+diff --git a/menuItem.js b/menuItem.js
+index 5d2c6e1..f3995f2 100644
+--- a/menuItem.js
++++ b/menuItem.js
+@@ -8,7 +8,7 @@ const Clutter = imports.gi.Clutter;
+ var MenuItem = GObject.registerClass(
+   class MenuItem extends PopupMenu.PopupBaseMenuItem {
+ 
+-    _init(icon, key, label, value) {
++    _init(icon, key, label, value, unit) {
+         super._init({ reactive: true });
+ 
+         this._checked = false;
+@@ -29,6 +29,9 @@ var MenuItem = GObject.registerClass(
+         this._valueLabel.set_y_expand(true);
+         this.add(this._valueLabel);
+ 
++        this._unitLabel = new St.Label({ text: unit });
++        this.add(this._unitLabel);
++
+         this.actor._delegate = this;
+     }
+ 
+@@ -64,4 +67,12 @@ var MenuItem = GObject.registerClass(
+     get value() {
+         return this._valueLabel.text;
+     }
++
++    set unit(value) {
++        this._unitLabel.text = value;
++    }
++
++    get unit() {
++        return this._unitLabel.text;
++    }
+ });
+diff --git a/sensors.js b/sensors.js
+index bcabd13..b853adc 100644
+--- a/sensors.js
++++ b/sensors.js
+@@ -201,21 +201,17 @@ var Sensors = new Lang.Class({
+         }).catch(err => { });
+ 
+         // grab cpu frequency
+-        new FileModule.File('/proc/cpuinfo').read().then(lines => {
+-            lines = lines.split("\n");
+-
+-            let freqs = [];
+-            for (let line of Object.values(lines)) {
+-                let value = line.match(/^cpu MHz(\s+): ([+-]?\d+(\.\d+)?)/);
+-                if (value) freqs.push(parseFloat(value[2]));
+-            }
+-
+-            let max_hertz = Math.getMaxOfArray(freqs) * 1000 * 1000;
+-            let sum = freqs.reduce(function(a, b) { return a + b; });
+-            let hertz = (sum / freqs.length) * 1000 * 1000;
+-            this._returnValue(callback, 'Frequency', hertz, 'processor', 'hertz');
+-            this._returnValue(callback, 'Boost', max_hertz, 'processor', 'hertz');
+-        }).catch(err => { });
++        new FileModule.File('/sys/bus/cpu/devices/').list().then(files => {
++            Promise.all(files.map(file => new FileModule.File('/sys/bus/cpu/devices/' + file + '/cpufreq/scaling_cur_freq').read().then(value => {
++                return parseFloat(value) * 1000;
++            }))).then(freqs => {
++                let max_hertz = Math.getMaxOfArray(freqs);
++                let sum = freqs.reduce(function(a, b) { return a + b; });
++                let hertz = (sum / freqs.length);
++                this._returnValue(callback, 'Frequency', hertz, 'processor', 'hertz');
++                this._returnValue(callback, 'Boost', max_hertz, 'processor', 'hertz');
++            });
++        }).catch(err => { global.log(err) });
+     },
+ 
+     _querySystem: function(callback) {
+@@ -339,6 +335,10 @@ var Sensors = new Lang.Class({
+             for (let key in files) {
+                 let file = files[key];
+ 
++                if (!new FileModule.File(netbase + file + '/device').exists()) {
++                    continue;
++                }
++
+                 if (typeof this._last_network[file] == 'undefined')
+                     this._last_network[file] = {};
+ 
+@@ -431,6 +431,7 @@ var Sensors = new Lang.Class({
+                     this._returnValue(callback, 'Data written', write, 'storage', 'storage');
+                     this._returnValue(callback, 'Data read/sec', (read - this._lastRead) / diff, 'storage', 'storage');
+                     this._returnValue(callback, 'Data written/sec', (write - this._lastWrite) / diff, 'storage', 'storage');
++                    this._returnValue(callback, 'Data read/written', [(read - this._lastRead) / diff, (write - this._lastWrite) / diff], 'storage', 'unistorage');
+                     this._lastRead = read;
+                     this._lastWrite = write;
+                     break;
+diff --git a/stylesheet.css b/stylesheet.css
+index adec425..d16ea5c 100644
+--- a/stylesheet.css
++++ b/stylesheet.css
+@@ -1,16 +1,17 @@
+ .vitals-icon { icon-size: 16px; }
+ .vitals-menu-button-container {}
+-.vitals-panel-icon-temperature { margin: 0 1px 0 8px; padding: 0; }
+-.vitals-panel-icon-voltage { margin: 0 0 0 8px; padding: 0; }
+-.vitals-panel-icon-fan { margin: 0 4px 0 8px; padding: 0; }
+-.vitals-panel-icon-memory { margin: 0 2px 0 8px; padding: 0; }
+-.vitals-panel-icon-processor { margin: 0 3px 0 8px; padding: 0; }
+-.vitals-panel-icon-system { margin: 0 3px 0 8px; padding: 0; }
+-.vitals-panel-icon-network { margin: 0 3px 0 8px; padding: 0; }
+-.vitals-panel-icon-storage { margin: 0 2px 0 8px; padding: 0; }
+-.vitals-panel-icon-battery { margin: 0 4px 0 8px; padding: 0; }
++.vitals-panel-icon-temperature { margin: 0 8px 0 1px; padding: 0; }
++.vitals-panel-icon-voltage { margin: 0 8px 0 0; padding: 0; }
++.vitals-panel-icon-fan { margin: 0 8px 0 4px; padding: 0; }
++.vitals-panel-icon-memory { margin: 0 8px 0 2px; padding: 0; }
++.vitals-panel-icon-processor { margin: 0 8px 0 3px; padding: 0; }
++.vitals-panel-icon-system { margin: 0 8px 0 3px; padding: 0; }
++.vitals-panel-icon-network { margin: 0 8px 0 3px; padding: 0; }
++.vitals-panel-icon-storage { margin: 0 8px 0 2px; padding: 0; }
++.vitals-panel-icon-battery { margin: 0 8px 0 4px; padding: 0; }
+ .vitals-panel-label { margin: 0 3px 0 0; padding: 0; }
+ .vitals-button-action { -st-icon-style: symbolic; border-radius: 32px; margin: 0px; min-height: 22px; min-width: 22px; padding: 10px; font-size: 100%; border: 1px solid transparent; }
+ .vitals-button-action:hover, .vitals-button-action:focus { border-color: #777; }
+ .vitals-button-action > StIcon { icon-size: 16px; }
+ .vitals-button-box { padding: 0px; spacing: 22px; }
++.vitals-panel-unit { margin: 0 0px 0 0; padding: 5px 0px 0px 0px; font-size: 60%; width: 6pt;}
+diff --git a/values.js b/values.js
+index 16e6621..b9f5234 100644
+--- a/values.js
++++ b/values.js
+@@ -45,6 +45,15 @@ var Values = new Lang.Class({
+         this.resetHistory();
+     },
+ 
++    _padding: function(value, digits) {
++        let d = value.match(/\d/g).length;
++        if (digits > d) {
++            return '\u2007'.repeat(digits - d) + value;
++        } else {
++            return value;
++        }
++    },
++
+     _legible: function(value, sensorClass) {
+         let unit = 1000;
+         if (value === null) return 'N/A';
+@@ -56,18 +65,21 @@ var Values = new Lang.Class({
+         let format = '';
+         let ending = '';
+         let exp = 0;
++        let maxValue;
++        let digits = 0;
+ 
+-        var decimal = [ 'B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB' ];
+-        var binary = [ 'B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB' ];
++        var decimal = [ 'B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' ];
++        var binary = [ 'B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' ];
+ 
+-        var hertz = [ 'Hz', 'KHz', 'MHz', 'GHz', 'THz', 'PHz', 'EHz', 'ZHz' ];
++        var hertz = [ 'H', 'K', 'M', 'G', 'T', 'P', 'E', 'Z' ];
+ 
+         switch (sensorClass) {
+             case 'percent':
+-                format = (use_higher_precision)?'%.1f%s':'%d%s';
++                format = (use_higher_precision)?'%.1f':'%d';
+                 value = value * 100;
+                 if (value > 100) value = 100;
+                 ending = '%';
++                digits = 3;
+                 break;
+             case 'temp':
+                 value = value / 1000;
+@@ -79,15 +91,15 @@ var Values = new Lang.Class({
+                     ending = '°F';
+                 }
+ 
+-                format = (use_higher_precision)?'%.1f%s':'%d%s';
++                format = (use_higher_precision)?'%.1f':'%d';
+                 break;
+             case 'fan':
+-                format = '%d %s';
++                format = '%d';
+                 ending = 'RPM';
+                 break;
+             case 'in': // voltage
+                 value = value / 1000;
+-                format = ((value >= 0) ? '+' : '-') + ((use_higher_precision)?'%.2f %s':'%.1f %s');
++                format = ((value >= 0) ? '+' : '-') + ((use_higher_precision)?'%.2f':'%.1f');
+                 ending = 'V';
+                 break;
+             case 'hertz':
+@@ -97,8 +109,9 @@ var Values = new Lang.Class({
+                     value = parseFloat((value / Math.pow(unit, exp)));
+                 }
+ 
+-                format = (use_higher_precision)?'%.2f %s':'%.1f %s';
++                format = (use_higher_precision)?'%.2f':'%.1f';
+                 ending = hertz[exp];
++                digits = 4;
+                 break;
+             case 'memory':
+                 unit = (memory_measurement)?1000:1024;
+@@ -110,13 +123,14 @@ var Values = new Lang.Class({
+                     value = parseFloat((value / Math.pow(unit, exp)));
+                 }
+ 
+-                format = (use_higher_precision)?'%.2f %s':'%.1f %s';
++                format = (use_higher_precision)?'%.2f':'%.1f';
+ 
+                 if (memory_measurement)
+                     ending = decimal[exp];
+                 else
+                     ending = binary[exp];
+ 
++                digits = 3;
+                 break;
+             case 'storage':
+                 unit = (storage_measurement)?1000:1024;
+@@ -127,7 +141,28 @@ var Values = new Lang.Class({
+                     value = parseFloat((value / Math.pow(unit, exp)));
+                 }
+ 
+-                format = (use_higher_precision)?'%.2f %s':'%.1f %s';
++                format = (use_higher_precision)?'%.2f':'%.1f';
++
++                if (storage_measurement)
++                    ending = decimal[exp];
++                else
++                    ending = binary[exp];
++
++                break;
++            case 'unistorage':
++                unit = (storage_measurement)?1000:1024;
++                maxValue = Math.getMaxOfArray(value);
++
++                if (maxValue > 0) {
++                    exp = Math.floor(Math.log(maxValue) / Math.log(unit));
++                    if (maxValue >= Math.pow(unit, exp) * (unit - 32)) exp++;
++                    value = value.map(v => parseFloat((v / Math.pow(unit, exp))));
++                }
++
++                digits = value.length * 3;
++                format = (use_higher_precision)?'%.1f':'%.0f';
++                value = value.map(v => format.format(v)).join(' / ');
++                format = '%s';
+ 
+                 if (storage_measurement)
+                     ending = decimal[exp];
+@@ -136,6 +171,7 @@ var Values = new Lang.Class({
+ 
+                 break;
+             case 'speed':
++                unit = 1024;
+                 if (value > 0) {
+                     if (use_bps) value *= 8;
+                     exp = Math.floor(Math.log(value) / Math.log(unit));
+@@ -143,14 +179,27 @@ var Values = new Lang.Class({
+                     value = parseFloat((value / Math.pow(unit, exp)));
+                 }
+ 
+-                format = (use_higher_precision)?'%.1f %s':'%.0f %s';
++                format = (use_higher_precision)?'%.1f':'%.0f';
+ 
+-                if (use_bps) {
+-                    ending = decimal[exp].replace('B', 'bps');
+-                } else {
+-                    ending = decimal[exp] + '/s';
++                ending = decimal[exp];
++                break;
++            case 'unispeed':
++                unit = 1024;
++                if (use_bps) value = value.map(v => v * 8);
++                maxValue = Math.getMaxOfArray(value);
++
++                if (maxValue > 0) {
++                    exp = Math.floor(Math.log(maxValue) / Math.log(unit));
++                    if (maxValue >= Math.pow(unit, exp) * (unit - 32)) exp++;
++                    value = value.map(v => parseFloat((v / Math.pow(unit, exp))));
+                 }
+ 
++                digits = value.length * 3;
++                format = (use_higher_precision)?'%.1f':'%.0f';
++                value = value.map(v => format.format(v)).join(' / ');
++                format = '%s';
++
++                ending = decimal[exp];
+                 break;
+             case 'duration':
+                 let scale = [24, 60, 60];
+@@ -171,22 +220,22 @@ var Values = new Lang.Class({
+                 format = '%s';
+                 break;
+             case 'milliamp':
+-                format = (use_higher_precision)?'%.1f %s':'%d %s';
++                format = (use_higher_precision)?'%.1f':'%d';
+                 value = value / 1000;
+                 ending = 'mA';
+                 break;
+             case 'milliamp-hour':
+-                format = (use_higher_precision)?'%.1f %s':'%d %s';
++                format = (use_higher_precision)?'%.1f':'%d';
+                 value = value / 1000;
+                 ending = 'mAh';
+                 break;
+             case 'watt':
+-                format = (use_higher_precision)?'%.2f %s':'%.1f %s';
++                format = (use_higher_precision)?'%.2f':'%.1f';
+                 value = value / 1000000000000;
+                 ending = 'W';
+                 break;
+             case 'watt-hour':
+-                format = (use_higher_precision)?'%.2f %s':'%.1f %s';
++                format = (use_higher_precision)?'%.2f':'%.1f';
+                 value = value / 1000000000000;
+                 ending = 'Wh';
+                 break;
+@@ -195,7 +244,7 @@ var Values = new Lang.Class({
+                 break;
+         }
+ 
+-        return format.format(value, ending);
++        return [this._padding(format.format(value, ending), digits), ending];
+     },
+ 
+     // From: https://programming.guide/the-worlds-most-copied-so-snippet.html
+@@ -239,11 +288,11 @@ var Values = new Lang.Class({
+             return output;
+ 
+         // is the value different from last time?
+-        let legible = this._legible(value, format);
+-        if (typeof this._history[type][key] == 'undefined' || this._history[type][key][0] != legible) {
+-            this._history[type][key] = [legible, value];
++        let [legible, unit] = this._legible(value, format);
++        if (typeof this._history[type][key] == 'undefined' || this._history[type][key][0] != legible + unit) {
++            this._history[type][key] = [legible + unit, value];
+ 
+-            output.push([label, legible, type, key]);
++            output.push([label, legible, unit, type, key]);
+ 
+             // process average values
+             if (type == 'temperature' || type == 'voltage' || type == 'fan') {
+@@ -260,21 +309,31 @@ var Values = new Lang.Class({
+ */
+                 let sum = vals.reduce(function(a, b) { return a + b; });
+                 let avg = sum / vals.length;
+-                avg = this._legible(avg, format);
++                [avg, unit] = this._legible(avg, format);
+ 
+                 output.push(['Average', avg, type, '__' + type + '_avg__']);
+-                output.push([type, avg, type + '-group', '']);
++                output.push([type, avg, unit, type + '-group', '']);
+             } else if ((type == 'network-download' || type == 'network-upload') && format == 'speed') {
+                 let vals = Object.values(this._history[type]).map(x => parseFloat(x[1]));
+                 let max = Math.getMaxOfArray(vals);
+-                max = this._legible(max, format);
+-                output.push(['Maximum ' + (type.includes('-upload')?'tx':'rx'), max, type, '__' + type + '_max__']);
++                [max, unit] = this._legible(max, format);
++                output.push(['Maximum ' + (type.includes('-upload')?'tx':'rx'), max, unit, type, '__' + type + '_max__']);
+ 
+                 if (type == 'network-download')
+-                    output.push([type, max, type + '-group', '']);
++                    output.push([type, max, unit, type + '-group', '']);
+             }
+         }
+ 
++        let rxvals = Object.values(this._history['network-download']).map(x => parseFloat(x[1]));
++        let txvals = Object.values(this._history['network-upload']).map(x => parseFloat(x[1]));
++        if (rxvals.length > 0 && txvals.length > 0) {
++            let rxmax = Math.getMaxOfArray(rxvals);
++            let txmax = Math.getMaxOfArray(txvals);
++
++            let [max, unit] = this._legible([rxmax, txmax], "unispeed");
++            output.push(['Maximum rx/tx', max, unit, 'network', '__network_max__']);
++        }
++
+         return output;
+     },
+ 

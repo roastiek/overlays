@@ -32,7 +32,7 @@ in rec {
 
   wine = super.winePackages.unstable;
 
-  volume-mixer = callPackage ./volume-mixer {};
+  # volume-mixer = callPackage ./volume-mixer {};
 
   lxc-templates = callPackage ./lxc-templates {};
 
@@ -46,40 +46,11 @@ in rec {
     '';
   });
 
-
-  alsa-sof-firmware = callPackage ./alsa-sof-firmware {};
-
-  # alsa-ucm-conf = callPackage ./alsa-ucm-conf {};
-
-  # alsa-topology-conf = callPackage ./alsa-topology-conf {};
-
-  # alsa-lib = callPackage ./alsa-lib {};
-
-  pulseaudio99Full = callPackage ./pulseaudio {
-    inherit (self.gnome3) dconf;
-    inherit (self.darwin.apple_sdk.frameworks) CoreServices AudioUnit Cocoa;
-    alsaLib = self.alsaLib;
-    x11Support = true;
-    jackaudioSupport = true;
-    airtunesSupport = true;
-    bluetoothSupport = true;
-    remoteControlSupport = true;
-    zeroconfSupport = true;
-  };
-
-  pulseaudio-modules-bt = super.pulseaudio-modules-bt.override {
-    pulseaudio = self.pulseaudio99Full;
-  };
-
   intel-undervolt = callPackage ./intel-undervolt { };
 
   freetype29 = callPackage ./freetype { };
 
-  # firmwareLinuxNonfree = callPackage ./firmware-linux-nonfree { };
-
   # freetype = freetype29;
-
-  # tageditor = callPackage ./tageditor { };
 
   atomicparsley2 = with super; stdenv.mkDerivation {
     name = "atomicparsley";
@@ -106,7 +77,9 @@ in rec {
 
   kube-login = super.buildGoModule rec {
     pname = "kube-login";
-    version = "1.2.8";
+    version = "1.2.12";
+
+    subPackages = [ "." ];
 
     src = builtins.fetchGit {
       url = "git@gitlab.seznam.net:ultra/SCIF/k8s/kube-login.git";
@@ -123,7 +96,7 @@ in rec {
       '';
     };
 
-    vendorSha256 = "sha256:0aqib09mi4l2n9xaq9by5va95pamx5kxn2b7i7qzkqmcannpiaj3";
+    vendorSha256 = "sha256:00g9yw5dg392yxc771f1x40b7w89v5syynpcdnin3qqsx7avvv1w";
 
     nativeBuildInputs = [ super.pkger ];
 
@@ -150,6 +123,10 @@ in rec {
     nativeBuildInputs = with self; [ cmake help2man ];
 
     #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" ];
+  };
+
+  gnomeExtensions = super.gnomeExtensions // {
+    vitals = self.callPackage ./vitals { };
   };
 
 }

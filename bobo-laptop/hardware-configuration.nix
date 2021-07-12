@@ -15,7 +15,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
-    "hid_microsoft" "intel_wmi_thunderbolt" "r8152" "thunderbolt" "i915" "dell_wmi" "dell_laptop" "hid_generic" "xhci_hcd" "usbhid"
+    "hid_microsoft" "intel_wmi_thunderbolt" "r8152" "thunderbolt" "i915" "hid_generic" "xhci_hcd" "usbhid"
     ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
@@ -65,8 +65,14 @@
 
   # hardware.firmware = with pkgs; [ alsa-sof-firmware ];
 
+  services.pipewire.enable = true;
+  services.pipewire.pulse.enable = true;
+  security.rtkit.enable = true;
+
+  hardware.pulseaudio.enable = false;
   hardware.pulseaudio.extraModules = with pkgs; [ pulseaudio-modules-bt ];
 
+  services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
   services.tlp.settings = {
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
