@@ -3,6 +3,8 @@
   imports = [
     ./channel.nix
     ./chrome-gnome-shell.nix
+    ./extensions.nix
+    ./basic-apps.nix
   ];
 
   nix = {

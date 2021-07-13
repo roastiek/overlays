@@ -89,100 +89,30 @@
 
   environment.systemPackages = with pkgs; [
     # systools
-    tcpdump
-    bridge-utils
     tunctl
     iptables
     debootstrap
     lxc-templates
-
-    # work tools
-    git
-    mc
-    htop
-    dpkg
-    zip
-    unzip
-    kubectl
-    gnumake
-    tree
-    wget
-    file
-    #gocode
-    #godef
-    #gotools
-    jq
-    direnv
-    goenvtemplator
-    kube-login
-    #bubblewrap
-    whois
-
-    firefox
-    vivaldi
-    vlc
-    mpv
-    #gnome3.gpaste
-    gnome3.gnome-tweak-tool
-    #gnome3.gtk
-    tango-icon-theme
-    tango-extras-icon-theme
-    #pidgin
-    geany
-    clementine
-    keepassx-community
-    #jre
-    #jdk11
-    #icedtea_web
-    gnupg1
-    openssl
-    #enchant
-    #gnome3.gspell
-    #hunspell
-    #hunspellDicts.en-us
-    #aspell
-    aspellDicts.cs
-    aspellDicts.en
-    libreoffice
-    # eclipses.eclipse-sdk
-    #eclipses.eclipse-java
-    #bazel
-    #yed
-    maven
-    streamlink
-    gimp
-    wine
-    winetricks
-    zoom-us
-    plex-media-player
-    kid3
-    picard
-    atomicparsley
-    minetime
-
-    # ( vscode-with-extensions )
-    vscodium
-
-    virtualgl
-    xorg.xhost
-
     i7z
     ethtool
     powertop
     sysbench
     intel-undervolt
     thermald
-    gnome3.dconf-editor
-    synergy
-    barrier
-    cifs-utils
 
-    gnome40Extensions."bluetooth-quick-connect@bjarosze.gmail.com"
-    gnome40Extensions."caffeine@patapon.info"
-    gnome40Extensions."impatience@gfxmonk.net"
-    gnome40Extensions."vertical-overview@RensAlthuis.github.com"
-    gnomeExtensions.vitals
-    gnomeExtensions.volume-mixer
+    # work tools
+    goenvtemplator
+    kube-login
+    whois
+    maven
+    vw
+    #gocode
+    #godef
+    #gotools
+    #bubblewrap
+
+    gnupg1
+    openssl
 
     arc-theme
     beauty-line-icon-theme
@@ -238,8 +168,6 @@
     venta
     vimix-gtk-themes
     zuki-themes
-
-    vw
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];

@@ -9,7 +9,6 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../modules/common.nix
-      #./attwifi
     ];
 
   nix = {
@@ -61,94 +60,9 @@
   # system.stateVersion = "20.09";
 
   environment.systemPackages = with pkgs; [
-    # sys tools
-    bridge-utils
-    tcpdump
-    hostapd
-    xboxdrv
-    docker-gc
-
-    # work tools
-    git
-    mc
-    file
-    dpkg
-    htop
-    zip
-    unzip
-    unrar
-    wget
-    tree
-    gnumake
-    kubectl
-
-    # gui
-    firefox
-    mailspring
-    minetime
-    gnome3.zenity
-    vivaldi
-    #chromium
-    vlc
-    mpv
-    #gnome3.gpaste
-    #gnome3.gtk
-    gnome3.gnome-tweak-tool
-    tango-icon-theme
-    tango-extras-icon-theme
-    clementine
-    keepassx-community
-    streamlink
-    # eclipses.eclipse-sdk
-    geany
-    gimp
-    viewnior
-    picard
-    plex-media-player
-    atomicparsley2
-    kid3
-    easytag
-    gnome3.dconf-editor
-    # dupeguru
-    # mcomix
-
-    # java
-    #jdk
-    #icedtea_web
-
-    #enchant
-    #gnome3.gspell
-    #hunspell
-    #hunspellDicts.en-us
-    aspellDicts.cs
-    aspellDicts.en
-    wine
-    winetricks
-    zoom-us
-    steam
-    #steam-run
-    #vscode
-    vscodium
-    libreoffice
-
-    virtualgl
-
-    # idrive
-    barrier
-
-    cifs-utils
-    nfs-utils
-    openiscsi
-    lsscsi
-    gnome40Extensions."pixel-saver@deadalnix.me"
-    gnome40Extensions."bluetooth-quick-connect@bjarosze.gmail.com"
-    gnome40Extensions."caffeine@patapon.info"
-    gnome40Extensions."impatience@gfxmonk.net"
-    gnome40Extensions."vertical-overview@RensAlthuis.github.com"
   ];
 
   services.resolved.enable = false;
-  # services.nscd.enable = false;
   services.unbound.enable = false;
 
   services.samba = {
@@ -169,7 +83,6 @@
     #};
   };
 
-
   networking.firewall.allowedTCPPorts = [ 139 445 ];
   networking.firewall.allowedUDPPorts = [ 137 138 53 ];
 
@@ -179,7 +92,7 @@
     internalInterfaces = [ "enp2s0" ];
   };
 
-  virtualisation.docker.enable = true;
+  # virtualisation.docker.enable = true;
 
   systemd.tmpfiles.rules = [ "d /tmp 1777 root root 10d" ];
 
@@ -204,11 +117,11 @@
 
   services.earlyoom.enable = true;
 
-  environment.etc."iscsi/initiatorname.iscsi".text = ''
-    InitiatorName=iqn.2016-04.com.open-iscsi:bobo-machine
-  '';
+  # environment.etc."iscsi/initiatorname.iscsi".text = ''
+  #   InitiatorName=iqn.2016-04.com.open-iscsi:bobo-machine
+  # '';
 
-  systemd.packages = [ pkgs.openiscsi ];
+  # systemd.packages = [ pkgs.openiscsi ];
 
 /*
   systemd.services."sa" = {
