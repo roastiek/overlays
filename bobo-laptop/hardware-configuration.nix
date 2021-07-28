@@ -15,6 +15,7 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc"
     "hid_microsoft" "intel_wmi_thunderbolt" "r8152" "thunderbolt" "i915" "hid_generic" "xhci_hcd" "usbhid"
+    "dell_wmi" "dell_laptop"
     ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];

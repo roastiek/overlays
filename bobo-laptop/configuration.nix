@@ -115,65 +115,20 @@
     openssl
 
     arc-theme
-    beauty-line-icon-theme
-    elementary-xfce-icon-theme
-    adapta-gtk-theme
     adwaita-qt
-    albatross
-    amber-theme
-    ant-theme
-    ant-bloody-theme
-    dracula-theme
-    ant-nebula-theme
     arc-kde-theme
-    blackbird
-    canta-theme
-    clearlooks-phenix
-    e17gtk
-    equilux-theme
-    flat-remix-gtk
-    gnome-breeze
-    greybird
-    gruvbox-dark-gtk
-    juno-theme
-    lounge-gtk-theme
-    marwaita
     matcha-gtk-theme
-    mojave-gtk-theme
-    nordic
-    nordic-polar
-    numix-gtk-theme
-    numix-solarized-gtk-theme
-    numix-sx-gtk-theme
-    onestepback
-    openzone-cursors
-    orchis
-    orion
-    paper-gtk-theme
-    plano-theme
-    plata-theme
-    pop-gtk-theme
     qogir-theme
-    shades-of-gray-theme
-    skeu
-    sweet
-    sierra-gtk-theme
-    snowblind
-    solarc-gtk-theme
-    stilo-themes
     theme-jade1
-    theme-obsidian2
-    theme-vertex
-    ubuntu-themes
-    venta
-    vimix-gtk-themes
-    zuki-themes
   ];
 
   systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
   systemd.services.NetworkManager.reloadIfChanged = true;
 
   services.earlyoom.enable = true;
+
+  hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.bobo = {
