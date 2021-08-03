@@ -35,12 +35,13 @@
     # rejectPackets = true;
   };
 
-  networking.hostName = "bobo-laptop"; # Define your hostname.
+  networking.hostName = "bobo-inspiron"; # Define your hostname.
   #networking.hosts."10.0.0.149" = [ config.networking.hostName ];
   #networking.hosts."127.0.1.1" = [ ];
   networking.extraHosts = ''
     10.0.0.140      bobo-machine
-    10.0.0.139      bobo-laptop
+    10.0.0.141      bobo-laptop
+    10.0.0.142      bobo-inspiron
   '';
 
   networking.resolvconf.extraConfig = ''
@@ -138,31 +139,31 @@
      extraGroups = [ "wheel" "networkmanager" "docker" "lxd" ];
   };
 
-  services.restic.backups = {
-    home = {
-      initialize = true;
-      repository = "sftp:admin@ruster:/share/Backups/2in1/homes";
+  # services.restic.backups = {
+  #   home = {
+  #     initialize = true;
+  #     repository = "sftp:admin@ruster:/share/Backups/2in1/homes";
 
-      rcloneOptions = {
-        "sftp-key-file" = "/etc/restic/ruster_id_rsa";
-      };
+  #     rcloneOptions = {
+  #       "sftp-key-file" = "/etc/restic/ruster_id_rsa";
+  #     };
 
-      paths = [ "/home" ];
+  #     paths = [ "/home" ];
 
-      extraBackupArgs = [
-        "--one-file-system"
-        "--exclude" "Music"
-        "--exclude-caches"
-        #"--exclude-larger-than" "1G"
-      ];
+  #     extraBackupArgs = [
+  #       "--one-file-system"
+  #       "--exclude" "Music"
+  #       "--exclude-caches"
+  #       #"--exclude-larger-than" "1G"
+  #     ];
 
-      passwordFile = "/etc/restic/ruster_home.pass";
+  #     passwordFile = "/etc/restic/ruster_home.pass";
 
-      extraOptions = [
-        "sftp.command='ssh admin@ruster -i /etc/restic/ruster_id_rsa -s sftp'"
-      ];
-    };
-  };
+  #     extraOptions = [
+  #       "sftp.command='ssh admin@ruster -i /etc/restic/ruster_id_rsa -s sftp'"
+  #     ];
+  #   };
+  # };
 
   # The NixOS release to be compatible with for stateful data such as databases.
   # system.stateVersion = "20.03";
