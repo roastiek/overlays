@@ -8,6 +8,8 @@
     aspellDicts.en
     cifs-utils
     nfs-utils
+    usbutils
+    pciutils
 
     # work tools
     git

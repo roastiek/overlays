@@ -96,7 +96,7 @@ in rec {
       '';
     };
 
-    vendorSha256 = "sha256:00g9yw5dg392yxc771f1x40b7w89v5syynpcdnin3qqsx7avvv1w";
+    vendorSha256 = "sha256:0gwbnc85w445arh3fy4zrbxk5y4pvbcd134s9k1wb1cgsfq4gmm4";
 
     nativeBuildInputs = [ super.pkger ];
 
@@ -129,5 +129,17 @@ in rec {
     vitals = self.callPackage ./vitals { };
     volume-mixer = self.callPackage ./volume-mixer { };
   };
+
+  thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
+    version = "2.4.6";
+    src = self.fetchFromGitHub {
+      owner = "intel";
+      repo = "thermal_daemon";
+      rev = "v${version}";
+      sha256 = "1lgaky8cmxbi17zpymy2v9wgknx1g92bq50j6kfpsm8qgb7djjb6";
+    };
+  });
+
+  thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
 }

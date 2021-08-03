@@ -5,6 +5,7 @@
     ./chrome-gnome-shell.nix
     ./extensions.nix
     ./basic-apps.nix
+    ./thermald.nix
   ];
 
   nix = {
