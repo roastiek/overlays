@@ -10,6 +10,7 @@
     nfs-utils
     usbutils
     pciutils
+    libsysfs
 
     # work tools
     git

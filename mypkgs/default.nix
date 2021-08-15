@@ -75,35 +75,7 @@ in rec {
     '';
   };
 
-  kube-login = super.buildGoModule rec {
-    pname = "kube-login";
-    version = "1.2.12";
-
-    subPackages = [ "." ];
-
-    src = builtins.fetchGit {
-      url = "git@gitlab.seznam.net:ultra/SCIF/k8s/kube-login.git";
-      ref = version;
-    };
-
-    overrideModAttrs = oldAttrs: oldAttrs // {
-      preConfigure = ''
-        HOME=/build/pkger pkger
-      '';
-
-      postInstall = ''
-        cp pkged.go $out/
-      '';
-    };
-
-    vendorSha256 = "sha256:0gwbnc85w445arh3fy4zrbxk5y4pvbcd134s9k1wb1cgsfq4gmm4";
-
-    nativeBuildInputs = [ super.pkger ];
-
-    postConfigure = ''
-      cp vendor/pkged.go .
-    '';
-  };
+  kube-login = self.callPackage ./kube-login { };
 
   vivaldi = super.vivaldi.override ({ proprietaryCodecs = true; enableWidevine = true; });
 
@@ -141,5 +113,10 @@ in rec {
   });
 
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
+
+  gnome = super.gnome // rec {
+    mutter = super.gnome.mutter.overrideAttrs ( oldAttrs: { patches = oldAttrs.patches ++ [ ./mutter.patch ]; });
+    gnome-shell = super.gnome.gnome-shell.override { inherit mutter; };
+  };
 
 }

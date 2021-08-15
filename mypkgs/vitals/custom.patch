@@ -172,16 +172,24 @@ index 1904856..71c6959 100644
          for (let signal of Object.values(this._settingChangedSignals))
              this._settings.disconnect(signal);
 diff --git a/helpers/file.js b/helpers/file.js
-index bea0c7a..f3469f2 100644
+index bea0c7a..313b017 100644
 --- a/helpers/file.js
 +++ b/helpers/file.js
-@@ -81,3 +81,7 @@ File.prototype.list = function() {
+@@ -81,3 +81,15 @@ File.prototype.list = function() {
          }
      });
  };
 +
 +File.prototype.exists = function() {
 +    return this.file.query_exists(null);
++};
++
++File.prototype.realpath = function() {
++    const info = this.file.query_info("standard::*", Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
++    if (!info.get_is_symlink()) {
++        return this.file.get_path();
++    }
++    return Gio.File.new_for_commandline_arg_and_cwd(info.get_symlink_target(), this.file.get_parent().get_path()).get_path();
 +};
 diff --git a/menuItem.js b/menuItem.js
 index 5d2c6e1..f3995f2 100644
@@ -220,9 +228,18 @@ index 5d2c6e1..f3995f2 100644
 +    }
  });
 diff --git a/sensors.js b/sensors.js
-index bcabd13..b853adc 100644
+index bcabd13..3054f16 100644
 --- a/sensors.js
 +++ b/sensors.js
+@@ -78,7 +78,7 @@ var Sensors = new Lang.Class({
+             for (let line of Object.values(lines)) {
+                 let loadArray = line.trim().split(/\s+/);
+                 if (loadArray[1] == this._settings.get_string('storage-path')) {
+-                    this._storageDevice = loadArray[0];
++                    this._storageDevice = new FileModule.File(loadArray[0]).realpath();
+                     break;
+                 }
+             }
 @@ -201,21 +201,17 @@ var Sensors = new Lang.Class({
          }).catch(err => { });
  

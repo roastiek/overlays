@@ -11,6 +11,7 @@
   nix = {
     daemonNiceLevel = 19;
     daemonIONiceLevel = 7;
+    trustedUsers = [ "@wheel" ];
     extraOptions = ''
       keep-outputs = true
       keep-derivations = true
@@ -170,9 +171,13 @@
   systemd.timers.docker-prune.timerConfig.Persistent = true;
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
-  hardware.pulseaudio.enable = false;
-  services.pipewire.enable = true;
-  services.pipewire.pulse.enable = true;
+  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
+  hardware.pulseaudio.extraConfig = ''
+    load-module module-switch-on-connect
+  '';
+  #services.pipewire.enable = true;
+  #services.pipewire.pulse.enable = true;
   security.rtkit.enable = true;
 
   fileSystems."/remote/amour" =

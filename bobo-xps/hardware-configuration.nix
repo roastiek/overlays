@@ -20,14 +20,18 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
-    "memmap=14M$18M"
+    # "memmap=14M$18M"
     # "memmap=0x287E000$0x59782000"
     # "memmap=0x1000%0x59782000-1+2"
     # "intel_pstate=no_hwp"
-    "initcall_debug"
-    #"nomodeset"
+    # "initcall_debug"
   ];
 
+  system.fsPackages = [ pkgs.ntfs3g ];
+
+  # boot.extraModprobeConfig = ''
+  #   options i915 fastboot=1
+  # '';
 
   boot.kernelPatches = [ {
     name = "enable-qca6390-bluetooth";
@@ -97,7 +101,7 @@
   services.tlp.settings = {
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_power";
+    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
     SCHED_POWERSAVE_ON_AC = 1;
     SCHED_POWERSAVE_ON_BAT = 1;
