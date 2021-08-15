@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+export NIX_PATH="nixpkgs=$(cd $(dirname $0)/../..; pwd)/nixpkgs"
+export NIXOS_CONFIG="$(cd $(dirname $0); pwd)/configuration.nix"
+#exec nixos-rebuild "$@" --option extra-substituters http://bobo-laptop:4080/
+exec nixos-rebuild "$@"
