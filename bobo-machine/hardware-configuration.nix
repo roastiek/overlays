@@ -48,6 +48,8 @@
   nix.buildCores = lib.mkDefault 3;
 
   services.xserver.videoDrivers = [ "nvidia" ];
+  #boot.kernelPackages = pkgs.linuxPackages_5_4;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_390;
 
   hardware.opengl.extraPackages = [ pkgs.libvdpau-va-gl pkgs.libvdpau ];
   hardware.opengl.extraPackages32 = [ pkgs.libvdpau-va-gl ];
