@@ -60,6 +60,7 @@
   programs.steam.enable = true;
 
   environment.systemPackages = with pkgs; [
+    config.boot.kernelPackages.cpupower
   ];
 
   services.resolved.enable = false;

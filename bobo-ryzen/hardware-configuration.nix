@@ -16,6 +16,9 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelParams = [
+    "acpi_enforce_resources=lax"
+  ];
 
   fileSystems."/" =
     { device = "/dev/mapper/nixos-system";
