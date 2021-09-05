@@ -57,6 +57,8 @@
   # The NixOS release to be compatible with for stateful data such as databases.
   # system.stateVersion = "20.09";
 
+  programs.steam.enable = true;
+
   environment.systemPackages = with pkgs; [
   ];
 

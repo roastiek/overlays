@@ -82,6 +82,8 @@
     package = pkgs.jdk11;
   };
 
+  programs.steam.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
