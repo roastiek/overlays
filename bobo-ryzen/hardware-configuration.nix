@@ -16,9 +16,11 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelParams = [
-    "acpi_enforce_resources=lax"
-  ];
+  #boot.kernelParams = [
+  #  "acpi_enforce_resources=lax"
+  #];
+
+  powerManagement.cpuFreqGovernor = lib.mkDefault "schedutil";
 
   fileSystems."/" =
     { device = "/dev/mapper/nixos-system";
@@ -30,12 +32,6 @@
     { device = "/dev/mapper/nixos-system";
       fsType = "btrfs";
       options = [ "subvol=home" "noatime" "autodefrag" ];
-    };
-
-  fileSystems."/home_setup" =
-    { device = "/dev/mapper/nixos-system";
-      fsType = "btrfs";
-      options = [ "subvol=home_setup" "noatime" "autodefrag" ];
     };
 
   fileSystems."/boot" =
@@ -55,4 +51,7 @@
 
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;
+
+  hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
 }
