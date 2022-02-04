@@ -161,6 +161,8 @@
     ./cert/seznamca-logy.crt
     ./cert/seznamca-root.crt
     ./cert/seznamca-server.crt
+    ./cert/seznam-kancelar-issuing-ca-2021.crt
+    ./cert/seznam-kancelar-root-ca-2020.crt
   ];
 
   virtualisation.docker = {
