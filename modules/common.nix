@@ -9,8 +9,8 @@
   ];
 
   nix = {
-    daemonNiceLevel = 19;
-    daemonIONiceLevel = 7;
+    daemonCPUSchedPolicy = "idle";
+    daemonIOSchedClass = "idle";
     trustedUsers = [ "@wheel" ];
     extraOptions = ''
       keep-outputs = true

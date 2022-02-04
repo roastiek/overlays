@@ -40,7 +40,7 @@ in rec {
     installPhase = oldAttrs.installPhase + ''
       p=$(cat $out/lib/vscode/resources/app/product.json)
       echo "$p" | ${self.jq}/bin/jq ' . + { "checksumFailMoreInfoUrl": "https://go.microsoft.com/fwlink/?LinkId=828886" }' > $out/lib/vscode/resources/app/product.json
-      for s in $(find $out -name "*.js" -print); do
+      for s in $(find $out -name "*.js" -type f -print); do
         substituteInPlace "$s" --replace 'sensitivity:"base"' 'sensitivity:"base",ignorePunctuation:1'
       done
     '';
@@ -125,6 +125,11 @@ in rec {
   gnomeExtensions = super.gnomeExtensions // {
     vitals = self.callPackage ./vitals { };
     volume-mixer = self.callPackage ./volume-mixer { };
+    no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
+      postInstall = ''
+        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"41"'
+      '';
+    });
   };
 
   thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
@@ -147,5 +152,11 @@ in rec {
   qsync = self.libsForQt512.callPackage ./qsync {};
 
   binance = self.callPackage ./binance {};
+
+  solaar = super.solaar.overrideAttrs ( oldAttrs: {
+    postInstall = oldAttrs.postInstall + ''
+      substituteInPlace $out/share/applications/solaar.desktop --replace 'Exec=solaar' 'Exec=solaar --window=hide'
+    '';
+  });
 
 }

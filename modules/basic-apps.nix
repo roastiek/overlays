@@ -31,7 +31,6 @@
     # gui apps
     firefox
     vivaldi
-    minetime
     zoom-us
     vscodium
     libreoffice

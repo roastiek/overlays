@@ -14,7 +14,6 @@ stdenv.mkDerivation rec {
   src = gnome40Extensions."Vitals@CoreCoding.com".src;
 
   patches = [
-    ./to42.patch
     ./custom.patch
   ];
 

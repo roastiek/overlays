@@ -5,12 +5,14 @@
     caffeine
     disconnect-wifi
     #impatience
-    gnome40Extensions."impatience@gfxmonk.net"
+    gnome41Extensions."impatience@gfxmonk.net"
     #noannoyance
-    gnome40Extensions."noannoyance@daase.net"
+    gnome41Extensions."noannoyance@daase.net"
+    gnome41Extensions."appindicatorsupport@rgcjonas.gmail.com"
     no-overview
     vertical-overview
     vitals
-    volume-mixer
+    #volume-mixer
+    no-title-bar
   ];
 }

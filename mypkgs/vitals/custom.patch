@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index 1904856..71c6959 100644
+index fc14f65..7229213 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -52,6 +52,7 @@ const VitalsMenuButton = new Lang.Class({
+@@ -51,6 +51,7 @@ var VitalsMenuButton = GObject.registerClass({
          this._warnings = [];
          this._sensorMenuItems = {};
          this._hotLabels = {};
@@ -10,18 +10,7 @@ index 1904856..71c6959 100644
          this._hotIcons = {};
          this._groups = {};
          this._widths = {};
-@@ -70,8 +71,8 @@ const VitalsMenuButton = new Lang.Class({
-             pack_start: false
-         });
- 
--        this._drawMenu();     
--        this.actor.add_actor(this._menuLayout);
-+        this._drawMenu();
-+        this.add_actor(this._menuLayout);
-         this._settingChangedSignals = [];
-         this._addSettingChangedSignal('update-time', Lang.bind(this, this._updateTimeChanged));
-         this._addSettingChangedSignal('position-in-panel', Lang.bind(this, this._positionInPanelChanged));
-@@ -190,6 +191,7 @@ const VitalsMenuButton = new Lang.Class({
+@@ -189,6 +190,7 @@ var VitalsMenuButton = GObject.registerClass({
              if (!this._sensorMenuItems[sensor]) {
                  hotSensors.splice(i, 1);
                  this._removeHotLabel(sensor);
@@ -29,21 +18,23 @@ index 1904856..71c6959 100644
                  this._removeHotIcon(sensor);
              }
          }
-@@ -222,8 +224,6 @@ const VitalsMenuButton = new Lang.Class({
-         let css_class = key.replace('__', '_').replace('-','_').split('_')[1];
-         let icon = this._defaultIcon(css_class, gicon);
+@@ -220,9 +222,9 @@ var VitalsMenuButton = GObject.registerClass({
+     }
  
+     _createHotItem(key, value) {
++        let split = key.replaceAll('_', ' ').trim().split(' ')[0].split('-');
++        let css_class = split[0];
+         let icon = this._defaultIcon(key);
 -        this._hotIcons[key] = icon;
 -        this._menuLayout.add_actor(icon)
  
          // don't add a label when no sensors are in the panel
          if (key == '_default_icon_') return;
-@@ -232,15 +232,28 @@ const VitalsMenuButton = new Lang.Class({
+@@ -231,14 +233,28 @@ var VitalsMenuButton = GObject.registerClass({
              style_class: 'vitals-panel-label',
              text: (value)?value:'\u2026', // ...
              y_expand: true,
 -            y_align: Clutter.ActorAlign.START
--            //,width: 10
 +            y_align: Clutter.ActorAlign.CENTER,
 +        });
 +
@@ -66,47 +57,44 @@ index 1904856..71c6959 100644
 +
 +        this._hotIcons[key] = icon;
 +        this._menuLayout.add_actor(icon);
-     },
+     }
  
-     _higherPrecisionChanged: function() {
-@@ -281,6 +294,20 @@ const VitalsMenuButton = new Lang.Class({
+     _higherPrecisionChanged() {
+@@ -279,6 +295,20 @@ var VitalsMenuButton = GObject.registerClass({
              this._removeHotLabel(key);
-     },
+     }
  
-+    _removeHotUnit: function(key) {
++    _removeHotUnit(key) {
 +        if (typeof this._hotUnits[key] != 'undefined') {
 +            let label = this._hotUnits[key];
 +            delete this._hotUnits[key];
 +            // make sure set_label is not called on non existant actor
 +            label.destroy();
 +        }
-+    },
++    }
 +
-+    _removeHotUnits: function() {
++    _removeHotUnits() {
 +        for (let key in this._hotUnits)
 +            this._removeHotUnit(key);
-+    },
++    }
 +
-     _removeHotIcon: function(key) {
+     _removeHotIcon(key) {
          if (typeof this._hotIcons[key] != 'undefined') {
              this._hotIcons[key].destroy();
-@@ -295,6 +322,7 @@ const VitalsMenuButton = new Lang.Class({
+@@ -293,6 +323,7 @@ var VitalsMenuButton = GObject.registerClass({
  
-     _redrawMenu: function() {
+     _redrawMenu() {
          this._removeHotIcons();
 +        this._removeHotUnits();
          this._removeHotLabels();
  
          for (let key in this._sensorMenuItems) {
-@@ -330,12 +358,16 @@ const VitalsMenuButton = new Lang.Class({
+@@ -331,10 +362,14 @@ var VitalsMenuButton = GObject.registerClass({
          this._settingChangedSignals.push(this._settings.connect('changed::' + key, callback));
-     },
+     }
  
--    _updateDisplay: function(label, value, type, key) {
--        //global.log('...label=' + label, 'value=' + value, 'type=' + type, 'key=' + key);
-+    _updateDisplay: function(label, value, unit, type, key) {
-+        //global.log('...label=' + label, 'value=' + value, 'unit=' + unit, 'type=' + type, 'key=' + key);
- 
+-    _updateDisplay(label, value, type, key) {
++    _updateDisplay(label, value, unit, type, key) {
          // update sensor value in menubar
          if (this._hotLabels[key]) {
 +            this._hotLabels[key].hide();
@@ -115,9 +103,9 @@ index 1904856..71c6959 100644
 +
 +            this._hotUnits[key].set_text(unit);
  
-             // support for fixed widths #55 (beta)
+             // support for fixed widths #55
              if (this._settings.get_boolean('fixed-widths')) {
-@@ -362,15 +394,16 @@ const VitalsMenuButton = new Lang.Class({
+@@ -354,15 +389,16 @@ var VitalsMenuButton = GObject.registerClass({
          if (item) {
              // update sensor value in the group
              item.value = value;
@@ -135,42 +123,42 @@ index 1904856..71c6959 100644
 +            let sensor = { 'label': label, 'value': value, 'unit': unit, 'type': type }
              this._appendMenuItem(sensor, key);
          }
-     },
-@@ -381,7 +414,7 @@ const VitalsMenuButton = new Lang.Class({
+     }
+@@ -373,7 +409,7 @@ var VitalsMenuButton = GObject.registerClass({
          let icon = (typeof split[1] != 'undefined')?'icon-' + split[1]:'icon';
          let gicon = Gio.icon_new_for_string(Me.path + '/icons/' + this._sensorIcons[type][icon]);
  
--        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value);
-+        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value, sensor.unit);
-         item.connect('activate', (self) => {
+-        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value, this._hotLabels[key]);
++        let item = new MenuItem.MenuItem(gicon, key, sensor.label, sensor.value, sensor.unit, this._hotLabels[key]);
+         item.connect('toggle', (self) => {
              let hotSensors = this._settings.get_strv('hot-sensors');
  
-@@ -391,6 +424,7 @@ const VitalsMenuButton = new Lang.Class({
+@@ -385,6 +421,7 @@ var VitalsMenuButton = GObject.registerClass({
                  // remove selected sensor from panel
                  hotSensors.splice(hotSensors.indexOf(self.key), 1);
                  this._removeHotLabel(self.key);
 +                this._removeHotUnit(self.key);
                  this._removeHotIcon(self.key);
-             } else {
-                 self.checked = true;
-@@ -476,7 +510,7 @@ const VitalsMenuButton = new Lang.Class({
+             }
+ 
+@@ -465,7 +502,7 @@ var VitalsMenuButton = GObject.registerClass({
  
              let items = this._values.returnIfDifferent(label, value, type, format, key);
              for (let item of Object.values(items))
 -                this._updateDisplay(_(item[0]), item[1], item[2], item[3]);
 +                this._updateDisplay(_(item[0]), item[1], item[2], item[3], item[4]);
-         }));
+         });
  
          if (this._warnings.length > 0) {
-@@ -498,7 +532,7 @@ const VitalsMenuButton = new Lang.Class({
- 
+@@ -489,7 +526,7 @@ var VitalsMenuButton = GObject.registerClass({
+ /*
          for (let key in this._sensorMenuItems)
              if (typeof this._sensorMenuItems[key] != 'undefined')
 -                this._sensorMenuItems[key].destroy();
 +                delete this._sensorMenuItems[key];
+ */
  
          for (let signal of Object.values(this._settingChangedSignals))
-             this._settings.disconnect(signal);
 diff --git a/helpers/file.js b/helpers/file.js
 index bea0c7a..313b017 100644
 --- a/helpers/file.js
@@ -192,19 +180,19 @@ index bea0c7a..313b017 100644
 +    return Gio.File.new_for_commandline_arg_and_cwd(info.get_symlink_target(), this.file.get_parent().get_path()).get_path();
 +};
 diff --git a/menuItem.js b/menuItem.js
-index 5d2c6e1..f3995f2 100644
+index 25fea31..70eb895 100644
 --- a/menuItem.js
 +++ b/menuItem.js
-@@ -8,7 +8,7 @@ const Clutter = imports.gi.Clutter;
- var MenuItem = GObject.registerClass(
-   class MenuItem extends PopupMenu.PopupBaseMenuItem {
+@@ -11,7 +11,7 @@ var MenuItem = GObject.registerClass({
  
--    _init(icon, key, label, value) {
-+    _init(icon, key, label, value, unit) {
+ }, class MenuItem extends PopupMenu.PopupBaseMenuItem {
+ 
+-    _init(icon, key, label, value, checked) {
++    _init(icon, key, label, value, unit, checked) {
          super._init({ reactive: true });
  
-         this._checked = false;
-@@ -29,6 +29,9 @@ var MenuItem = GObject.registerClass(
+         this._checked = checked;
+@@ -34,6 +34,9 @@ var MenuItem = GObject.registerClass({
          this._valueLabel.set_y_expand(true);
          this.add(this._valueLabel);
  
@@ -214,11 +202,10 @@ index 5d2c6e1..f3995f2 100644
          this.actor._delegate = this;
      }
  
-@@ -64,4 +67,12 @@ var MenuItem = GObject.registerClass(
-     get value() {
-         return this._valueLabel.text;
+@@ -71,4 +74,11 @@ var MenuItem = GObject.registerClass({
+             this.setOrnament(PopupMenu.Ornament.NONE);
      }
-+
+ 
 +    set unit(value) {
 +        this._unitLabel.text = value;
 +    }
@@ -228,10 +215,10 @@ index 5d2c6e1..f3995f2 100644
 +    }
  });
 diff --git a/sensors.js b/sensors.js
-index bcabd13..3054f16 100644
+index b9c94b1..6f0be61 100644
 --- a/sensors.js
 +++ b/sensors.js
-@@ -78,7 +78,7 @@ var Sensors = new Lang.Class({
+@@ -78,7 +78,7 @@ var Sensors = GObject.registerClass({
              for (let line of Object.values(lines)) {
                  let loadArray = line.trim().split(/\s+/);
                  if (loadArray[1] == this._settings.get_string('storage-path')) {
@@ -240,7 +227,7 @@ index bcabd13..3054f16 100644
                      break;
                  }
              }
-@@ -201,21 +201,17 @@ var Sensors = new Lang.Class({
+@@ -201,21 +201,17 @@ var Sensors = GObject.registerClass({
          }).catch(err => { });
  
          // grab cpu frequency
@@ -270,10 +257,10 @@ index bcabd13..3054f16 100644
 +                this._returnValue(callback, 'Boost', max_hertz, 'processor', 'hertz');
 +            });
 +        }).catch(err => { global.log(err) });
-     },
+     }
  
-     _querySystem: function(callback) {
-@@ -339,6 +335,10 @@ var Sensors = new Lang.Class({
+     _querySystem(callback) {
+@@ -339,6 +335,10 @@ var Sensors = GObject.registerClass({
              for (let key in files) {
                  let file = files[key];
  
@@ -284,7 +271,7 @@ index bcabd13..3054f16 100644
                  if (typeof this._last_network[file] == 'undefined')
                      this._last_network[file] = {};
  
-@@ -431,6 +431,7 @@ var Sensors = new Lang.Class({
+@@ -431,6 +431,7 @@ var Sensors = GObject.registerClass({
                      this._returnValue(callback, 'Data written', write, 'storage', 'storage');
                      this._returnValue(callback, 'Data read/sec', (read - this._lastRead) / diff, 'storage', 'storage');
                      this._returnValue(callback, 'Data written/sec', (write - this._lastWrite) / diff, 'storage', 'storage');
@@ -324,26 +311,26 @@ index adec425..d16ea5c 100644
  .vitals-button-box { padding: 0px; spacing: 22px; }
 +.vitals-panel-unit { margin: 0 0px 0 0; padding: 5px 0px 0px 0px; font-size: 60%; width: 6pt;}
 diff --git a/values.js b/values.js
-index 16e6621..b9f5234 100644
+index cadd1dc..c4e88b0 100644
 --- a/values.js
 +++ b/values.js
-@@ -45,6 +45,15 @@ var Values = new Lang.Class({
+@@ -46,6 +46,15 @@ var Values = GObject.registerClass({
          this.resetHistory();
-     },
+     }
  
-+    _padding: function(value, digits) {
++    _padding(value, digits) {
 +        let d = value.match(/\d/g).length;
 +        if (digits > d) {
 +            return '\u2007'.repeat(digits - d) + value;
 +        } else {
 +            return value;
 +        }
-+    },
++    }
 +
-     _legible: function(value, sensorClass) {
+     _legible(value, sensorClass) {
          let unit = 1000;
          if (value === null) return 'N/A';
-@@ -56,18 +65,21 @@ var Values = new Lang.Class({
+@@ -57,18 +66,21 @@ var Values = GObject.registerClass({
          let format = '';
          let ending = '';
          let exp = 0;
@@ -369,7 +356,7 @@ index 16e6621..b9f5234 100644
                  break;
              case 'temp':
                  value = value / 1000;
-@@ -79,15 +91,15 @@ var Values = new Lang.Class({
+@@ -80,15 +92,15 @@ var Values = GObject.registerClass({
                      ending = '°F';
                  }
  
@@ -388,7 +375,7 @@ index 16e6621..b9f5234 100644
                  ending = 'V';
                  break;
              case 'hertz':
-@@ -97,8 +109,9 @@ var Values = new Lang.Class({
+@@ -98,8 +110,9 @@ var Values = GObject.registerClass({
                      value = parseFloat((value / Math.pow(unit, exp)));
                  }
  
@@ -399,7 +386,7 @@ index 16e6621..b9f5234 100644
                  break;
              case 'memory':
                  unit = (memory_measurement)?1000:1024;
-@@ -110,13 +123,14 @@ var Values = new Lang.Class({
+@@ -111,13 +124,14 @@ var Values = GObject.registerClass({
                      value = parseFloat((value / Math.pow(unit, exp)));
                  }
  
@@ -415,7 +402,7 @@ index 16e6621..b9f5234 100644
                  break;
              case 'storage':
                  unit = (storage_measurement)?1000:1024;
-@@ -127,7 +141,28 @@ var Values = new Lang.Class({
+@@ -128,7 +142,28 @@ var Values = GObject.registerClass({
                      value = parseFloat((value / Math.pow(unit, exp)));
                  }
  
@@ -445,7 +432,7 @@ index 16e6621..b9f5234 100644
  
                  if (storage_measurement)
                      ending = decimal[exp];
-@@ -136,6 +171,7 @@ var Values = new Lang.Class({
+@@ -137,6 +172,7 @@ var Values = GObject.registerClass({
  
                  break;
              case 'speed':
@@ -453,7 +440,7 @@ index 16e6621..b9f5234 100644
                  if (value > 0) {
                      if (use_bps) value *= 8;
                      exp = Math.floor(Math.log(value) / Math.log(unit));
-@@ -143,14 +179,27 @@ var Values = new Lang.Class({
+@@ -144,14 +180,27 @@ var Values = GObject.registerClass({
                      value = parseFloat((value / Math.pow(unit, exp)));
                  }
  
@@ -486,7 +473,7 @@ index 16e6621..b9f5234 100644
                  break;
              case 'duration':
                  let scale = [24, 60, 60];
-@@ -171,22 +220,22 @@ var Values = new Lang.Class({
+@@ -172,22 +221,22 @@ var Values = GObject.registerClass({
                  format = '%s';
                  break;
              case 'milliamp':
@@ -513,16 +500,16 @@ index 16e6621..b9f5234 100644
                  value = value / 1000000000000;
                  ending = 'Wh';
                  break;
-@@ -195,7 +244,7 @@ var Values = new Lang.Class({
+@@ -196,7 +245,7 @@ var Values = GObject.registerClass({
                  break;
          }
  
 -        return format.format(value, ending);
 +        return [this._padding(format.format(value, ending), digits), ending];
-     },
+     }
  
      // From: https://programming.guide/the-worlds-most-copied-so-snippet.html
-@@ -239,11 +288,11 @@ var Values = new Lang.Class({
+@@ -240,11 +289,11 @@ var Values = GObject.registerClass({
              return output;
  
          // is the value different from last time?
@@ -538,7 +525,7 @@ index 16e6621..b9f5234 100644
  
              // process average values
              if (type == 'temperature' || type == 'voltage' || type == 'fan') {
-@@ -260,21 +309,31 @@ var Values = new Lang.Class({
+@@ -261,21 +310,31 @@ var Values = GObject.registerClass({
  */
                  let sum = vals.reduce(function(a, b) { return a + b; });
                  let avg = sum / vals.length;
@@ -573,5 +560,5 @@ index 16e6621..b9f5234 100644
 +        }
 +
          return output;
-     },
+     }
  

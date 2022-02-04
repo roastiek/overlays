@@ -1,26 +1,8 @@
 diff --git a/src/backends/meta-monitor-config-manager.c b/src/backends/meta-monitor-config-manager.c
-index 0253e07..616b945 100644
+index da3f1dd..5a5af3e 100644
 --- a/src/backends/meta-monitor-config-manager.c
 +++ b/src/backends/meta-monitor-config-manager.c
-@@ -1200,6 +1200,8 @@ create_for_switch_config_external (MetaMonitorConfigManager *config_manager)
-   GList *l;
-   MetaMonitorsConfig *monitors_config;
- 
-+  meta_warning("create_for_switch_config_external\n");
-+
-   layout_mode = meta_monitor_manager_get_default_layout_mode (monitor_manager);
- 
-   monitors = meta_monitor_manager_get_monitors (monitor_manager);
-@@ -1250,6 +1252,8 @@ create_for_switch_config_builtin (MetaMonitorConfigManager *config_manager)
-   MetaMonitor *monitor;
-   MetaMonitorsConfig *monitors_config;
- 
-+  meta_warning("mutter create_for_switch_config_builtin\n");
-+
-   monitor = meta_monitor_manager_get_laptop_panel (monitor_manager);
-   if (!monitor)
-     return NULL;
-@@ -1284,6 +1288,8 @@ meta_monitor_config_manager_create_for_switch_config (MetaMonitorConfigManager
+@@ -1297,6 +1297,8 @@ meta_monitor_config_manager_create_for_switch_config (MetaMonitorConfigManager
    MetaMonitorManager *monitor_manager = config_manager->monitor_manager;
    MetaMonitorsConfig *config;
  
@@ -30,10 +12,10 @@ index 0253e07..616b945 100644
      return NULL;
  
 diff --git a/src/backends/meta-monitor.c b/src/backends/meta-monitor.c
-index e02f8ed..d499bdb 100644
+index 54a228e..4d75536 100644
 --- a/src/backends/meta-monitor.c
 +++ b/src/backends/meta-monitor.c
-@@ -1644,7 +1644,7 @@ meta_monitor_calculate_crtc_pos (MetaMonitor          *monitor,
+@@ -1658,7 +1658,7 @@ meta_monitor_calculate_crtc_pos (MetaMonitor          *monitor,
  }
  
  /* The minimum resolution at which we turn on a window-scale of 2 */
@@ -42,7 +24,7 @@ index e02f8ed..d499bdb 100644
  
  /*
   * The minimum screen height at which we turn on a window-scale of 2;
-@@ -1664,12 +1664,15 @@ calculate_scale (MetaMonitor     *monitor,
+@@ -1679,12 +1679,15 @@ calculate_scale (MetaMonitor                *monitor,
    int width_mm, height_mm;
    int scale;
  
@@ -56,9 +38,9 @@ index e02f8ed..d499bdb 100644
 +  meta_warning("calculate_scale %d %d\n", resolution_width, resolution_height);
 +
    if (resolution_height < HIDPI_MIN_HEIGHT)
-     goto out;
+     return scale;
  
-@@ -1687,6 +1690,8 @@ calculate_scale (MetaMonitor     *monitor,
+@@ -1702,6 +1705,8 @@ calculate_scale (MetaMonitor                *monitor,
  
    meta_monitor_get_physical_dimensions (monitor, &width_mm, &height_mm);
  
@@ -67,7 +49,7 @@ index e02f8ed..d499bdb 100644
    /*
     * Somebody encoded the aspect ratio (16/9 or 16/10) instead of the physical
     * size.
-@@ -1701,6 +1706,8 @@ calculate_scale (MetaMonitor     *monitor,
+@@ -1716,6 +1721,8 @@ calculate_scale (MetaMonitor                *monitor,
        dpi_x = (double) resolution_width / (width_mm / 25.4);
        dpi_y = (double) resolution_height / (height_mm / 25.4);
  
