@@ -79,22 +79,47 @@ in rec {
 
   vivaldi = super.vivaldi.override ({ proprietaryCodecs = true; enableWidevine = true; });
 
+  # vw = self.stdenv.mkDerivation {
+  #   name = "vw";
+
+  #   src = self.fetchFromGitHub {
+  #     owner = "VowpalWabbit";
+  #     repo = "vowpal_wabbit";
+  #     rev = "8.10.2";
+  #     sha256 = "1f5cps9md0c5nrk3c0q1q94lqi3g64f2h493a408zlj1c1ks754l";
+  #     fetchSubmodules = true;
+  #   };
+
+  #   buildInputs = with self; [ boost zlib ];
+
+  #   nativeBuildInputs = with self; [ cmake help2man ];
+
+  #   #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" ];
+  # };
+
+  boostStatic = self.boost.override { enableShared = false; enableStatic = true; };
+
   vw = self.stdenv.mkDerivation {
     name = "vw";
 
     src = self.fetchFromGitHub {
       owner = "VowpalWabbit";
       repo = "vowpal_wabbit";
-      rev = "8.10.2";
-      sha256 = "1f5cps9md0c5nrk3c0q1q94lqi3g64f2h493a408zlj1c1ks754l";
-      fetchSubmodules = true;
+      rev = "8.5.0";
+      sha256 = "04bwzk6ifgnz3fmzid8b7avxf9n5pnx9xcjm61nkjng1vv0bpj8x";
     };
 
     buildInputs = with self; [ boost zlib ];
+    enableParallelBuilding = true;
+    configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" "--enable-static" ];
+    postInstall = ''
+      cp vowpalwabbit/array_parameters.h $out/include/vowpalwabbit
+    '';
+  };
 
-    nativeBuildInputs = with self; [ cmake help2man ];
-
-    #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" ];
+  vw-deps = self.symlinkJoin {
+    name = "vw-deps";
+    paths = with self; [ vw boostStatic boostStatic.dev zlib ];
   };
 
   gnomeExtensions = super.gnomeExtensions // {
@@ -118,5 +143,9 @@ in rec {
     mutter = super.gnome.mutter.overrideAttrs ( oldAttrs: { patches = oldAttrs.patches ++ [ ./mutter.patch ]; });
     gnome-shell = super.gnome.gnome-shell.override { inherit mutter; };
   };
+
+  qsync = self.libsForQt512.callPackage ./qsync {};
+
+  binance = self.callPackage ./binance {};
 
 }

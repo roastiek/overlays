@@ -11,6 +11,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  #boot.kernelPackages = pkgs.linuxPackages_5_13;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "i915"
@@ -21,10 +22,12 @@
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
     # "memmap=14M$18M"
-    # "memmap=0x287E000$0x59782000"
-    # "memmap=0x1000%0x59782000-1+2"
+    #"memmap=12M$20M"
+    #"memmap=0x287E000$0x59782000"
+    #"memmap=0x1000%0x59782000-1+2"
     # "intel_pstate=no_hwp"
     # "initcall_debug"
+    "intel_pstate=passive"
   ];
 
   system.fsPackages = [ pkgs.ntfs3g ];
@@ -44,7 +47,8 @@
       SERIAL_DEV_BUS y
       SERIAL_DEV_CTRL_TTYPORT y
     '';
-  } ];
+  }
+  ];
 
   boot.blacklistedKernelModules = [ "psmouse" ];
 
@@ -99,10 +103,12 @@
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
   services.tlp.settings = {
-    CPU_SCALING_GOVERNOR_ON_AC = "powersave";
-    CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    #CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+    #CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
+    CPU_SCALING_GOVERNOR_ON_BAT = "schedutil";
     CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
-    CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
+    CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
     SCHED_POWERSAVE_ON_AC = 1;
     SCHED_POWERSAVE_ON_BAT = 1;
 

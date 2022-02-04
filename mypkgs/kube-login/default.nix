@@ -1,7 +1,7 @@
 { buildGoModule, pkger }:
 buildGoModule rec {
   pname = "kube-login";
-  version = "1.2.12";
+  version = "1.2.14";
 
   subPackages = [ "." ];
 
@@ -27,5 +27,6 @@ buildGoModule rec {
 
   preConfigure = ''
     cp ${./pkged.go} ./pkged.go
+    #pkger
   '';
 }
