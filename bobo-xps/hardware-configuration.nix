@@ -11,8 +11,8 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  #boot.kernelPackages = pkgs.linuxPackages_5_13;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_5_16;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "i915"
     "nvme" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -36,19 +36,19 @@
   #   options i915 fastboot=1
   # '';
 
-  boot.kernelPatches = [ {
-    name = "enable-qca6390-bluetooth";
-    patch = null;
-    extraConfig = ''
-      BT_QCA m
-      BT_HCIUART m
-      BT_HCIUART_QCA y
-      BT_HCIUART_SERDEV y
-      SERIAL_DEV_BUS y
-      SERIAL_DEV_CTRL_TTYPORT y
-    '';
-  }
-  ];
+  # boot.kernelPatches = [ {
+  #   name = "enable-qca6390-bluetooth";
+  #   patch = null;
+  #   extraConfig = ''
+  #     BT_QCA m
+  #     BT_HCIUART m
+  #     BT_HCIUART_QCA y
+  #     BT_HCIUART_SERDEV y
+  #     SERIAL_DEV_BUS y
+  #     SERIAL_DEV_CTRL_TTYPORT y
+  #   '';
+  # }
+  # ];
 
   boot.blacklistedKernelModules = [ "psmouse" ];
 

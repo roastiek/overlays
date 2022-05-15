@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://ftp.binance.com/electron-desktop/linux/production/binance-amd64-linux.deb";
-    sha256 = "0x8vx2f13z3jfb6i897zig92n1mf4v1yzys0xyxi4j26zrajkvsa";
+    sha256 = "0ibjkhph3lxc782shxjq7sqlws477mh92fqfcx6ccsh13pd68p9y";
   };
 
   outputs = [ "out" ];
