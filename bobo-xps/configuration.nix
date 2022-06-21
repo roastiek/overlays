@@ -99,7 +99,7 @@
     thermald
     thermal-monitor
     config.boot.kernelPackages.cpupower
-    qsync
+    #qsync
 
     # work tools
     goenvtemplator
@@ -110,7 +110,7 @@
 
     gnupg1
     openssl
-    binance
+    #binance
 
     arc-theme
     adwaita-qt
