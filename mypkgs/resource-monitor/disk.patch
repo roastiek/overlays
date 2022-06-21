@@ -1,0 +1,56 @@
+diff --git a/extension.js b/extension.js
+index f89095d..46eadf7 100644
+--- a/extension.js
++++ b/extension.js
+@@ -1841,7 +1841,7 @@ class Extension {
+ 
+         const index = {
+             left: -1,
+-            center: 0,
++            center: -1,
+             right: 0,
+         };
+ 
+diff --git a/prefs.js b/prefs.js
+index 00f0251..3cabea5 100644
+--- a/prefs.js
++++ b/prefs.js
+@@ -82,6 +82,20 @@ function init() {
+     ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
+ }
+ 
++function realpath(path) {
++    try {
++        const file = Gio.File.new_for_path(path);
++        const info = file.query_info("standard::*", Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
++        if (!info.get_is_symlink()) {
++            return path;
++        }
++        return Gio.File.new_for_commandline_arg_and_cwd(info.get_symlink_target(), file.get_parent().get_path()).get_path();
++    } catch (e) {
++        return path;
++    }
++};
++
++
+ const ResourceMonitorPrefsWidget = GObject.registerClass(
+     class ResourceMonitorPrefsWidget extends Gtk.Box {
+         _init() {
+@@ -378,7 +392,7 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+             let newDisksArray = [];
+             let x = 0;
+ 
+-            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs']).then(output => {
++            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs', '-x', 'devtmpfs']).then(output => {
+                 let lines = output.split('\n');
+ 
+                 // Excludes the first line of output
+@@ -386,7 +400,7 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+                     let line = lines[i];
+                     let entry = line.trim().split(/\s+/);
+ 
+-                    let filesystem = entry[0];
++                    let filesystem = realpath(entry[0]);
+                     let mountedOn = entry[5];
+ 
+                     let disk = new ListItemRow(filesystem, mountedOn);

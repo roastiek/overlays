@@ -5,14 +5,15 @@
     caffeine
     disconnect-wifi
     #impatience
-    gnome41Extensions."impatience@gfxmonk.net"
+    gnome42Extensions."impatience@gfxmonk.net"
     #noannoyance
-    gnome41Extensions."noannoyance@daase.net"
-    gnome41Extensions."appindicatorsupport@rgcjonas.gmail.com"
+    gnome42Extensions."noannoyance@daase.net"
+    gnome42Extensions."appindicatorsupport@rgcjonas.gmail.com"
     no-overview
     vertical-overview
-    vitals
+    #vitals
     #volume-mixer
     no-title-bar
+    (resource-monitor.overrideAttrs ( oldAttrs: { patches = [ ../mypkgs/resource-monitor/disk.patch ]; }))
   ];
 }

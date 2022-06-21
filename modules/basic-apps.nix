@@ -10,7 +10,7 @@
     nfs-utils
     usbutils
     pciutils
-    libsysfs
+    sysfsutils
 
     # work tools
     git
@@ -37,11 +37,12 @@
 
     # gui tools
     gnome.zenity
-    gnome.gnome-tweak-tool
+    gnome.gnome-tweaks
     tango-icon-theme
     tango-extras-icon-theme
-    keepassx-community
+    keepassxc
     gnome.dconf-editor
+    gnome.gnome-terminal
 
     # media
     gimp

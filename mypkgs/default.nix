@@ -36,16 +36,16 @@ in rec {
 
   lxc-templates = callPackage ./lxc-templates {};
 
-  vscodium = super.vscodium.overrideAttrs (oldAttrs: {
-    installPhase = oldAttrs.installPhase + ''
-      p=$(cat $out/lib/vscode/resources/app/product.json)
-      echo "$p" | ${self.jq}/bin/jq ' . + { "checksumFailMoreInfoUrl": "https://go.microsoft.com/fwlink/?LinkId=828886" }' > $out/lib/vscode/resources/app/product.json
-      for s in $(find $out -name "*.js" -type f -print); do
-        substituteInPlace "$s" --replace 'sensitivity:"base"' 'sensitivity:"base",ignorePunctuation:!0' \
-          --replace 'sensitivity:"accent"' 'sensitivity:"accent",ignorePunctuation:!0'
-      done
-    '';
-  });
+  # vscodium = super.vscodium.overrideAttrs (oldAttrs: {
+  #   installPhase = oldAttrs.installPhase + ''
+  #     p=$(cat $out/lib/vscode/resources/app/product.json)
+  #     echo "$p" | ${self.jq}/bin/jq ' . + { "checksumFailMoreInfoUrl": "https://go.microsoft.com/fwlink/?LinkId=828886" }' > $out/lib/vscode/resources/app/product.json
+  #     for s in $(find $out -name "*.js" -type f -print); do
+  #       substituteInPlace "$s" --replace 'sensitivity:"base"' 'sensitivity:"base",ignorePunctuation:!0' \
+  #         --replace 'sensitivity:"accent"' 'sensitivity:"accent",ignorePunctuation:!0'
+  #     done
+  #   '';
+  # });
 
   intel-undervolt = callPackage ./intel-undervolt { };
 
@@ -128,7 +128,7 @@ in rec {
     volume-mixer = self.callPackage ./volume-mixer { };
     no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
       postInstall = ''
-        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"41"'
+        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"42"'
       '';
     });
   };

@@ -16,6 +16,7 @@
       keep-outputs = true
       keep-derivations = true
       keep-env-derivations = true
+      experimental-features = nix-command
     '';
     gc = {
       automatic = true;
@@ -174,7 +175,8 @@
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
   hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  # hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
   hardware.pulseaudio.extraConfig = ''
     load-module module-switch-on-connect
   '';
