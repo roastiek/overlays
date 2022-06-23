@@ -8,6 +8,8 @@ buildGoModule rec {
   src = builtins.fetchGit {
     url = "git@gitlab.seznam.net:ultra/SCIF/k8s/kube-login.git";
     ref = version;
+    allRefs =  true;
+    rev = "d39dd1e66139f8d3bebd575f4f26653d0bf9f716";
   };
 
   overrideModAttrs = oldAttrs: oldAttrs // {
