@@ -14,6 +14,6 @@
     #vitals
     #volume-mixer
     no-title-bar
-    (resource-monitor.overrideAttrs ( oldAttrs: { patches = [ ../mypkgs/resource-monitor/disk.patch ]; }))
+    (resource-monitor.overrideAttrs ( oldAttrs: { patches = [ ../mypkgs/resource-monitor/disk.patch ../mypkgs/resource-monitor/units.patch ]; }))
   ];
 }
