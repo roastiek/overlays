@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index 46eadf7..2d08df7 100644
+index 46eadf7..bad9a77 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -188,29 +188,29 @@ const ResourceMonitor = GObject.registerClass(
@@ -451,3 +451,131 @@ index 46eadf7..2d08df7 100644
              }
          }
  
+@@ -1641,7 +1643,7 @@ const DiskContainer = GObject.registerClass(
+             this._elementsName = [];
+             this._elementsLabel = [];
+             this._elementsValue = [];
+-            this._elementsUnit = [];
++            //this._elementsUnit = [];
+         }
+ 
+         set_element_width(width) {
+@@ -1664,7 +1666,7 @@ const DiskContainer = GObject.registerClass(
+             this._elementsName = [];
+             this._elementsLabel = [];
+             this._elementsValue = [];
+-            this._elementsUnit = [];
++            //this._elementsUnit = [];
+ 
+             this.remove_all_children();
+         }
+@@ -1690,14 +1692,14 @@ const DiskContainerStats = GObject.registerClass(
+             });
+             this._elementsValue['single'].set_style('text-align: right;');
+ 
+-            this._elementsUnit['single'] = new St.Label({
+-                y_align: Clutter.ActorAlign.CENTER,
+-                text: 'K'
+-            });
+-            this._elementsUnit['single'].set_style('padding-left: 0.125em;');
++            // this._elementsUnit['single'] = new St.Label({
++            //     y_align: Clutter.ActorAlign.CENTER,
++            //     text: 'K'
++            // });
++            // this._elementsUnit['single'].set_style('padding-left: 0.125em;');
+ 
+             this.add(this._elementsValue['single']);
+-            this.add(this._elementsUnit['single']);
++            //this.add(this._elementsUnit['single']);
+ 
+             this.idleOld['single'] = 0;
+             this.rwTotOld['single'] = [0, 0];
+@@ -1717,15 +1719,15 @@ const DiskContainerStats = GObject.registerClass(
+             });
+             this._elementsValue[filesystem].set_style('text-align: right;');
+ 
+-            this._elementsUnit[filesystem] = new St.Label({
+-                y_align: Clutter.ActorAlign.CENTER,
+-                text: 'K'
+-            });
+-            this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
++            // this._elementsUnit[filesystem] = new St.Label({
++            //     y_align: Clutter.ActorAlign.CENTER,
++            //     text: 'K'
++            // });
++            // this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
+ 
+             this.add(this._elementsName[filesystem]);
+             this.add(this._elementsValue[filesystem]);
+-            this.add(this._elementsUnit[filesystem]);
++            //this.add(this._elementsUnit[filesystem]);
+ 
+             this.idleOld[filesystem] = 0;
+             this.rwTotOld[filesystem] = [0, 0];
+@@ -1738,10 +1740,10 @@ const DiskContainerStats = GObject.registerClass(
+                         if (element !== 'single') {
+                             this._elementsName[element].hide();
+                             this._elementsValue[element].hide();
+-                            this._elementsUnit[element].hide();
++                            //this._elementsUnit[element].hide();
+                         } else {
+                             this._elementsValue[element].show();
+-                            this._elementsUnit[element].show();
++                            //this._elementsUnit[element].show();
+                         }
+                     });
+ 
+@@ -1754,10 +1756,10 @@ const DiskContainerStats = GObject.registerClass(
+                         if (element !== 'single') {
+                             this._elementsName[element].show();
+                             this._elementsValue[element].show();
+-                            this._elementsUnit[element].show();
++                            //this._elementsUnit[element].show();
+                         } else {
+                             this._elementsValue[element].hide();
+-                            this._elementsUnit[element].hide();
++                            //this._elementsUnit[element].hide();
+                         }
+                     });
+ 
+@@ -1787,8 +1789,8 @@ const DiskContainerStats = GObject.registerClass(
+ 
+         update_element_value(filesystem, value, unit) {
+             if (this._elementsValue[filesystem]) {
+-                this._elementsValue[filesystem].text = value;
+-                this._elementsUnit[filesystem].text = unit;
++                this._elementsValue[filesystem].text = value + unit;
++                //this._elementsUnit[filesystem].text = unit;
+             }
+         }
+     });
+@@ -1809,21 +1811,21 @@ const DiskContainerSpace = GObject.registerClass(
+             });
+             this._elementsValue[filesystem].set_style('text-align: right;');
+ 
+-            this._elementsUnit[filesystem] = new St.Label({
+-                y_align: Clutter.ActorAlign.CENTER,
+-                text: this._diskSpaceUnitType ? '%' : 'KB'
+-            });
+-            this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
++            // this._elementsUnit[filesystem] = new St.Label({
++            //     y_align: Clutter.ActorAlign.CENTER,
++            //     text: this._diskSpaceUnitType ? '%' : 'KB'
++            // });
++            // this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
+ 
+             this.add(this._elementsName[filesystem]);
+             this.add(this._elementsValue[filesystem]);
+-            this.add(this._elementsUnit[filesystem]);
++            // this.add(this._elementsUnit[filesystem]);
+         }
+ 
+         update_element_value(filesystem, value, unit) {
+             if (this._elementsValue[filesystem]) {
+-                this._elementsValue[filesystem].text = value;
+-                this._elementsUnit[filesystem].text = unit;
++                this._elementsValue[filesystem].text = value + unit;
++                // this._elementsUnit[filesystem].text = unit;
+             }
+         }
+     });
