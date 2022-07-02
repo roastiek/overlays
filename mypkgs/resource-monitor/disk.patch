@@ -12,7 +12,7 @@ index f89095d..46eadf7 100644
          };
  
 diff --git a/prefs.js b/prefs.js
-index 00f0251..3cabea5 100644
+index 00f0251..e40d4ee 100644
 --- a/prefs.js
 +++ b/prefs.js
 @@ -82,6 +82,20 @@ function init() {
@@ -36,7 +36,7 @@ index 00f0251..3cabea5 100644
  const ResourceMonitorPrefsWidget = GObject.registerClass(
      class ResourceMonitorPrefsWidget extends Gtk.Box {
          _init() {
-@@ -378,7 +392,7 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+@@ -378,17 +392,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
              let newDisksArray = [];
              let x = 0;
  
@@ -44,8 +44,10 @@ index 00f0251..3cabea5 100644
 +            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs', '-x', 'devtmpfs']).then(output => {
                  let lines = output.split('\n');
  
++                let fsf = new Set();
++
                  // Excludes the first line of output
-@@ -386,7 +400,7 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+                 for (let i = 1; i < lines.length - 1; i++) {
                      let line = lines[i];
                      let entry = line.trim().split(/\s+/);
  
@@ -53,4 +55,12 @@ index 00f0251..3cabea5 100644
 +                    let filesystem = realpath(entry[0]);
                      let mountedOn = entry[5];
  
++                    if (fsf.has(filesystem)) {
++                        continue;
++                    }
++
++                    fsf.add(filesystem);
++
                      let disk = new ListItemRow(filesystem, mountedOn);
+ 
+                     // Init gui

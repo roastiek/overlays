@@ -1,0 +1,13 @@
+diff --git a/extension.js b/extension.js
+index 5dc9d81..d762e7f 100644
+--- a/extension.js
++++ b/extension.js
+@@ -930,7 +930,7 @@ const ResourceMonitor = GObject.registerClass(
+ 
+             this._diskDevicesListChanged();
+ 
+-            //this._netAutoHideStatusChanged();
++            this._netAutoHideStatusChanged();
+ 
+             //this._netUnitChanged();
+ 
