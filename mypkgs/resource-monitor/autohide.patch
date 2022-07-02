@@ -1,13 +1,12 @@
 diff --git a/extension.js b/extension.js
-index 5dc9d81..d762e7f 100644
+index 426ec29..45b4d27 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -930,7 +930,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -123,6 +123,7 @@ const ResourceMonitor = GObject.registerClass(
+             this.connect('button-press-event', this._clickManager.bind(this));
  
-             this._diskDevicesListChanged();
- 
--            //this._netAutoHideStatusChanged();
-+            this._netAutoHideStatusChanged();
- 
-             //this._netUnitChanged();
+             NM.Client.new_async(null, (client) => {
++                this._nm_client = client;
+                 client.connect('active-connection-added', this._onActiveConnectionAdded.bind(this));
+                 client.connect('active-connection-removed', this._onActiveConnectionRemoved.bind(this));
  
