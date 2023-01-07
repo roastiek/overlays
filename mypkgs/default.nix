@@ -106,21 +106,31 @@ in rec {
     src = self.fetchFromGitHub {
       owner = "VowpalWabbit";
       repo = "vowpal_wabbit";
-      rev = "8.5.0";
-      sha256 = "04bwzk6ifgnz3fmzid8b7avxf9n5pnx9xcjm61nkjng1vv0bpj8x";
+      rev = "9.0.1";
+      fetchSubmodules = true;
+      sha256 = "sha256-4Ye+tsJ0zfScDTAO/cckgyTs2j1ihkl72tSglBkCMG0=";
     };
 
-    buildInputs = with self; [ boost zlib ];
+    nativeBuildInputs = with self; [ cmake ];
+    buildInputs = with self; [ boost zlib ]; #spdlog rapidjson ];
     enableParallelBuilding = true;
-    configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" "--enable-static" ];
+    cmakeFlags = [
+      "-DFMT_SYS_DEP=OFF"
+      "-DSPDLOG_SYS_DEP=OFF"
+      "-DRAPIDJSON_SYS_DEP=OFF"
+      # "-DSTATIC_LINK_VW=ON"
+    ];
+    #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" "--enable-static" ];
+
     postInstall = ''
-      cp vowpalwabbit/array_parameters.h $out/include/vowpalwabbit
+      cp ../vowpalwabbit/io/* $out/include/vowpalwabbit/io
+      cp -r ../ext_libs/spdlog/include/spdlog/fmt/bundled $out/include/spdlog/fmt/
     '';
   };
 
   vw-deps = self.symlinkJoin {
     name = "vw-deps";
-    paths = with self; [ vw boostStatic boostStatic.dev zlib ];
+    paths = with self; [ vw boost boost.dev zlib ]; #boostStatic boostStatic.dev zlib ];
   };
 
   gnomeExtensions = super.gnomeExtensions // {

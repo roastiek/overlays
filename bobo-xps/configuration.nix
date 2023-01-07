@@ -45,15 +45,15 @@
     append_search="dev.dszn.cz test.dszn.cz dszn.cz"
   '';
 
-  #virtualisation.lxd.enable = true;
-  #environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
-  #  server=/lxd/172.18.0.1
-  #  rev-server=172.18.0.0/16,172.18.0.1
-  #  # rev-server=fd42:52bb:7b8c:d18e::0/64,172.18.0.1
-  #  # log-queries
-  #  # dns-loop-detect
-  #'';
-  #systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
+  virtualisation.lxd.enable = true;
+  environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
+    server=/lxd/172.20.0.1
+    rev-server=172.20.0.0/16,172.20.0.1
+    # rev-server=fd42:52bb:7b8c:d18e::0/64,172.20.0.1
+    # log-queries
+    # dns-loop-detect
+  '';
+  systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
   systemd.services.NetworkManager.reloadIfChanged = true;
 
   virtualisation.podman.enable = true;

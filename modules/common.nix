@@ -158,12 +158,14 @@
   nixpkgs.config.allowUnfree = true;
 
   security.pki.certificateFiles = [
+    ./cert/seznamca-kancelar-issuing.crt
     ./cert/seznamca-kancelar-root.crt
     ./cert/seznamca-logy.crt
     ./cert/seznamca-root.crt
     ./cert/seznamca-server.crt
-    ./cert/seznam-kancelar-issuing-ca-2021.crt
     ./cert/seznam-kancelar-root-ca-2020.crt
+    ./cert/seznam-kancelar-issuing-ca-2021.crt
+    ./cert/seznam-rootca-2022.crt
   ];
 
   virtualisation.docker = {
@@ -174,14 +176,14 @@
   systemd.timers.docker-prune.timerConfig.Persistent = true;
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  hardware.pulseaudio.enable = false;
+  #hardware.pulseaudio.package = pkgs.pulseaudioFull;
   # hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
-  hardware.pulseaudio.extraConfig = ''
-    load-module module-switch-on-connect
-  '';
-  #services.pipewire.enable = true;
-  #services.pipewire.pulse.enable = true;
+  #hardware.pulseaudio.extraConfig = ''
+  #  load-module module-switch-on-connect
+  #'';
+  services.pipewire.enable = true;
+  services.pipewire.pulse.enable = true;
   security.rtkit.enable = true;
 
   fileSystems."/remote/amour" =

@@ -26,13 +26,16 @@
     gnumake
     kubectl
     jq
+    yq-go
     direnv
 
     # gui apps
     firefox
     vivaldi
     zoom-us
-    vscodium
+    ( vscodium-fhsWithPackages { additionalPkgs = pkgs: [ pkgs.go_1_19 pkgs.jdk17 ]; profile = ''
+      JAVA_HOME=/usr/lib64/openjdk
+    '';} )
     libreoffice
 
     # gui tools
