@@ -61,6 +61,14 @@
 
   environment.systemPackages = with pkgs; [
     config.boot.kernelPackages.cpupower
+    ( dwarf-fortress-packages.dwarf-fortress-full.override {
+      #dfVersion = "0.44.11";
+      #theme = "cla";
+      enableIntro = false;
+      enableFPS = true;
+      enableSound = false;
+      enableTWBT = true;
+    } )
   ];
 
   services.resolved.enable = false;

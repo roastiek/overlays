@@ -69,7 +69,7 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.defaultSession = lib.mkDefault "gnome-xorg";
+  services.xserver.displayManager.defaultSession = lib.mkDefault "gnome";
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
 
@@ -177,11 +177,12 @@
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
   hardware.pulseaudio.enable = false;
-  #hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  # hardware.pulseaudio.package = pkgs.pulseaudioFull;
   # hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
-  #hardware.pulseaudio.extraConfig = ''
-  #  load-module module-switch-on-connect
-  #'';
+  # hardware.pulseaudio.extraConfig = ''
+  #   load-module module-switch-on-connect
+  # '';
+
   services.pipewire.enable = true;
   services.pipewire.pulse.enable = true;
   security.rtkit.enable = true;
