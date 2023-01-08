@@ -138,7 +138,7 @@ in rec {
     volume-mixer = self.callPackage ./volume-mixer { };
     no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
       postInstall = ''
-        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"42"'
+        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"43"'
       '';
     });
   };

@@ -46,8 +46,10 @@
 
   swapDevices = [ ];
 
-  nix.maxJobs = lib.mkDefault 100;
-  nix.buildCores = lib.mkDefault 16;
+  nix.settings = {
+    max-jobs = lib.mkDefault 100;
+    cores = lib.mkDefault 16;
+  };
 
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault true;

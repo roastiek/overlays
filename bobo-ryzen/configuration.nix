@@ -49,6 +49,12 @@
      shell = "/run/current-system/sw/bin/zsh";
   };
 
+  # users.extraUsers.test = {
+  #    isNormalUser = true;
+  #    uid = 3000;
+  #    extraGroups = [ "wheel" "networkmanager" ];
+  # };
+
   #users.extraUsers.lenka = {
   #   isNormalUser = true;
   #   uid = 1002;

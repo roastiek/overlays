@@ -5,10 +5,10 @@
     caffeine
     disconnect-wifi
     #impatience
-    gnome42Extensions."impatience@gfxmonk.net"
+    gnome43Extensions."impatience@gfxmonk.net"
     #noannoyance
-    gnome42Extensions."noannoyance@daase.net"
-    gnome42Extensions."appindicatorsupport@rgcjonas.gmail.com"
+    gnome43Extensions."noannoyance@daase.net"
+    gnome43Extensions."appindicatorsupport@rgcjonas.gmail.com"
     no-overview
     vertical-overview
     #vitals

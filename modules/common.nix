@@ -11,7 +11,9 @@
   nix = {
     daemonCPUSchedPolicy = "idle";
     daemonIOSchedClass = "idle";
-    trustedUsers = [ "@wheel" ];
+    settings = {
+      trusted-users = [ "@wheel" ];
+    };
     extraOptions = ''
       keep-outputs = true
       keep-derivations = true
@@ -39,11 +41,12 @@
   };
 
   # Select internationalisation properties.
-  # i18n = {
+  i18n = {
   #   consoleFont = "Lat2-Terminus16";
   #   consoleKeyMap = "us";
-  #   defaultLocale = "en_US.UTF-8";
-  # };
+    defaultLocale = "en_US.UTF-8";
+    supportedLocales = [ "en_US.UTF-8/UTF-8" "cs_CZ.UTF-8/UTF-8" ];
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Prague";

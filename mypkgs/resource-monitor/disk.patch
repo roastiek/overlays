@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index f89095d..46eadf7 100644
+index e17f219..a6e9743 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -1841,7 +1841,7 @@ class Extension {
+@@ -2706,7 +2706,7 @@ class Extension {
  
          const index = {
              left: -1,
@@ -12,12 +12,12 @@ index f89095d..46eadf7 100644
          };
  
 diff --git a/prefs.js b/prefs.js
-index 00f0251..e40d4ee 100644
+index b0b9736..d6857a1 100644
 --- a/prefs.js
 +++ b/prefs.js
-@@ -82,6 +82,20 @@ function init() {
-     ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
- }
+@@ -114,6 +114,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass({
+     }
+ });
  
 +function realpath(path) {
 +    try {
@@ -34,11 +34,11 @@ index 00f0251..e40d4ee 100644
 +
 +
  const ResourceMonitorPrefsWidget = GObject.registerClass(
-     class ResourceMonitorPrefsWidget extends Gtk.Box {
-         _init() {
-@@ -378,17 +392,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
-             let newDisksArray = [];
-             let x = 0;
+     class ResourceMonitorPrefsWidget extends GObject.Object {
+         _connectSpinButton(settings, settingsName, element) {
+@@ -408,17 +422,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+             // Get current disks settings
+             let disksArray = this._settings.get_strv(DISK_DEVICES_LIST);
  
 -            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs']).then(output => {
 +            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs', '-x', 'devtmpfs']).then(output => {
@@ -61,6 +61,6 @@ index 00f0251..e40d4ee 100644
 +
 +                    fsf.add(filesystem);
 +
-                     let disk = new ListItemRow(filesystem, mountedOn);
+                     let dStButton = false;
+                     let dSpButton = false;
  
-                     // Init gui
