@@ -16,16 +16,17 @@
   #  "net.ipv4.ip_forward" = 1;
   #};
 
-  nix.binaryCaches = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
-
-  nix.trustedBinaryCaches = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
-
-  nix.binaryCachePublicKeys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
-
-  nix.extraOptions = ''
-    narinfo-cache-negative-ttl = 300
-    http-connections = 100
-  '';
+  nix = {
+    settings = {
+      substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
+      trusted-substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
+      trusted-public-keys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
+    };
+    extraOptions = ''
+      narinfo-cache-negative-ttl = 300
+      http-connections = 100
+    '';
+  };
 
   networking.useDHCP = false;
   networking.firewall = with lib; {
@@ -99,7 +100,7 @@
     thermald
     thermal-monitor
     config.boot.kernelPackages.cpupower
-    #qsync
+    # qsync
 
     # work tools
     goenvtemplator
@@ -110,7 +111,7 @@
 
     gnupg1
     openssl
-    #binance
+    # binance
 
     arc-theme
     adwaita-qt

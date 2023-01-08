@@ -111,6 +111,11 @@ in rec {
       sha256 = "sha256-4Ye+tsJ0zfScDTAO/cckgyTs2j1ihkl72tSglBkCMG0=";
     };
 
+    postPatch = ''
+      substituteInPlace ext_libs/spdlog/cmake/spdlog.pc.in \
+        --replace '$'{exec_prefix}/@CMAKE_INSTALL_LIBDIR@ @CMAKE_INSTALL_FULL_LIBDIR@
+    '';
+
     nativeBuildInputs = with self; [ cmake ];
     buildInputs = with self; [ boost zlib ]; #spdlog rapidjson ];
     enableParallelBuilding = true;

@@ -11,6 +11,8 @@
     usbutils
     pciutils
     sysfsutils
+    alsa-utils
+    pavucontrol
 
     # work tools
     git
