@@ -18,6 +18,7 @@
         ../mypkgs/resource-monitor/disk.patch
         ../mypkgs/resource-monitor/units.patch
         ../mypkgs/resource-monitor/autohide.patch
+        ../mypkgs/resource-monitor/thermal.patch
       ]; }))
   ];
 }
