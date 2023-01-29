@@ -13,6 +13,7 @@
     sysfsutils
     alsa-utils
     pavucontrol
+    snappers
 
     # work tools
     git

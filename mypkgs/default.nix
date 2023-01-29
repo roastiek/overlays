@@ -175,4 +175,6 @@ in rec {
     '';
   });
 
+  snappers = self.callPackage ./snappers { pythonPackages = self.python3Packages; };
+
 }
