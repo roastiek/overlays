@@ -1,7 +1,7 @@
 { buildGoModule, pkger }:
 buildGoModule rec {
   pname = "kube-login";
-  version = "1.2.14";
+  version = "1.2.15";
 
   subPackages = [ "." ];
 
@@ -9,7 +9,7 @@ buildGoModule rec {
     url = "git@gitlab.seznam.net:ultra/SCIF/k8s/kube-login.git";
     ref = version;
     allRefs =  true;
-    rev = "d39dd1e66139f8d3bebd575f4f26653d0bf9f716";
+    rev = "54a6d62d3efcbbd73192a980532f9486db514116";
   };
 
   overrideModAttrs = oldAttrs: oldAttrs // {
@@ -23,7 +23,7 @@ buildGoModule rec {
   #   '';
   };
 
-  vendorSha256 = "sha256:0208zzs0ah8x85nxz2ca2c2077j72rs5d702ksfr1zjcccd1k87k";
+  vendorSha256 = "sha256:86AZGmNM/pCdngKcVnQWR54DBBOKid9tQR1BBfT/CAg=";
 
   nativeBuildInputs = [ pkger ];
 
