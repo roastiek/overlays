@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index e17f219..a6e9743 100644
+index db83273..1a3e0a0 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -2706,7 +2706,7 @@ class Extension {
+@@ -2879,7 +2879,7 @@ class Extension {
  
          const index = {
              left: -1,
@@ -12,10 +12,10 @@ index e17f219..a6e9743 100644
          };
  
 diff --git a/prefs.js b/prefs.js
-index b0b9736..d6857a1 100644
+index 5fa2695..fe6063b 100644
 --- a/prefs.js
 +++ b/prefs.js
-@@ -114,6 +114,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass({
+@@ -123,6 +123,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass({
      }
  });
  
@@ -36,9 +36,9 @@ index b0b9736..d6857a1 100644
  const ResourceMonitorPrefsWidget = GObject.registerClass(
      class ResourceMonitorPrefsWidget extends GObject.Object {
          _connectSpinButton(settings, settingsName, element) {
-@@ -408,17 +422,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+@@ -476,17 +490,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
              // Get current disks settings
-             let disksArray = this._settings.get_strv(DISK_DEVICES_LIST);
+             let disksArray = settings.get_strv(DISK_DEVICES_LIST);
  
 -            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs']).then(output => {
 +            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs', '-x', 'devtmpfs']).then(output => {

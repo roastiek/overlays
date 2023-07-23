@@ -1,16 +1,8 @@
 diff --git a/extension.js b/extension.js
-index 29cd8a3..3a6d5fa 100644
+index e5d6210..a06c782 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -2043,6 +2043,7 @@ const ResourceMonitor = GObject.registerClass(
-         }
- 
-         _refreshCpuTemperatureValue() {
-+            log("REFRESH THERMAL CPU")
-             if (this._thermalCpuTemperatureDevicesList.length > 0) {
-                 for (let i = 0; i < this._thermalCpuTemperatureDevicesList.length; i++) {
-                     const element = this._thermalCpuTemperatureDevicesList[i];
-@@ -2055,47 +2056,43 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2136,46 +2136,45 @@ const ResourceMonitor = GObject.registerClass(
                          continue;
                      }
  
@@ -22,6 +14,8 @@ index 29cd8a3..3a6d5fa 100644
 -                            this._cpuTemperatures += value / 1000;
 -                            this._cpuTemperaturesReads++;
 +                    if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
++                    } else {
++                        this._cpuTemperatureValue.text = _('[Temperature Error');
 +                        temps.push(this._loadFile(path).then(contents => {
 +                            return parseInt(ByteArray.toString(contents)) / 1000;
 +                        }));
@@ -79,7 +73,6 @@ index 29cd8a3..3a6d5fa 100644
 -                        });
 -                    } else {
 -                        this._cpuTemperatureValue.text = _('[Temperature Error');
--                        // this._cpuTemperatureUnit.text = '';
 -                    }
 +                        this._cpuTemperatures = 0;
 +                    });

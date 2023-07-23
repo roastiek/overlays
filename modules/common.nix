@@ -62,8 +62,8 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.openssh.forwardX11 = true;
-  programs.ssh.setXAuthLocation = true;
+  # services.openssh.forwardX11 = true;
+  # programs.ssh.setXAuthLocation = true;
 
   programs.command-not-found.enable = true;
   programs.bash.enableCompletion = true;
@@ -115,18 +115,16 @@
     cleanupInterval = "1h";
     configs = {
       home = {
-        subvolume = "/home";
-        extraConfig = ''
-          TIMELINE_CREATE="yes"
-          TIMELINE_CLEANUP="yes"
-          TIMELINE_MIN_AGE="28800"
-          TIMELINE_LIMIT_HOURLY="0-48"
-          TIMELINE_LIMIT_DAILY="0-14"
-          TIMELINE_LIMIT_WEEKLY="0-8"
-          TIMELINE_LIMIT_MONTHLY="0-3"
-          TIMELINE_LIMIT_YEARLY="0-2"
-          SYNC_ACL="yes"
-        '';
+        SUBVOLUME = "/home";
+        TIMELINE_CREATE = true;
+        TIMELINE_CLEANUP = true;
+        TIMELINE_MIN_AGE = "28800";
+        TIMELINE_LIMIT_HOURLY = "0-48";
+        TIMELINE_LIMIT_DAILY = "0-14";
+        TIMELINE_LIMIT_WEEKLY = "0-8";
+        TIMELINE_LIMIT_MONTHLY = "0-3";
+        TIMELINE_LIMIT_YEARLY = "0-2";
+        SYNC_ACL = "yes";
       };
     };
   };

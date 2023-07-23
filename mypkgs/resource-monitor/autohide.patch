@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index 6b81720..29cd8a3 100644
+index b71694a..e5d6210 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -148,6 +148,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -156,6 +156,7 @@ const ResourceMonitor = GObject.registerClass(
  
              if (typeof NM !== 'undefined') {
                  NM.Client.new_async(null, (client) => {

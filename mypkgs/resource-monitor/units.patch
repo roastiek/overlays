@@ -1,11 +1,12 @@
 diff --git a/extension.js b/extension.js
-index a6e9743..6b81720 100644
+index 1a3e0a0..b71694a 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -219,29 +219,29 @@ const ResourceMonitor = GObject.registerClass(
+@@ -226,49 +226,6 @@ const ResourceMonitor = GObject.registerClass(
+                 style_class: 'system-status-icon'
              });
  
-             // Unit
+-            // Unit
 -            this._cpuTemperatureUnit = new St.Label({
 -                y_align: Clutter.ActorAlign.CENTER,
 -                text: '°C'
@@ -14,7 +15,7 @@ index a6e9743..6b81720 100644
 -
 -            this._cpuFrequencyUnit = new St.Label({
 -                y_align: Clutter.ActorAlign.CENTER,
--                text: 'MHz'
+-                text: 'KHz'
 -            });
 -            this._cpuFrequencyUnit.set_style('padding-left: 0.125em;');
 -
@@ -29,137 +30,118 @@ index a6e9743..6b81720 100644
 -                text: this._ramUnitType ? '%' : 'KB'
 -            });
 -            this._ramUnit.set_style('padding-left: 0.125em;');
-+            // this._cpuTemperatureUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: '°C'
-+            // });
-+            // this._cpuTemperatureUnit.set_style('padding-left: 0.125em;');
-+
-+            // this._cpuFrequencyUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: 'MHz'
-+            // });
-+            // this._cpuFrequencyUnit.set_style('padding-left: 0.125em;');
-+
-+            // this._cpuUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: '%'
-+            // });
-+            // this._cpuUnit.set_style('padding-left: 0.125em;');
-+
-+            // this._ramUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: this._ramUnitType ? '%' : 'KB'
-+            // });
-+            // this._ramUnit.set_style('padding-left: 0.125em;');
- 
-             this._swapUnit = new St.Label({
-                 y_align: Clutter.ActorAlign.CENTER,
-@@ -249,17 +249,17 @@ const ResourceMonitor = GObject.registerClass(
-             });
-             this._swapUnit.set_style('padding-left: 0.125em;');
- 
+-
+-            this._swapUnit = new St.Label({
+-                y_align: Clutter.ActorAlign.CENTER,
+-                text: this._swapUnitType ? '%' : 'KB'
+-            });
+-            this._swapUnit.set_style('padding-left: 0.125em;');
+-
 -            this._ethUnit = new St.Label({
 -                y_align: Clutter.ActorAlign.CENTER,
 -                text: 'K'
 -            });
 -            this._ethUnit.set_style('padding-left: 0.125em;');
-+            // this._ethUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: 'K'
-+            // });
-+            // this._ethUnit.set_style('padding-left: 0.125em;');
- 
+-
 -            this._wlanUnit = new St.Label({
 -                y_align: Clutter.ActorAlign.CENTER,
 -                text: 'K'
 -            });
 -            this._wlanUnit.set_style('padding-left: 0.125em;');
-+            // this._wlanUnit = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: 'K'
-+            // });
-+            // this._wlanUnit.set_style('padding-left: 0.125em;');
- 
+-
              // Value
              this._cpuValue = new St.Label({
-@@ -332,19 +332,19 @@ const ResourceMonitor = GObject.registerClass(
-                 case 'left':
-                     this._box.add(this._cpuIcon);
-                     this._box.add(this._cpuValue);
--                    this._box.add(this._cpuUnit);
-+                    //this._box.add(this._cpuUnit);
+                 y_align: Clutter.ActorAlign.CENTER,
+@@ -343,13 +300,10 @@ const ResourceMonitor = GObject.registerClass(
+                             case 'cpu':
+                                 this._box.add(this._cpuIcon);
+                                 this._box.add(this._cpuValue);
+-                                this._box.add(this._cpuUnit);
  
-                     this._box.add(this._cpuTemperatureValue);
--                    this._box.add(this._cpuTemperatureUnit);
-+                    //this._box.add(this._cpuTemperatureUnit);
-                     this._box.add(this._cpuTemperatureValueBracket);
-                     this._box.add(this._cpuFrequencyValue);
--                    this._box.add(this._cpuFrequencyUnit);
-+                    //this._box.add(this._cpuFrequencyUnit);
-                     this._box.add(this._cpuFrequencyValueBracket);
-                     this._box.add(this._cpuLoadAverageValue);
+                                 this._box.add(this._cpuTemperatureValue);
+-                                this._box.add(this._cpuTemperatureUnit);
+                                 this._box.add(this._cpuTemperatureValueBracket);
+                                 this._box.add(this._cpuFrequencyValue);
+-                                this._box.add(this._cpuFrequencyUnit);
+                                 this._box.add(this._cpuFrequencyValueBracket);
+                                 this._box.add(this._cpuLoadAverageValue);
  
-                     this._box.add(this._ramIcon);
-                     this._box.add(this._ramValue);
--                    this._box.add(this._ramUnit);
-+                    //this._box.add(this._ramUnit);
+@@ -358,15 +312,12 @@ const ResourceMonitor = GObject.registerClass(
+                             case 'ram':
+                                 this._box.add(this._ramIcon);
+                                 this._box.add(this._ramValue);
+-                                this._box.add(this._ramUnit);
  
-                     this._box.add(this._swapIcon);
-                     this._box.add(this._swapValue);
-@@ -358,11 +358,11 @@ const ResourceMonitor = GObject.registerClass(
+                                 break;
  
-                     this._box.add(this._ethIcon);
-                     this._box.add(this._ethValue);
--                    this._box.add(this._ethUnit);
-+                    //this._box.add(this._ethUnit);
+                             case 'swap':
+                                 this._box.add(this._swapIcon);
+                                 this._box.add(this._swapValue);
+-                                this._box.add(this._swapUnit);
+-
+                                 break;
  
-                     this._box.add(this._wlanIcon);
-                     this._box.add(this._wlanValue);
--                    this._box.add(this._wlanUnit);
-+                    //this._box.add(this._wlanUnit);
+                             case 'stats':
+@@ -384,14 +335,12 @@ const ResourceMonitor = GObject.registerClass(
+                             case 'eth':
+                                 this._box.add(this._ethIcon);
+                                 this._box.add(this._ethValue);
+-                                this._box.add(this._ethUnit);
  
-                     this._box.add(this._gpuIcon);
-                     this._box.add(this._gpuBox);
-@@ -373,19 +373,19 @@ const ResourceMonitor = GObject.registerClass(
+                                 break;
  
-                 default:
-                     this._box.add(this._cpuValue);
--                    this._box.add(this._cpuUnit);
-+                    //this._box.add(this._cpuUnit);
+                             case 'wlan':
+                                 this._box.add(this._wlanIcon);
+                                 this._box.add(this._wlanValue);
+-                                this._box.add(this._wlanUnit);
  
-                     this._box.add(this._cpuTemperatureValue);
--                    this._box.add(this._cpuTemperatureUnit);
-+                    //this._box.add(this._cpuTemperatureUnit);
-                     this._box.add(this._cpuTemperatureValueBracket);
-                     this._box.add(this._cpuFrequencyValue);
--                    this._box.add(this._cpuFrequencyUnit);
-+                    //this._box.add(this._cpuFrequencyUnit);
-                     this._box.add(this._cpuFrequencyValueBracket);
-                     this._box.add(this._cpuLoadAverageValue);
-                     this._box.add(this._cpuIcon);
+                                 break;
  
-                     this._box.add(this._ramValue);
--                    this._box.add(this._ramUnit);
-+                    //this._box.add(this._ramUnit);
-                     this._box.add(this._ramIcon);
+@@ -416,13 +365,10 @@ const ResourceMonitor = GObject.registerClass(
+                         switch (element) {
+                             case 'cpu':
+                                 this._box.add(this._cpuValue);
+-                                this._box.add(this._cpuUnit);
  
-                     this._box.add(this._swapValue);
-@@ -398,11 +398,11 @@ const ResourceMonitor = GObject.registerClass(
-                     this._box.add(this._diskSpaceIcon);
+                                 this._box.add(this._cpuTemperatureValue);
+-                                this._box.add(this._cpuTemperatureUnit);
+                                 this._box.add(this._cpuTemperatureValueBracket);
+                                 this._box.add(this._cpuFrequencyValue);
+-                                this._box.add(this._cpuFrequencyUnit);
+                                 this._box.add(this._cpuFrequencyValueBracket);
+                                 this._box.add(this._cpuLoadAverageValue);
+                                 this._box.add(this._cpuIcon);
+@@ -431,14 +377,12 @@ const ResourceMonitor = GObject.registerClass(
  
-                     this._box.add(this._ethValue);
--                    this._box.add(this._ethUnit);
-+                    //this._box.add(this._ethUnit);
-                     this._box.add(this._ethIcon);
+                             case 'ram':
+                                 this._box.add(this._ramValue);
+-                                this._box.add(this._ramUnit);
+                                 this._box.add(this._ramIcon);
  
-                     this._box.add(this._wlanValue);
--                    this._box.add(this._wlanUnit);
-+                    //this._box.add(this._wlanUnit);
-                     this._box.add(this._wlanIcon);
+                                 break;
  
-                     this._box.add(this._gpuBox);
-@@ -587,8 +587,8 @@ const ResourceMonitor = GObject.registerClass(
+                             case 'swap':
+                                 this._box.add(this._swapValue);
+-                                this._box.add(this._swapUnit);
+                                 this._box.add(this._swapIcon);
+ 
+                                 break;
+@@ -457,14 +401,12 @@ const ResourceMonitor = GObject.registerClass(
+ 
+                             case 'eth':
+                                 this._box.add(this._ethValue);
+-                                this._box.add(this._ethUnit);
+                                 this._box.add(this._ethIcon);
+ 
+                                 break;
+ 
+                             case 'wlan':
+                                 this._box.add(this._wlanValue);
+-                                this._box.add(this._wlanUnit);
+                                 this._box.add(this._wlanIcon);
+ 
+                                 break;
+@@ -667,8 +609,8 @@ const ResourceMonitor = GObject.registerClass(
                  }
              });
  
@@ -170,7 +152,7 @@ index a6e9743..6b81720 100644
          }
  
          _onActiveConnectionRemoved(client, activeConnection) {
-@@ -615,8 +615,8 @@ const ResourceMonitor = GObject.registerClass(
+@@ -695,8 +637,8 @@ const ResourceMonitor = GObject.registerClass(
                  });
              });
  
@@ -181,7 +163,7 @@ index a6e9743..6b81720 100644
          }
  
          _refreshTimeChanged() {
-@@ -691,7 +691,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -783,7 +725,7 @@ const ResourceMonitor = GObject.registerClass(
          _cpuStatusChanged() {
              this._cpuStatus = this._settings.get_boolean(CPU_STATUS);
  
@@ -190,7 +172,7 @@ index a6e9743..6b81720 100644
          }
  
          _cpuWidthChanged() {
-@@ -703,7 +703,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -795,7 +737,7 @@ const ResourceMonitor = GObject.registerClass(
          _cpuFrequencyStatusChanged() {
              this._cpuFrequencyStatus = this._settings.get_boolean(CPU_FREQUENCY_STATUS);
  
@@ -199,7 +181,7 @@ index a6e9743..6b81720 100644
          }
  
          _cpuFrequencyWidthChanged() {
-@@ -727,7 +727,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -827,7 +769,7 @@ const ResourceMonitor = GObject.registerClass(
          _ramStatusChanged() {
              this._ramStatus = this._settings.get_boolean(RAM_STATUS);
  
@@ -208,7 +190,16 @@ index a6e9743..6b81720 100644
          }
  
          _ramWidthChanged() {
-@@ -899,8 +899,8 @@ const ResourceMonitor = GObject.registerClass(
+@@ -863,7 +805,7 @@ const ResourceMonitor = GObject.registerClass(
+         _swapStatusChanged() {
+             this._swapStatus = this._settings.get_boolean(SWAP_STATUS);
+ 
+-            this._basicItemStatus(this._swapStatus, true, this._swapIcon, this._swapValue, this._swapUnit);
++            this._basicItemStatus(this._swapStatus, true, this._swapIcon, this._swapValue);
+         }
+ 
+         _swapWidthChanged() {
+@@ -999,8 +941,8 @@ const ResourceMonitor = GObject.registerClass(
          _netAutoHideStatusChanged() {
              this._netAutoHideStatus = this._settings.get_boolean(NET_AUTO_HIDE_STATUS) && typeof NM !== 'undefined';
  
@@ -219,7 +210,7 @@ index a6e9743..6b81720 100644
          }
  
          _netUnitChanged() {
-@@ -928,7 +928,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1028,7 +970,7 @@ const ResourceMonitor = GObject.registerClass(
          _netEthStatusChanged() {
              this._netEthStatus = this._settings.get_boolean(NET_ETH_STATUS);
  
@@ -228,7 +219,7 @@ index a6e9743..6b81720 100644
          }
  
          _netEthWidthChanged() {
-@@ -940,7 +940,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1040,7 +982,7 @@ const ResourceMonitor = GObject.registerClass(
          _netWlanStatusChanged() {
              this._netWlanStatus = this._settings.get_boolean(NET_WLAN_STATUS);
  
@@ -237,7 +228,7 @@ index a6e9743..6b81720 100644
          }
  
          _netWlanWidthChanged() {
-@@ -952,7 +952,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1052,7 +994,7 @@ const ResourceMonitor = GObject.registerClass(
          _thermalCpuTemperatureStatusChanged() {
              this._thermalCpuTemperatureStatus = this._settings.get_boolean(THERMAL_CPU_TEMPERATURE_STATUS);
  
@@ -246,7 +237,7 @@ index a6e9743..6b81720 100644
          }
  
          _thermalCpuTemperatureWidthChanged() {
-@@ -1232,9 +1232,9 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1344,9 +1286,9 @@ const ResourceMonitor = GObject.registerClass(
                  this._cpuIdleOld = idle;
  
                  if (this._decimalsStatus) {
@@ -258,7 +249,7 @@ index a6e9743..6b81720 100644
                  }
              });
          }
-@@ -1279,13 +1279,11 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1391,13 +1333,11 @@ const ResourceMonitor = GObject.registerClass(
                  switch (this._ramUnitType) {
                      case 'perc':
                          if (this._decimalsStatus) {
@@ -274,7 +265,7 @@ index a6e9743..6b81720 100644
                          break;
  
                      case 'numeric':
-@@ -1336,12 +1334,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1448,13 +1388,11 @@ const ResourceMonitor = GObject.registerClass(
                          }
  
                          if (this._decimalsStatus) {
@@ -286,19 +277,47 @@ index a6e9743..6b81720 100644
                          }
  
 -                        this._ramUnit.text = unit;
-+                        unit;
- 
+-
                          break;
                  }
-@@ -1797,6 +1795,7 @@ const ResourceMonitor = GObject.registerClass(
-                 const unit = boolUnit ? 1000 : 1024;
+             });
+@@ -1500,9 +1438,9 @@ const ResourceMonitor = GObject.registerClass(
+                 switch (this._swapUnitType) {
+                     case 'perc':
+                         if (this._decimalsStatus) {
+-                            this._swapValue.text = `${(100 * value / total).toFixed(1)}`;
++                            this._swapValue.text = `${(100 * value / total).toFixed(1)}%`;
+                         } else {
+-                            this._swapValue.text = `${(100 * value / total).toFixed(0)}`;
++                            this._swapValue.text = `${(100 * value / total).toFixed(0)}%`;
+                         }
+ 
+                         this._swapUnit.text = '%';
+@@ -1557,13 +1495,11 @@ const ResourceMonitor = GObject.registerClass(
+                         }
+ 
+                         if (this._decimalsStatus) {
+-                            this._swapValue.text = `${value.toFixed(1)}`;
++                            this._swapValue.text = `${value.toFixed(1)}${unit}`;
+                         } else {
+-                            this._swapValue.text = `${value.toFixed(0)}`;
++                            this._swapValue.text = `${value.toFixed(0)}${unit}`;
+                         }
+ 
+-                        this._swapUnit.text = unit;
+-
+                         break;
+                 }
+             });
+@@ -1918,6 +1854,7 @@ const ResourceMonitor = GObject.registerClass(
+ 
                  const factor = boolUnit ? 8 : 1;
  
 +                let eunit = "";
                  if (delta > 0) {
                      for (let i = 0; i < 2; i++) {
                          du[i] = ((duTot[i] - this._duTotEthOld[i]) * factor) / delta;
-@@ -1805,17 +1804,17 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1926,17 +1863,17 @@ const ResourceMonitor = GObject.registerClass(
  
                      switch (this._netUnitMeasure) {
                          case 'b':
@@ -309,57 +328,57 @@ index a6e9743..6b81720 100644
                          case 'k':
 -                            this._ethUnit.text = boolUnit ? 'k' : 'K';
 +                            eunit = boolUnit ? 'k' : 'K';
-                             du[0] /= unit;
-                             du[1] /= unit;
+                             du[0] /= 1024;
+                             du[1] /= 1024;
                              break;
  
                          case 'm':
 -                            this._ethUnit.text = boolUnit ? 'm' : 'M';
 +                            eunit = boolUnit ? 'm' : 'M';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1823,7 +1822,7 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -1944,7 +1881,7 @@ const ResourceMonitor = GObject.registerClass(
                              break;
  
                          case 'g':
 -                            this._ethUnit.text = boolUnit ? 'g' : 'G';
 +                            eunit = boolUnit ? 'g' : 'G';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1833,7 +1832,7 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -1954,7 +1891,7 @@ const ResourceMonitor = GObject.registerClass(
                              break;
  
                          case 't':
 -                            this._ethUnit.text = boolUnit ? 't' : 'T';
 +                            eunit = boolUnit ? 't' : 'T';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1848,26 +1847,26 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -1969,26 +1906,26 @@ const ResourceMonitor = GObject.registerClass(
  
                          default:
-                             if (du[0] > unit || du[1] > unit) {
+                             if (du[0] > 1024 || du[1] > 1024) {
 -                                this._ethUnit.text = boolUnit ? 'k' : 'K';
 +                                eunit = boolUnit ? 'k' : 'K';
-                                 du[0] /= unit;
-                                 du[1] /= unit;
-                                 if (du[0] > unit || du[1] > unit) {
+                                 du[0] /= 1024;
+                                 du[1] /= 1024;
+                                 if (du[0] > 1024 || du[1] > 1024) {
 -                                    this._ethUnit.text = boolUnit ? 'm' : 'M';
 +                                    eunit = boolUnit ? 'm' : 'M';
-                                     du[0] /= unit;
-                                     du[1] /= unit;
-                                     if (du[0] > unit || du[1] > unit) {
+                                     du[0] /= 1024;
+                                     du[1] /= 1024;
+                                     if (du[0] > 1024 || du[1] > 1024) {
 -                                        this._ethUnit.text = boolUnit ? 'g' : 'G';
 +                                        eunit = boolUnit ? 'g' : 'G';
-                                         du[0] /= unit;
-                                         du[1] /= unit;
-                                         if (du[0] > unit || du[1] > unit) {
+                                         du[0] /= 1024;
+                                         du[1] /= 1024;
+                                         if (du[0] > 1024 || du[1] > 1024) {
 -                                            this._ethUnit.text = boolUnit ? 't' : 'T';
 +                                            eunit = boolUnit ? 't' : 'T';
-                                             du[0] /= unit;
-                                             du[1] /= unit;
+                                             du[0] /= 1024;
+                                             du[1] /= 1024;
                                          }
                                      }
                                  }
@@ -369,7 +388,7 @@ index a6e9743..6b81720 100644
                              }
  
                              break;
-@@ -1877,9 +1876,9 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1998,9 +1935,9 @@ const ResourceMonitor = GObject.registerClass(
                  this._ethIdleOld = idle;
  
                  if (this._decimalsStatus) {
@@ -381,15 +400,15 @@ index a6e9743..6b81720 100644
                  }
              });
          }
-@@ -1913,6 +1912,7 @@ const ResourceMonitor = GObject.registerClass(
-                 const unit = boolUnit ? 1000 : 1024;
+@@ -2033,6 +1970,7 @@ const ResourceMonitor = GObject.registerClass(
+ 
                  const factor = boolUnit ? 8 : 1;
  
 +                let wunit = "";
                  if (delta > 0) {
                      for (let i = 0; i < 2; i++) {
                          du[i] = ((duTot[i] - this._duTotWlanOld[i]) * factor) / delta;
-@@ -1921,17 +1921,17 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2041,17 +1979,17 @@ const ResourceMonitor = GObject.registerClass(
  
                      switch (this._netUnitMeasure) {
                          case 'b':
@@ -400,57 +419,57 @@ index a6e9743..6b81720 100644
                          case 'k':
 -                            this._wlanUnit.text = boolUnit ? 'k' : 'K';
 +                            wunit = boolUnit ? 'k' : 'K';
-                             du[0] /= unit;
-                             du[1] /= unit;
+                             du[0] /= 1024;
+                             du[1] /= 1024;
                              break;
  
                          case 'm':
 -                            this._wlanUnit.text = boolUnit ? 'm' : 'M';
 +                            wunit = boolUnit ? 'm' : 'M';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1939,7 +1939,7 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -2059,7 +1997,7 @@ const ResourceMonitor = GObject.registerClass(
                              break;
  
                          case 'g':
 -                            this._wlanUnit.text = boolUnit ? 'g' : 'G';
 +                            wunit = boolUnit ? 'g' : 'G';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1949,7 +1949,7 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -2069,7 +2007,7 @@ const ResourceMonitor = GObject.registerClass(
                              break;
  
                          case 't':
 -                            this._wlanUnit.text = boolUnit ? 't' : 'T';
 +                            wunit = boolUnit ? 't' : 'T';
-                             du[0] /= unit;
-                             du[1] /= unit;
-                             du[0] /= unit;
-@@ -1964,26 +1964,26 @@ const ResourceMonitor = GObject.registerClass(
+                             du[0] /= 1024;
+                             du[1] /= 1024;
+                             du[0] /= 1024;
+@@ -2084,26 +2022,26 @@ const ResourceMonitor = GObject.registerClass(
  
                          default:
-                             if (du[0] > unit || du[1] > unit) {
+                             if (du[0] > 1024 || du[1] > 1024) {
 -                                this._wlanUnit.text = boolUnit ? 'k' : 'K';
 +                                wunit = boolUnit ? 'k' : 'K';
-                                 du[0] /= unit;
-                                 du[1] /= unit;
-                                 if (du[0] > unit || du[1] > unit) {
+                                 du[0] /= 1024;
+                                 du[1] /= 1024;
+                                 if (du[0] > 1024 || du[1] > 1024) {
 -                                    this._wlanUnit.text = boolUnit ? 'm' : 'M';
 +                                    wunit = boolUnit ? 'm' : 'M';
-                                     du[0] /= unit;
-                                     du[1] /= unit;
-                                     if (du[0] > unit || du[1] > unit) {
+                                     du[0] /= 1024;
+                                     du[1] /= 1024;
+                                     if (du[0] > 1024 || du[1] > 1024) {
 -                                        this._wlanUnit.text = boolUnit ? 'g' : 'G';
 +                                        wunit = boolUnit ? 'g' : 'G';
-                                         du[0] /= unit;
-                                         du[1] /= unit;
-                                         if (du[0] > unit || du[1] > unit) {
+                                         du[0] /= 1024;
+                                         du[1] /= 1024;
+                                         if (du[0] > 1024 || du[1] > 1024) {
 -                                            this._wlanUnit.text = boolUnit ? 't' : 'T';
 +                                            wunit = boolUnit ? 't' : 'T';
-                                             du[0] /= unit;
-                                             du[1] /= unit;
+                                             du[0] /= 1024;
+                                             du[1] /= 1024;
                                          }
                                      }
                                  }
@@ -460,7 +479,7 @@ index a6e9743..6b81720 100644
                              }
  
                              break;
-@@ -1993,9 +1993,9 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2113,9 +2051,9 @@ const ResourceMonitor = GObject.registerClass(
                  this._wlanIdleOld = idle;
  
                  if (this._decimalsStatus) {
@@ -472,23 +491,12 @@ index a6e9743..6b81720 100644
                  }
              });
          }
-@@ -2004,25 +2004,26 @@ const ResourceMonitor = GObject.registerClass(
-             if (GLib.file_test('/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq', GLib.FileTest.EXISTS)) {
-                 this._loadFile('/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq').then(contents => {
-                     let value = parseInt(ByteArray.toString(contents));
-+                    let unit = "";
- 
-                     if (value > 999999) {
--                        this._cpuFrequencyUnit.text = 'GHz';
-+                        unit = 'GHz';
-                         value /= 1000;
-                         value /= 1000;
-                     } else {
--                        this._cpuFrequencyUnit.text = 'MHz';
-+                        unit = 'MHz';
-                         value /= 1000;
+@@ -2159,17 +2097,14 @@ const ResourceMonitor = GObject.registerClass(
+                             break;
                      }
  
+-                    this._cpuFrequencyUnit.text = unit;
+-
                      if (this._decimalsStatus) {
 -                        this._cpuFrequencyValue.text = `[${value.toFixed(2)}`;
 +                        this._cpuFrequencyValue.text = `[${value.toFixed(2)}${unit}`;
@@ -500,11 +508,10 @@ index a6e9743..6b81720 100644
              } else {
                  this._cpuFrequencyValue.text = _('[Frequency Error');
 -                this._cpuFrequencyUnit.text = '';
-+                //this._cpuFrequencyUnit.text = '';
              }
          }
  
-@@ -2062,27 +2063,28 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2209,27 +2144,28 @@ const ResourceMonitor = GObject.registerClass(
  
                              if (this._cpuTemperaturesReads >= this._thermalCpuTemperatureDevicesList.length) {
                                  // Temperatures Average
@@ -537,34 +544,31 @@ index a6e9743..6b81720 100644
                                  }
  
                                  this._cpuTemperatures = 0;
-@@ -2091,7 +2093,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2238,7 +2174,6 @@ const ResourceMonitor = GObject.registerClass(
                          });
                      } else {
                          this._cpuTemperatureValue.text = _('[Temperature Error');
 -                        this._cpuTemperatureUnit.text = '';
-+                        // this._cpuTemperatureUnit.text = '';
                      }
                  }
              } else {
-@@ -2319,7 +2321,7 @@ const DiskContainer = GObject.registerClass(
+@@ -2490,7 +2425,6 @@ const DiskContainer = GObject.registerClass(
              this._elementsName = [];
              this._elementsLabel = [];
              this._elementsValue = [];
 -            this._elementsUnit = [];
-+            //this._elementsUnit = [];
          }
  
          set_element_width(width) {
-@@ -2342,7 +2344,7 @@ const DiskContainer = GObject.registerClass(
+@@ -2513,7 +2447,6 @@ const DiskContainer = GObject.registerClass(
              this._elementsName = [];
              this._elementsLabel = [];
              this._elementsValue = [];
 -            this._elementsUnit = [];
-+            //this._elementsUnit = [];
  
              this.remove_all_children();
          }
-@@ -2368,14 +2370,14 @@ const DiskContainerStats = GObject.registerClass(
+@@ -2539,14 +2472,8 @@ const DiskContainerStats = GObject.registerClass(
              });
              this._elementsValue['single'].set_style('text-align: right;');
  
@@ -573,19 +577,13 @@ index a6e9743..6b81720 100644
 -                text: 'K'
 -            });
 -            this._elementsUnit['single'].set_style('padding-left: 0.125em;');
-+            // this._elementsUnit['single'] = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: 'K'
-+            // });
-+            // this._elementsUnit['single'].set_style('padding-left: 0.125em;');
  
              this.add(this._elementsValue['single']);
 -            this.add(this._elementsUnit['single']);
-+            //this.add(this._elementsUnit['single']);
  
              this.idleOld['single'] = 0;
              this.rwTotOld['single'] = [0, 0];
-@@ -2395,15 +2397,15 @@ const DiskContainerStats = GObject.registerClass(
+@@ -2566,15 +2493,8 @@ const DiskContainerStats = GObject.registerClass(
              });
              this._elementsValue[filesystem].set_style('text-align: right;');
  
@@ -594,57 +592,46 @@ index a6e9743..6b81720 100644
 -                text: 'K'
 -            });
 -            this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
-+            // this._elementsUnit[filesystem] = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: 'K'
-+            // });
-+            // this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
- 
+-
              this.add(this._elementsName[filesystem]);
              this.add(this._elementsValue[filesystem]);
 -            this.add(this._elementsUnit[filesystem]);
-+            //this.add(this._elementsUnit[filesystem]);
  
              this.idleOld[filesystem] = 0;
              this.rwTotOld[filesystem] = [0, 0];
-@@ -2416,10 +2418,10 @@ const DiskContainerStats = GObject.registerClass(
+@@ -2587,10 +2507,8 @@ const DiskContainerStats = GObject.registerClass(
                          if (element !== 'single') {
                              this._elementsName[element].hide();
                              this._elementsValue[element].hide();
 -                            this._elementsUnit[element].hide();
-+                            //this._elementsUnit[element].hide();
                          } else {
                              this._elementsValue[element].show();
 -                            this._elementsUnit[element].show();
-+                            //this._elementsUnit[element].show();
                          }
                      });
  
-@@ -2432,10 +2434,10 @@ const DiskContainerStats = GObject.registerClass(
+@@ -2603,10 +2521,8 @@ const DiskContainerStats = GObject.registerClass(
                          if (element !== 'single') {
                              this._elementsName[element].show();
                              this._elementsValue[element].show();
 -                            this._elementsUnit[element].show();
-+                            //this._elementsUnit[element].show();
                          } else {
                              this._elementsValue[element].hide();
 -                            this._elementsUnit[element].hide();
-+                            //this._elementsUnit[element].hide();
                          }
                      });
  
-@@ -2465,8 +2467,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -2636,8 +2552,7 @@ const DiskContainerStats = GObject.registerClass(
  
          update_element_value(filesystem, value, unit) {
              if (this._elementsValue[filesystem]) {
 -                this._elementsValue[filesystem].text = value;
 -                this._elementsUnit[filesystem].text = unit;
 +                this._elementsValue[filesystem].text = value + unit;
-+                //this._elementsUnit[filesystem].text = unit;
              }
          }
      });
-@@ -2487,21 +2489,21 @@ const DiskContainerSpace = GObject.registerClass(
+@@ -2658,21 +2573,13 @@ const DiskContainerSpace = GObject.registerClass(
              });
              this._elementsValue[filesystem].set_style('text-align: right;');
  
@@ -653,16 +640,10 @@ index a6e9743..6b81720 100644
 -                text: this._diskSpaceUnitType ? '%' : 'KB'
 -            });
 -            this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
-+            // this._elementsUnit[filesystem] = new St.Label({
-+            //     y_align: Clutter.ActorAlign.CENTER,
-+            //     text: this._diskSpaceUnitType ? '%' : 'KB'
-+            // });
-+            // this._elementsUnit[filesystem].set_style('padding-left: 0.125em;');
- 
+-
              this.add(this._elementsName[filesystem]);
              this.add(this._elementsValue[filesystem]);
 -            this.add(this._elementsUnit[filesystem]);
-+            // this.add(this._elementsUnit[filesystem]);
          }
  
          update_element_value(filesystem, value, unit) {
@@ -670,7 +651,6 @@ index a6e9743..6b81720 100644
 -                this._elementsValue[filesystem].text = value;
 -                this._elementsUnit[filesystem].text = unit;
 +                this._elementsValue[filesystem].text = value + unit;
-+                // this._elementsUnit[filesystem].text = unit;
              }
          }
      });

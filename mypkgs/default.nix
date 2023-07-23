@@ -161,7 +161,7 @@ in rec {
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
   gnome = super.gnome // rec {
-    mutter = super.gnome.mutter.overrideAttrs ( oldAttrs: { patches = oldAttrs.patches ++ [ ./mutter.patch ]; });
+    mutter = super.gnome.mutter.overrideAttrs ( oldAttrs: { patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ]; });
     gnome-shell = super.gnome.gnome-shell.override { inherit mutter; };
   };
 

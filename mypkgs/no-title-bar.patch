@@ -1,0 +1,88 @@
+diff --git a/decoration.js b/decoration.js
+index 9128bc0..ba182af 100644
+--- a/decoration.js
++++ b/decoration.js
+@@ -53,7 +53,7 @@ var Decoration = class {
+             this._nWorkspacesChanged();
+         });
+ 
+-        this._changeMonitorsID = Meta.MonitorManager.get().connect('monitors-changed', () => {
++        this._changeMonitorsID = Main.layoutManager.connect('monitors-changed', () => {
+             Utils.log_debug("Monitors changed, reloading");
+             this._disable();
+             this._enable();
+@@ -129,7 +129,7 @@ var Decoration = class {
+         this._removeUserStyles();
+ 
+         if (this._changeMonitorsID != null) {
+-            Meta.MonitorManager.get().disconnect(this._changeMonitorsID);
++            Main.layoutManager.disconnect(this._changeMonitorsID);
+             this._changeMonitorsID = null;
+         }
+ 
+@@ -202,7 +202,7 @@ var Decoration = class {
+         if (originalState === WindowState.DEFAULT) {
+             this._toggleDecorations(win, hide);
+         } else {
+-            Utils.log_debug(`Skipping window '${win.get_title()}' because its window state was not default`);
++            Utils.log_debug(`Skipping window '${win.get_title()}' because its window state was not default ${originalState}`);
+         }
+     }
+ 
+@@ -235,7 +235,7 @@ var Decoration = class {
+     _toggleDecorations(win, hide) {
+         let windId = this._guessWindowXID(win);
+         let prop = '_MOTIF_WM_HINTS';
+-        let value = '0x2, 0x0, %s, 0x0, 0x0'.format(hide ? '0x2' : '0x1');
++        let value = '0x2, 0x0, %s, 0x0, 0x0'.format(hide ? '0x0' : '0x1');
+ 
+         GLib.spawn_command_line_sync(`/nix/store/l2lal7c07w2xhrpxrw7gbinxf7agacvh-xprop-1.2.6/bin/xprop -id ${windId} -f ${prop} 32c -set ${prop} "${value}"`);
+         if (!hide && !win.titlebar_is_onscreen()) {
+diff --git a/extension.js b/extension.js
+index f27dd31..3a075c5 100644
+--- a/extension.js
++++ b/extension.js
+@@ -34,19 +34,19 @@ function enable() {
+     Utils.log("Enabling extension");
+     let settings = Utils.enable();
+ 
+-    buttons = new Buttons.Buttons(settings);
+-    appMenu = new AppMenu.AppMenu(settings);
++    // buttons = new Buttons.Buttons(settings);
++    // appMenu = new AppMenu.AppMenu(settings);
+     decoration = new Decoration.Decoration(settings);
+ }
+ 
+ function disable() {
+     Utils.log("Disabling extension");
+-    appMenu.destroy();
+-    appMenu = null;
++    // appMenu.destroy();
++    // appMenu = null;
+     decoration.destroy();
+     decoration = null;
+-    buttons.destroy();
+-    buttons = null;
++    // buttons.destroy();
++    // buttons = null;
+ 
+     Utils.disable();
+ }
+diff --git a/metadata.json b/metadata.json
+index fcb3815..ef0fe9d 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -3,8 +3,12 @@
+   "name": "No Title Bar - Forked",
+   "description": "No Title Bar removes the title bar from non-GTK applications and moves the window title and buttons to the top panel.\n\nTitlebars are also hidden for Wayland-native clients that don't use CSD. Some of the options may be incompatible with this. For issues on Wayland please visit github!\n\nThis is a fork of https://extensions.gnome.org/extension/1267/no-title-bar/ with added compatibility for Gnome 3.32.\n\nThis extension depends on some Xorg utilities. To install them:\n\n\u26ab Debian/Ubuntu: apt install x11-utils\n\u26ab Fedora/RHEL: dnf install xorg-x11-utils\n\u26ab Arch: pacman -S xorg-xprop",
+   "url": "https://github.com/poehlerj/no-title-bar",
++  "session-modes": [
++    "unlock-dialog",
++    "user"
++  ],
+   "shell-version": [
+-      "3.38"
++      "3.38", "44"
+   ],
+   "version": 11
+ }

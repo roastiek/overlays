@@ -1,60 +1,13 @@
-diff --git a/src/backends/meta-monitor-config-manager.c b/src/backends/meta-monitor-config-manager.c
-index da3f1dd..5a5af3e 100644
---- a/src/backends/meta-monitor-config-manager.c
-+++ b/src/backends/meta-monitor-config-manager.c
-@@ -1297,6 +1297,8 @@ meta_monitor_config_manager_create_for_switch_config (MetaMonitorConfigManager
-   MetaMonitorManager *monitor_manager = config_manager->monitor_manager;
-   MetaMonitorsConfig *config;
- 
-+  meta_warning("meta_monitor_config_manager_create_for_switch_config\n");
-+
-   if (!meta_monitor_manager_can_switch_config (monitor_manager))
-     return NULL;
- 
 diff --git a/src/backends/meta-monitor.c b/src/backends/meta-monitor.c
-index 54a228e..4d75536 100644
+index 00502bb..e5dfda2 100644
 --- a/src/backends/meta-monitor.c
 +++ b/src/backends/meta-monitor.c
-@@ -1658,7 +1658,7 @@ meta_monitor_calculate_crtc_pos (MetaMonitor          *monitor,
- }
+@@ -1828,7 +1828,7 @@ meta_monitor_calculate_crtc_pos (MetaMonitor          *monitor,
+  * The largest mainstream laptops have screens ~17in, and HiDPI external
+  * monitors start at ~23in, so 20in is a good boundary point
+  */
+-#define UI_SCALE_LARGE_TARGET_DPI 110
++#define UI_SCALE_LARGE_TARGET_DPI 75
+ #define UI_SCALE_LARGE_MIN_SIZE_INCHES 20
  
- /* The minimum resolution at which we turn on a window-scale of 2 */
--#define HIDPI_LIMIT 192
-+#define HIDPI_LIMIT 132
- 
- /*
-  * The minimum screen height at which we turn on a window-scale of 2;
-@@ -1679,12 +1679,15 @@ calculate_scale (MetaMonitor                *monitor,
-   int width_mm, height_mm;
-   int scale;
- 
-+
-   scale = 1.0;
- 
-   meta_monitor_mode_get_resolution (monitor_mode,
-                                     &resolution_width,
-                                     &resolution_height);
- 
-+  meta_warning("calculate_scale %d %d\n", resolution_width, resolution_height);
-+
-   if (resolution_height < HIDPI_MIN_HEIGHT)
-     return scale;
- 
-@@ -1702,6 +1705,8 @@ calculate_scale (MetaMonitor                *monitor,
- 
-   meta_monitor_get_physical_dimensions (monitor, &width_mm, &height_mm);
- 
-+  meta_warning("calculate_scale %d %d\n", width_mm, height_mm);
-+
-   /*
-    * Somebody encoded the aspect ratio (16/9 or 16/10) instead of the physical
-    * size.
-@@ -1716,6 +1721,8 @@ calculate_scale (MetaMonitor                *monitor,
-       dpi_x = (double) resolution_width / (width_mm / 25.4);
-       dpi_y = (double) resolution_height / (height_mm / 25.4);
- 
-+      meta_warning("calculate_scale %f %f\n", dpi_x, dpi_y);
-+
-       /*
-        * We don't completely trust these values so both must be high, and never
-        * pick higher ratio than 2 automatically.
+ static float
