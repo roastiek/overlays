@@ -143,6 +143,11 @@
       unifont
     ];
     #fontconfig.penultimate.enable = false;
+    fontconfig.defaultFonts = {
+      serif = [ "Liberation Serif" ];
+      sansSerif = [ "Liberation Sans" ];
+      monospace = [ "Liberation Mono" ];
+    };
   };
 
   environment.extraInit = ''
