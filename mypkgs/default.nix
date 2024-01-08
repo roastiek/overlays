@@ -4,10 +4,6 @@ let
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
 in rec {
 
-  opera12 = callPackage ./opera12 { freetype = freetype29;
-    inherit (super.gst_all_1) gstreamer gst-plugins-base gst-plugins-good;
-  };
-
   freetype_subpixel = super.freetype.overrideDerivation (old: {
       postPatch = ''
         sed -r -i 's/^#define TT_CONFIG_OPTION_SUBPIXEL_HINTING .*$//' devel/ftoption.h include/freetype/config/ftoption.h
@@ -138,15 +134,15 @@ in rec {
     paths = with self; [ vw boost boost.dev zlib ]; #boostStatic boostStatic.dev zlib ];
   };
 
-  gnomeExtensions = super.gnomeExtensions // {
-    vitals = self.callPackage ./vitals { };
-    volume-mixer = self.callPackage ./volume-mixer { };
-    no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
-      postInstall = ''
-        substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"43"'
-      '';
-    });
-  };
+  # gnomeExtensions = super.gnomeExtensions // {
+  #   vitals = self.callPackage ./vitals { };
+  #   volume-mixer = self.callPackage ./volume-mixer { };
+  #   no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
+  #     postInstall = ''
+  #       substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"43"'
+  #     '';
+  #   });
+  # };
 
   thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
     version = "2.4.6";
@@ -156,6 +152,13 @@ in rec {
       rev = "v${version}";
       sha256 = "1lgaky8cmxbi17zpymy2v9wgknx1g92bq50j6kfpsm8qgb7djjb6";
     };
+    CFLAGS="-Wno-error";
+
+    buildFlags = [ "CFLAGS=-Wno-error" "CXXFLAGS=-Wno-error" ];
+    # configureFlags = oldAttrs.configureFlags ++ [
+    #   "--help"
+    #   "--disable-error-on-warning"
+    # ];
   });
 
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
@@ -177,4 +180,23 @@ in rec {
 
   snappers = self.callPackage ./snappers { pythonPackages = self.python3Packages; };
 
+  piggy = self.callPackage ./piggy { };
+
+  gopls = self.buildGoModule rec {
+    pname = "gopls";
+    version = "0.14.2";
+    src = self.fetchFromGitHub {
+      owner = "golang";
+      repo = "tools";
+      rev = "gopls/v${version}";
+      sha256 = "sha256-hcicI5ka6m0W2Sj8IaxNsLfIc97eR8SKKp81mJvM2GM=";
+    };
+
+    modRoot = "gopls";
+    vendorSha256 = "sha256-jjUTRLRySRy3sfUDfg7cXRiDHk1GWHijgEA5XjS+9Xo=";
+    doCheck = false;
+
+    # Only build gopls, and not the integration tests or documentation generator.
+    subPackages = [ "." ];
+  };
 }

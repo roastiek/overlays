@@ -36,7 +36,9 @@
     firefox
     vivaldi
     zoom-us
-    ( vscodium-fhsWithPackages { additionalPkgs = pkgs: [ pkgs.go_1_19 pkgs.jdk17 ]; profile = ''
+    ( vscodium-fhsWithPackages { additionalPkgs = pkgs: [
+      pkgs.go pkgs.gopls pkgs.gotools pkgs.go-tools pkgs.delve pkgs.gotests
+      pkgs.jdk17 ]; profile = ''
       JAVA_HOME=/usr/lib64/openjdk
     '';} )
     libreoffice

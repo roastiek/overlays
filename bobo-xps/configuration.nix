@@ -85,6 +85,8 @@
 
   programs.steam.enable = true;
 
+  programs.firefox.nativeMessagingHosts.gsconnect = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -102,7 +104,9 @@
     config.boot.kernelPackages.cpupower
     # qsync
 
-    # work tools
+    gnomeExtensions.gsconnect
+
+  # work tools
     goenvtemplator
     kube-login
     whois
@@ -121,6 +125,26 @@
     theme-jade1
   ];
 
+  environment.variables.JAVAX_NET_SSL_TRUSTSTORE =
+    let
+      caBundle = config.environment.etc."ssl/certs/ca-bundle.crt".source;
+      p11kit = pkgs.p11-kit.overrideAttrs (oldAttrs: {
+        configureFlags = [
+          "--with-trust-paths=${caBundle}"
+        ];
+      });
+    in derivation {
+      name = "java-cacerts";
+      builder = pkgs.writeShellScript "java-cacerts-builder" ''
+        ${p11kit.bin}/bin/trust \
+          extract \
+          --format=java-cacerts \
+          --purpose=server-auth \
+          $out
+      '';
+      system = builtins.currentSystem;
+    };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.bobo = {
     isNormalUser = true;
@@ -129,4 +153,47 @@
     extraGroups = [ "wheel" "networkmanager" "docker" "lxd" "power" ]; # Enable ‘sudo’ for the user.
   };
 
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = [ "pipecd" "bobo" ];
+    ensureUsers = [
+      { name = "bobo";
+        ensurePermissions = {
+          "DATABASE pipecd" = "ALL PRIVILEGES";
+        };
+      }
+      { name = "bobo";
+        ensurePermissions = {
+          "DATABASE bobo" = "ALL PRIVILEGES";
+        };
+      }
+    ];
+  };
+
+  systemd.user.services.piggy = {
+    wantedBy = ["default.target"];
+    preStart = ''
+      mkdir -p ~/.piggy
+    '';
+    serviceConfig = {
+      ExecStart = "${pkgs.piggy}/bin/piggy --address localhost:7666 %h/.piggy/db.json";
+      RestartSec = "1m";
+      Restart = "always";
+    };
+  };
+
+  # systemd.user.services.caldav-proxy = {
+  #   wantedBy = ["default.target"];
+  #   serviceConfig = {
+  #     ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.envoy}/bin/envoy -c ${./caldav.yaml} --concurrency 1 | tee'";
+  #     RestartSec = "1m";
+  #     Restart = "always";
+  #   };
+  # };
+
+  # systemd.services.nix-daemon = {
+  #   environment = {
+  #     TMPDIR = "/var/tmp";
+  #   };
+  # };
 }

@@ -11,8 +11,8 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # boot.kernelPackages = pkgs.linuxPackages_5_16;
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_6_4;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "i915"
     "nvme" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -27,6 +27,7 @@
     #"memmap=0x1000%0x59782000-1+2"
     # "intel_pstate=no_hwp"
     # "initcall_debug"
+    #"intel_pstate=active"
     "intel_pstate=passive"
   ];
 
@@ -89,20 +90,16 @@
   nix = {
     settings = {
       max-jobs = lib.mkDefault 100;
-      cores = lib.mkDefault 8;
+      cores = lib.mkDefault 6;
     };
   };
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
   hardware.opengl.driSupport32Bit = true;
   hardware.cpu.intel.updateMicrocode = true;
   hardware.sensor.iio.enable = true;
-
-  hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = true;
 
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
