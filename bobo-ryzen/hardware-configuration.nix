@@ -16,11 +16,12 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  #boot.kernelParams = [
+  boot.kernelParams = [
   #  "acpi_enforce_resources=lax"
-  #];
+    "amd_pstate=active"
+  ];
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "schedutil";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   fileSystems."/" =
     { device = "/dev/mapper/nixos-system";
