@@ -37,8 +37,8 @@
   networking.useDHCP = false;
   networking.hostName = "bobo-machine"; # Define your hostname.
   networking.extraHosts = ''
-    10.0.0.140      bobo-machine.lan bobo-machine
-    10.0.0.141      bobo-laptop.lan bobo-laptop
+    #10.0.0.140      bobo-machine.lan bobo-machine
+    #10.0.0.141      bobo-laptop.lan bobo-laptop
   '';
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -75,6 +75,7 @@
       enableSound = false;
       enableTWBT = true;
     } )
+    iptables
   ];
 
   services.resolved.enable = false;
@@ -163,4 +164,6 @@
 */
 
 # boot.plymouth.enable = true;
+
+  # networking.firewall.enable = false;
 }

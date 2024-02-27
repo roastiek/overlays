@@ -23,7 +23,7 @@ buildGoModule rec {
   #   '';
   };
 
-  vendorSha256 = "sha256:86AZGmNM/pCdngKcVnQWR54DBBOKid9tQR1BBfT/CAg=";
+  vendorHash = "sha256:86AZGmNM/pCdngKcVnQWR54DBBOKid9tQR1BBfT/CAg=";
 
   nativeBuildInputs = [ pkger ];
 

@@ -1,81 +1,103 @@
 diff --git a/extension.js b/extension.js
-index e5d6210..a06c782 100644
+index ac12679..aad5a15 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -2136,46 +2136,45 @@ const ResourceMonitor = GObject.registerClass(
-                         continue;
-                     }
+@@ -26,6 +26,8 @@ import GLib from "gi://GLib";
+ import Shell from "gi://Shell";
+ import NM from "gi://NM";
  
--                    if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
--                        this._loadFile(path).then(contents => {
--                            const value = parseInt(ByteArray.toString(contents));
-+                    let temps = [];
++const ByteArray = imports.byteArray;
++
+ import * as Main from "resource:///org/gnome/shell/ui/main.js";
+ import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
+ import * as Util from "resource:///org/gnome/shell/misc/util.js";
+@@ -2541,53 +2543,51 @@ const ResourceMonitor = GObject.registerClass(
+             continue;
+           }
  
--                            this._cpuTemperatures += value / 1000;
--                            this._cpuTemperaturesReads++;
-+                    if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
-+                    } else {
-+                        this._cpuTemperatureValue.text = _('[Temperature Error');
-+                        temps.push(this._loadFile(path).then(contents => {
-+                            return parseInt(ByteArray.toString(contents)) / 1000;
-+                        }));
-+                    }
-+                    Promise.all(temps).then(values => {
-+                        let temp = values.reduce((a, b) => a + b, 0)
+-          if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
+-            this._loadFile(path).then((contents) => {
+-              const value = parseInt(new TextDecoder().decode(contents));
++          let temps = [];
  
--                            if (this._cpuTemperaturesReads >= this._thermalCpuTemperatureDevicesList.length) {
--                                // Temperatures Average
--                                let unit = "";
--                                this._cpuTemperatures /= this._cpuTemperaturesReads;
-+                        // Temperatures Average
-+                        let unit = "";
-+                        this._cpuTemperatures = temp / values.length;
+-              this._cpuTemperatures += value / 1000;
+-              this._cpuTemperaturesReads++;
++          if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
++            temps.push(this._loadFile(path).then(contents => {
++              return parseInt(ByteArray.toString(contents)) / 1000;
++            }).catch(reason => {
++              log(`FAILED TEMP READ ${reason}`);
++            }));
++          }
++          Promise.all(temps).then(values => {
++            let temp = values.reduce((a, b) => a + b, 0)
  
--                                switch (this._thermalTemperatureUnit) {
--                                    case 'f':
--                                        this._cpuTemperatures = (this._cpuTemperatures * 1.8) + 32;
--                                        unit = '°F';
-+                        switch (this._thermalTemperatureUnit) {
-+                            case 'f':
-+                                this._cpuTemperatures = (this._cpuTemperatures * 1.8) + 32;
-+                                unit = '°F';
+-              if (
+-                this._cpuTemperaturesReads >=
+-                this._thermalCpuTemperatureDevicesList.length
+-              ) {
+-                // Temperatures Average
+-                let unit = "";
+-                this._cpuTemperatures /= this._cpuTemperaturesReads;
++            // Temperatures Average
++            let unit = "";
++            this._cpuTemperatures = temp / values.length;
  
--                                        break;
-+                                break;
+-                switch (this._thermalTemperatureUnit) {
+-                  case "f":
+-                    this._cpuTemperatures = this._cpuTemperatures * 1.8 + 32;
+-                    unit = "°F";
++            switch (this._thermalTemperatureUnit) {
++              case "f":
++                this._cpuTemperatures = (this._cpuTemperatures * 1.8) + 32;
++                unit = "°F";
  
--                                    case 'c':
-+                            case 'c':
+-                    break;
++                break;
  
--                                    default:
--                                        unit = '°C';
-+                            default:
-+                                unit = '°C';
+-                  case "c":
++              case "c":
  
--                                        break;
--                                }
-+                                break;
-+                        }
+-                  default:
+-                    unit = "°C";
++              default:
++                unit = "°C";
  
--                                if (this._decimalsStatus) {
--                                    this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(1)}${unit}`;
--                                } else {
--                                    this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(0)}${unit}`;
--                                }
-+                        if (this._decimalsStatus) {
-+                            this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(1)}${unit}`;
-+                        } else {
-+                            this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(0)}${unit}`;
-+                        }
+-                    break;
+-                }
++                break;
++            }
  
--                                this._cpuTemperatures = 0;
--                                this._cpuTemperaturesReads = 0;
--                            }
--                        });
--                    } else {
--                        this._cpuTemperatureValue.text = _('[Temperature Error');
--                    }
-+                        this._cpuTemperatures = 0;
-+                    });
-                 }
-             } else {
-                 this._cpuTemperatureValue.text = _('[--');
+-                if (this._decimalsStatus) {
+-                  this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
+-                    1
+-                  )}${unit}`;
+-                } else {
+-                  this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
+-                    0
+-                  )}${unit}`;
+-                }
++            if (this._decimalsStatus) {
++              this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
++                1
++              )}${unit}`;
++            } else {
++              this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
++                0
++              )}${unit}`;
++            }
+ 
+-                this._cpuTemperatures = 0;
+-                this._cpuTemperaturesReads = 0;
+-              }
+-            });
+-          } else {
+-            this._cpuTemperatureValue.text = _("[Temperature Error");
+-          }
++            this._cpuTemperatures = 0;
++          }).catch(reason => {
++              log(`FAILED TEMP READ ${reason}`);
++          });
+         }
+       } else {
+         this._cpuTemperatureValue.text = _("[--");

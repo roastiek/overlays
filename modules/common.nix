@@ -132,10 +132,10 @@
   systemd.services."save-hwclock".wantedBy = lib.mkForce [];
 
   fonts = {
-    enableDefaultFonts = false;
+    enableDefaultPackages = false;
     #enableFontDir = true;
     #enableCoreFonts = true;
-    fonts = with pkgs; [
+    packages = with pkgs; lib.mkForce [
       liberation_ttf_v1
       #liberation_ttf
       freefont_ttf

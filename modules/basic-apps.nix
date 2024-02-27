@@ -1,5 +1,7 @@
 { config, pkgs, lib, ... }:
 {
+  programs.firefox.enable = true;
+
   environment.systemPackages = with pkgs; [
     # systools
     tcpdump
@@ -33,7 +35,6 @@
     direnv
 
     # gui apps
-    firefox
     vivaldi
     zoom-us
     ( vscodium-fhsWithPackages { additionalPkgs = pkgs: [

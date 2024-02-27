@@ -1,12 +1,12 @@
 diff --git a/extension.js b/extension.js
-index b71694a..e5d6210 100644
+index 69ca8a8..ac12679 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -156,6 +156,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -145,6 +145,7 @@ const ResourceMonitor = GObject.registerClass(
  
-             if (typeof NM !== 'undefined') {
-                 NM.Client.new_async(null, (client) => {
-+                    this._nm_client = client;
-                     client.connect('active-connection-added', this._onActiveConnectionAdded.bind(this));
-                     client.connect('active-connection-removed', this._onActiveConnectionRemoved.bind(this));
- 
+       if (typeof NM !== "undefined") {
+         NM.Client.new_async(null, (client) => {
++          this._nm_client = client;
+           client.connect(
+             "active-connection-added",
+             this._onActiveConnectionAdded.bind(this)

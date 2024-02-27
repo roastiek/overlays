@@ -1,137 +1,121 @@
 diff --git a/extension.js b/extension.js
-index a06c782..4a85692 100644
+index aad5a15..82116bc 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -165,6 +165,12 @@ const ResourceMonitor = GObject.registerClass(
-             }
- 
-             this._mainTimer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, this._refreshTime, this._refreshHandler.bind(this));
+@@ -166,6 +166,12 @@ const ResourceMonitor = GObject.registerClass(
+         this._refreshTime,
+         this._refreshHandler.bind(this)
+       );
 +
-+            this._cpus = [];
-+            for (let i = 0; GLib.file_test(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`, GLib.FileTest.EXISTS); i++) {
-+                this._cpus.push(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
-+            }
++      this._cpus = [];
++      for (let i = 0; GLib.file_test(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`, GLib.FileTest.EXISTS); i++) {
++          this._cpus.push(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
++      }
 +
-             this._refreshHandler();
-         }
+       this._refreshHandler();
+     }
  
-@@ -2060,53 +2066,60 @@ const ResourceMonitor = GObject.registerClass(
-         }
+@@ -2452,62 +2458,60 @@ const ResourceMonitor = GObject.registerClass(
+     }
  
-         _refreshCpuFrequencyValue() {
--            if (GLib.file_test('/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq', GLib.FileTest.EXISTS)) {
--                this._loadFile('/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq').then(contents => {
--                    let value = parseInt(ByteArray.toString(contents));
--                    let unit = "";
-+            let freqs = [];
-+            for (let i = 0; i < this._cpus.length; i++) {
-+                freqs.push(this._loadFile(this._cpus[i]).then(contents => {
-+                    return parseInt(ByteArray.toString(contents));
-+                }).catch(reason => {
-+                    log(`FREQ READ FAILED ${reason}`);
-+                }));
-+            }
+     _refreshCpuFrequencyValue() {
+-      if (
+-        GLib.file_test(
+-          "/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq",
+-          GLib.FileTest.EXISTS
+-        )
+-      ) {
+-        this._loadFile(
+-          "/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq"
+-        ).then((contents) => {
+-          let value = parseInt(new TextDecoder().decode(contents));
+-          let unit = "";
+-
+-          switch (this._cpuFrequencyUnitMeasure) {
+-            case "k":
+-              unit = "KHz";
+-              break;
++      let freqs = [];
++      for (let i = 0; i < this._cpus.length; i++) {
++        freqs.push(this._loadFile(this._cpus[i]).then(contents => {
++          return parseInt(ByteArray.toString(contents));
++        }).catch(reason => {
++          log(`FREQ READ FAILED ${reason}`);
++        }));
++      }
  
--                    switch (this._cpuFrequencyUnitMeasure) {
--                        case 'k':
--                            unit = "KHz"
--                            break;
-+            Promise.all(freqs).then(values => {
-+                let value = values.reduce((a, b) => a > b ? a : b, 0)
-+                let unit = "";
+-            case "m":
+-              unit = "MHz";
+-              value /= 1000;
+-              break;
++      Promise.all(freqs).then(values => {
++        let value = values.reduce((a, b) => a > b ? a : b, 0)
++        let unit = "";
  
--                        case 'm':
--                            unit = "MHz"
--                            value /= 1000;
--                            break;
-+                switch (this._cpuFrequencyUnitMeasure) {
-+                    case 'k':
-+                        unit = "KHz"
-+                        break;
+-            case "g":
+-              unit = "GHz";
+-              value /= 1000;
+-              value /= 1000;
+-              break;
++        switch (this._cpuFrequencyUnitMeasure) {
++          case "k":
++            unit = "KHz";
++            break;
  
--                        case 'g':
--                            unit = "GHz"
--                            value /= 1000;
--                            value /= 1000;
--                            break;
-+                    case 'm':
-+                        unit = "MHz"
-+                        value /= 1000;
-+                        break;
+-            case "auto":
++          case "m":
++            unit = "MHz";
++            value /= 1000;
++            break;
  
--                        case 'auto':
-+                    case 'g':
-+                        unit = "GHz"
-+                        value /= 1000;
-+                        value /= 1000;
-+                        break;
- 
--                        default:
-+                    case 'auto':
+-            default:
+-              if (value > 1000) {
++          case "g":
++            unit = "GHz";
++            value /= 1000;
++            value /= 1000;
++            break;
 +
-+                    default:
-+                        if (value > 1000) {
-+                            unit = 'MHz';
-+                            value /= 1000;
-                             if (value > 1000) {
--                                unit = 'MHz';
-+                                unit = 'GHz';
-                                 value /= 1000;
--                                if (value > 1000) {
--                                    unit = 'GHz';
--                                    value /= 1000;
--                                }
--                            } else {
--                                unit = 'KHz';
-                             }
-+                        } else {
-+                            unit = 'KHz';
-+                        }
- 
--                            break;
--                    }
-+                        break;
-+                }
- 
--                    if (this._decimalsStatus) {
--                        this._cpuFrequencyValue.text = `[${value.toFixed(2)}${unit}`;
--                    } else {
--                        this._cpuFrequencyValue.text = `[${value.toFixed(0)}${unit}`;
--                    }
--                });
--            } else {
--                this._cpuFrequencyValue.text = _('[Frequency Error');
--            }
-+                if (this._decimalsStatus) {
-+                    this._cpuFrequencyValue.text = `[${value.toFixed(2)}${unit}`;
-+                } else {
-+                    this._cpuFrequencyValue.text = `[${value.toFixed(0)}${unit}`;
-+                }
-+            }).catch(reason => {
-+                log(`UPDATE FAILED ${reason}`);
-+            });
-         }
- 
-         _refreshCpuLoadAverageValue() {
-@@ -2139,10 +2152,10 @@ const ResourceMonitor = GObject.registerClass(
-                     let temps = [];
- 
-                     if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
--                    } else {
--                        this._cpuTemperatureValue.text = _('[Temperature Error');
-                         temps.push(this._loadFile(path).then(contents => {
-                             return parseInt(ByteArray.toString(contents)) / 1000;
-+                        }).catch(reason => {
-+                            log(`FAILED TEMP READ ${reason}`);
-                         }));
-                     }
-                     Promise.all(temps).then(values => {
-@@ -2174,6 +2187,8 @@ const ResourceMonitor = GObject.registerClass(
-                         }
- 
-                         this._cpuTemperatures = 0;
-+                    }).catch(reason => {
-+                        log(`FAILED TEMP READ ${reason}`);
-                     });
++          case "auto":
++
++          default:
++            if (value > 1000) {
+                 unit = "MHz";
+                 value /= 1000;
+                 if (value > 1000) {
+-                  unit = "GHz";
+-                  value /= 1000;
++                    unit = "GHz";
++                    value /= 1000;
                  }
-             } else {
+-              } else {
++            } else {
+                 unit = "KHz";
+-              }
+-
+-              break;
+-          }
++            }
+ 
+-          this._cpuFrequencyUnit.text = unit;
++            break;
++        }
+ 
+-          if (this._decimalsStatus) {
++        if (this._decimalsStatus) {
+             this._cpuFrequencyValue.text = `[${value.toFixed(2)}${unit}`;
+-          } else {
++        } else {
+             this._cpuFrequencyValue.text = `[${value.toFixed(0)}${unit}`;
+-          }
+-        });
+-      } else {
+-        this._cpuFrequencyValue.text = _("[Frequency Error");
+-      }
++        }
++      }).catch(reason => {
++          log(`UPDATE FAILED ${reason}`);
++      });
+     }
+ 
+     _refreshCpuLoadAverageValue() {

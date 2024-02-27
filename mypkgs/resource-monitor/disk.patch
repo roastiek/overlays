@@ -1,23 +1,23 @@
 diff --git a/extension.js b/extension.js
-index db83273..1a3e0a0 100644
+index ffd09da..9043e31 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -2879,7 +2879,7 @@ class Extension {
+@@ -3354,7 +3354,7 @@ export default class ResourceMonitorExtension extends Extension {
  
-         const index = {
-             left: -1,
--            center: 0,
-+            center: -1,
-             right: 0,
-         };
+     const index = {
+       left: -1,
+-      center: 0,
++      center: -1,
+       right: 0,
+     };
  
 diff --git a/prefs.js b/prefs.js
-index 5fa2695..fe6063b 100644
+index ed176f4..cd5395f 100644
 --- a/prefs.js
 +++ b/prefs.js
-@@ -123,6 +123,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass({
-     }
- });
+@@ -119,6 +119,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass(
+   }
+ );
  
 +function realpath(path) {
 +    try {
@@ -34,33 +34,34 @@ index 5fa2695..fe6063b 100644
 +
 +
  const ResourceMonitorPrefsWidget = GObject.registerClass(
-     class ResourceMonitorPrefsWidget extends GObject.Object {
-         _connectSpinButton(settings, settingsName, element) {
-@@ -476,17 +490,25 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
-             // Get current disks settings
-             let disksArray = settings.get_strv(DISK_DEVICES_LIST);
+   class ResourceMonitorPrefsWidget extends GObject.Object {
+     _connectSpinButton(settings, settingsName, element) {
+@@ -710,18 +724,26 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
+       // Get current disks settings
+       let disksArray = settings.get_strv(DISK_DEVICES_LIST);
  
--            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs']).then(output => {
-+            this._executeCommand(['df', '-x', 'squashfs', '-x', 'tmpfs', '-x', 'devtmpfs']).then(output => {
-                 let lines = output.split('\n');
+-      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs"]).then(
++      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs", '-x', 'devtmpfs']).then(
+         (output) => {
+           let lines = output.split("\n");
  
-+                let fsf = new Set();
++          let fsf = new Set();
 +
-                 // Excludes the first line of output
-                 for (let i = 1; i < lines.length - 1; i++) {
-                     let line = lines[i];
-                     let entry = line.trim().split(/\s+/);
+           // Excludes the first line of output
+           for (let i = 1; i < lines.length - 1; i++) {
+             let line = lines[i];
+             let entry = line.trim().split(/\s+/);
  
--                    let filesystem = entry[0];
-+                    let filesystem = realpath(entry[0]);
-                     let mountedOn = entry[5];
+-            let filesystem = entry[0];
++            let filesystem = realpath(entry[0]);
+             let mountedOn = entry[5];
  
-+                    if (fsf.has(filesystem)) {
-+                        continue;
-+                    }
++            if (fsf.has(filesystem)) {
++              continue;
++            }
 +
-+                    fsf.add(filesystem);
++            fsf.add(filesystem);
 +
-                     let dStButton = false;
-                     let dSpButton = false;
+             let dStButton = false;
+             let dSpButton = false;
  
