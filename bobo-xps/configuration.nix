@@ -35,16 +35,16 @@
 
   networking.hostName = "bobo-laptop"; # Define your hostname.
   networking.extraHosts = ''
-    10.0.0.140      bobo-machine
-    10.0.0.141      bobo-laptop
-    10.0.0.142      bobo-inspiron
+    # 10.0.0.140      bobo-machine
+    # 10.0.0.141      bobo-laptop
+    # 10.0.0.142      bobo-inspiron
   '';
 
-  networking.resolvconf.extraConfig = ''
-    # prepend_nameservers=192.168.121.1
-    # prepend_search=lan
-    append_search="dev.dszn.cz test.dszn.cz dszn.cz"
-  '';
+  # networking.resolvconf.extraConfig = ''
+  #   # prepend_nameservers=192.168.121.1
+  #   # prepend_search=lan
+  #   # append_search="dev.dszn.cz test.dszn.cz dszn.cz"
+  # '';
 
   virtualisation.lxd.enable = true;
   environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
@@ -196,4 +196,5 @@
   #     TMPDIR = "/var/tmp";
   #   };
   # };
+
 }
