@@ -85,8 +85,6 @@
 
   programs.steam.enable = true;
 
-  programs.firefox.nativeMessagingHosts.gsconnect = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -112,6 +110,11 @@
     whois
     maven
     vw
+    nil
+    nixd
+    nixpkgs-fmt
+    nixfmt
+    alejandra
 
     gnupg1
     openssl
@@ -158,14 +161,14 @@
     ensureDatabases = [ "pipecd" "bobo" ];
     ensureUsers = [
       { name = "bobo";
-        ensurePermissions = {
-          "DATABASE pipecd" = "ALL PRIVILEGES";
-        };
+        # ensurePermissions = {
+        #   "DATABASE pipecd" = "ALL PRIVILEGES";
+        # };
       }
       { name = "bobo";
-        ensurePermissions = {
-          "DATABASE bobo" = "ALL PRIVILEGES";
-        };
+        # ensurePermissions = {
+        #   "DATABASE bobo" = "ALL PRIVILEGES";
+        # };
       }
     ];
   };
