@@ -80,7 +80,7 @@
 
   programs.java = {
     enable = true;
-    package = pkgs.jdk11;
+    package = pkgs.jdk17;
   };
 
   programs.steam.enable = true;
@@ -132,8 +132,13 @@
     let
       caBundle = config.environment.etc."ssl/certs/ca-bundle.crt".source;
       p11kit = pkgs.p11-kit.overrideAttrs (oldAttrs: {
-        configureFlags = [
-          "--with-trust-paths=${caBundle}"
+        mesonFlags = [
+          "--sysconfdir=/etc"
+          (lib.mesonEnable "systemd" false)
+          (lib.mesonOption "bashcompdir" "${placeholder "bin"}/share/bash-completion/completions")
+          (lib.mesonOption "trust_paths" (lib.concatStringsSep ":" [
+            "${caBundle}"
+          ]))
         ];
       });
     in derivation {

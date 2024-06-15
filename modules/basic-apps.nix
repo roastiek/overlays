@@ -59,6 +59,7 @@
     picard
     plex-media-player
     clementine
+    strawberry
     vlc
     mpv
     kid3
