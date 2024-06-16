@@ -53,10 +53,11 @@
 
   networking.firewall.allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
   networking.networkmanager.dns = "dnsmasq";
-  networking.networkmanager.extraConfig = ''
-    [main]
-    systemd-resolved=false
-  '';
+  networking.networkmanager.settings.main.systemd-resolved = false;
+  # networking.networkmanager.extraConfig = ''
+  #   [main]
+  #   systemd-resolved=false
+  # '';
 
   # List services that you want to enable:
 
@@ -70,9 +71,9 @@
   programs.zsh.enable = true;
 
   # Enable the X11 windowing system.
+  services.displayManager.defaultSession = lib.mkDefault "gnome";
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.defaultSession = lib.mkDefault "gnome";
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
 

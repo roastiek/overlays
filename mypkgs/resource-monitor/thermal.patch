@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index ac12679..aad5a15 100644
+index d51b307..ec9726c 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -26,6 +26,8 @@ import GLib from "gi://GLib";

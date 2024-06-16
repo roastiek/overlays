@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index 69ca8a8..ac12679 100644
+index 3b78467..d51b307 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -145,6 +145,7 @@ const ResourceMonitor = GObject.registerClass(
