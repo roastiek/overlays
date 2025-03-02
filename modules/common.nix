@@ -54,10 +54,6 @@
   networking.firewall.allowedTCPPortRanges = [ { from = 1024; to = 65000;} ];
   networking.networkmanager.dns = "dnsmasq";
   networking.networkmanager.settings.main.systemd-resolved = false;
-  # networking.networkmanager.extraConfig = ''
-  #   [main]
-  #   systemd-resolved=false
-  # '';
 
   # List services that you want to enable:
 
@@ -67,7 +63,7 @@
   # programs.ssh.setXAuthLocation = true;
 
   programs.command-not-found.enable = true;
-  programs.bash.enableCompletion = true;
+  programs.bash.completion.enable = true;
   programs.zsh.enable = true;
 
   # Enable the X11 windowing system.
@@ -75,7 +71,18 @@
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome3.gpaste pkgs.gnome3.mutter ];
+  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.desktop.interface]
+    font-rendering='manual'
+    '';
+  services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gpaste pkgs.mutter pkgs.gnome-settings-daemon ];
+  environment.etc."xdg/gtk-4.0/settings.ini" = {
+    text = ''
+      [Settings]
+      gtk-font-rendering=manual
+      gtk-hint-font-metrics=1
+    '';
+  };
 
   services.gnome.evolution-data-server.enable = true;
   programs.evolution.enable = true;
@@ -134,32 +141,43 @@
 
   fonts = {
     enableDefaultPackages = false;
-    #enableFontDir = true;
-    #enableCoreFonts = true;
     packages = with pkgs; lib.mkForce [
-      liberation_ttf_v1
-      #liberation_ttf
-      freefont_ttf
-      #gyre-fonts # TrueType substitutes for standard PostScript fonts
+      #liberation_ttf_v1
+      font-awesome
+      openmoji-black
+      ankacoder
+      inconsolata
+      iosevka
+      maple-mono-otf
+      liberation_ttf
+      gyre-fonts # TrueType substitutes for standard PostScript fonts
       unifont
+      noto-fonts-color-emoji
     ];
-    #fontconfig.penultimate.enable = false;
     fontconfig.defaultFonts = {
       serif = [ "Liberation Serif" ];
       sansSerif = [ "Liberation Sans" ];
       monospace = [ "Liberation Mono" ];
     };
+    fontconfig = {
+      hinting.style = "full";
+      # hinting.style = "none";
+      subpixel.rgba = "rgb";
+      # subpixel.rgba = "none";
+      # subpixel.lcdfilter = "light";
+      subpixel.lcdfilter = "default";
+      allowBitmaps = false;
+    };
+    fontconfig.localConf = ''
+      <rejectfont>
+        <glob>${pkgs.dejavu_fonts.minimal}/*</glob>
+      </rejectfont>
+    '';
   };
 
   environment.extraInit = ''
     export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
   '';
-
-  system.replaceRuntimeDependencies = with pkgs; [
-  #  { original = freetype;
-  #    replacement = freetype29;
-  #  }
-  ];
 
   nixpkgs.overlays = [ ( import ../mypkgs ) ];
   nixpkgs.config.allowUnfree = true;
@@ -211,4 +229,5 @@
       fsType = "nfs";
       options = [ "user" "soft" "noauto" "nofail" "_netdev" "noatime" "x-systemd.automount" "x-systemd.idle-timeout=30min" "nfsvers=4.0" ];
     };
+
 }

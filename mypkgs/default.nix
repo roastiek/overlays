@@ -4,11 +4,11 @@ let
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
 in rec {
 
-  freetype_subpixel = super.freetype.overrideDerivation (old: {
-      postPatch = ''
-        sed -r -i 's/^#define TT_CONFIG_OPTION_SUBPIXEL_HINTING .*$//' devel/ftoption.h include/freetype/config/ftoption.h
-      '';
-    });
+  # freetype_subpixel = super.freetype.overrideDerivation (old: {
+  #     postPatch = ''
+  #       sed -r -i 's/^#define TT_CONFIG_OPTION_SUBPIXEL_HINTING .*$//' devel/ftoption.h include/freetype/config/ftoption.h
+  #     '';
+  #   });
 
   tango-extras-icon-theme = callPackage ./tango-extras-icon-theme {};
 
@@ -18,7 +18,7 @@ in rec {
 
   yed = callPackage ./yed {};
 
-  goenvtemplator = callPackage ./goenvtemplator {};
+  # goenvtemplator = callPackage ./goenvtemplator {};
 
   firefoxFHS = buildFHSUserEnv {
     name = "firefox";
@@ -43,9 +43,9 @@ in rec {
   #   '';
   # });
 
-  intel-undervolt = callPackage ./intel-undervolt { };
+  # intel-undervolt = callPackage ./intel-undervolt { };
 
-  freetype29 = callPackage ./freetype { };
+  # freetype29 = callPackage ./freetype { };
 
   # freetype = freetype29;
 
@@ -94,7 +94,7 @@ in rec {
   #   #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" ];
   # };
 
-  boostStatic = self.boost.override { enableShared = false; enableStatic = true; };
+  # boostStatic = self.boost.override { enableShared = false; enableStatic = true; };
 
     glibcSt = self.runCommand "glibc" {} ''
       mkdir -p $out/lib
@@ -143,15 +143,21 @@ in rec {
     paths = with self; [ vw boost boost.dev zlib ]; #boostStatic boostStatic.dev zlib ];
   };
 
-  # gnomeExtensions = super.gnomeExtensions // {
-  #   vitals = self.callPackage ./vitals { };
-  #   volume-mixer = self.callPackage ./volume-mixer { };
-  #   no-title-bar = super.gnomeExtensions.no-title-bar.overrideAttrs (oldAttrs: {
-  #     postInstall = ''
-  #       substituteInPlace $out/share/gnome-shell/extensions/no-title-bar@jonaspoehler.de/metadata.json --replace '"3.38"' '"43"'
-  #     '';
-  #   });
-  # };
+  gnomeExtensions = super.gnomeExtensions // ( with super.gnomeExtensions; {
+    no-titlebar-when-maximized = no-titlebar-when-maximized.overrideAttrs ( oldAttrs: {
+      patches = ( oldAttrs.patches or [] ) ++ [ ./no-titlebar-when-maximized.patch ];
+    });
+    resource-monitor = resource-monitor.overrideAttrs ( oldAttrs: {
+      patches = ( oldAttrs.patches or [] ) ++ [
+        ../mypkgs/resource-monitor/disk.patch
+        ../mypkgs/resource-monitor/units.patch
+        ../mypkgs/resource-monitor/autohide.patch
+        ../mypkgs/resource-monitor/thermal.patch
+        ../mypkgs/resource-monitor/freqs.patch
+        ../mypkgs/resource-monitor/no_brackets.patch
+      ];
+    });
+  });
 
   # thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
   #   version = "2.4.6";
@@ -243,14 +249,12 @@ in rec {
 
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
-  gnome = super.gnome // rec {
-    mutter = super.gnome.mutter.overrideAttrs ( oldAttrs: { patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ]; });
-    gnome-shell = super.gnome.gnome-shell.override { inherit mutter; };
-  };
 
-  qsync = self.libsForQt512.callPackage ./qsync {};
+  mutter = super.mutter.overrideAttrs ( oldAttrs: { patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ]; });
 
-  binance = self.callPackage ./binance {};
+  # qsync = self.libsForQt512.callPackage ./qsync {};
+
+  # binance = self.callPackage ./binance {};
 
   solaar = super.solaar.overrideAttrs ( oldAttrs: {
     postInstall = oldAttrs.postInstall + ''

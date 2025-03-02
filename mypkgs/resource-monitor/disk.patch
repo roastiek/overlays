@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index ba8dce8..ad544d2 100644
+index 2317503..92d07a0 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -3354,7 +3354,7 @@ export default class ResourceMonitorExtension extends Extension {
+@@ -3393,7 +3393,7 @@ export default class ResourceMonitorExtension extends Extension {
  
      const index = {
        left: -1,
@@ -12,10 +12,10 @@ index ba8dce8..ad544d2 100644
      };
  
 diff --git a/prefs.js b/prefs.js
-index ed176f4..cd5395f 100644
+index 58b1738..57da19a 100644
 --- a/prefs.js
 +++ b/prefs.js
-@@ -119,6 +119,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass(
+@@ -137,6 +137,20 @@ const ResourceMonitorBuilderScope = GObject.registerClass(
    }
  );
  
@@ -36,25 +36,23 @@ index ed176f4..cd5395f 100644
  const ResourceMonitorPrefsWidget = GObject.registerClass(
    class ResourceMonitorPrefsWidget extends GObject.Object {
      _connectSpinButton(settings, settingsName, element) {
-@@ -710,18 +724,26 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
-       // Get current disks settings
+@@ -1134,16 +1148,24 @@ const ResourceMonitorPrefsWidget = GObject.registerClass(
        let disksArray = settings.get_strv(DISK_DEVICES_LIST);
  
--      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs"]).then(
-+      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs", '-x', 'devtmpfs']).then(
-         (output) => {
-           let lines = output.split("\n");
+       // Execute 'df' command and parse the output
+-      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs"])
++      this._executeCommand(["df", "-x", "squashfs", "-x", "tmpfs", '-x', 'devtmpfs'])
+         .then((output) => {
+           const lines = output.split("\n");
  
 +          let fsf = new Set();
 +
-           // Excludes the first line of output
+           // Parse each line of the command output, skipping the header line
            for (let i = 1; i < lines.length - 1; i++) {
-             let line = lines[i];
-             let entry = line.trim().split(/\s+/);
- 
--            let filesystem = entry[0];
-+            let filesystem = realpath(entry[0]);
-             let mountedOn = entry[5];
+             const entry = lines[i].trim().split(/\s+/);
+-            const filesystem = entry[0];
++            const filesystem = realpath(entry[0]);
+             const mountPoint = entry[5];
  
 +            if (fsf.has(filesystem)) {
 +              continue;
@@ -62,6 +60,6 @@ index ed176f4..cd5395f 100644
 +
 +            fsf.add(filesystem);
 +
-             let dStButton = false;
-             let dSpButton = false;
- 
+             // Initialize button states and display name
+             let statsButton = false;
+             let spaceButton = false;

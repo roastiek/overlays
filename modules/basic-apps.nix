@@ -45,13 +45,13 @@
     libreoffice
 
     # gui tools
-    gnome.zenity
-    gnome.gnome-tweaks
+    zenity
+    gnome-tweaks
     tango-icon-theme
     tango-extras-icon-theme
     keepassxc
-    gnome.dconf-editor
-    gnome.gnome-terminal
+    dconf-editor
+    gnome-terminal
 
     # media
     gimp

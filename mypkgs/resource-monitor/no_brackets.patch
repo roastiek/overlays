@@ -1,0 +1,123 @@
+diff --git a/extension.js b/extension.js
+index 489bc65..460cdc0 100644
+--- a/extension.js
++++ b/extension.js
+@@ -375,10 +375,6 @@ const ResourceMonitor = GObject.registerClass(
+         x_align: Clutter.ActorAlign.END,
+       });
+ 
+-      this._cpuTemperatureBracketStart = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "[",
+-      });
+       this._cpuTemperatureValue = new St.Label({
+         y_align: Clutter.ActorAlign.CENTER,
+         text: "--",
+@@ -386,15 +382,7 @@ const ResourceMonitor = GObject.registerClass(
+       this._cpuTemperatureValue.clutter_text.set({
+         x_align: Clutter.ActorAlign.END,
+       });
+-      this._cpuTemperatureBracketEnd = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "]",
+-      });
+ 
+-      this._cpuFrequencyBracketStart = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "[",
+-      });
+       this._cpuFrequencyValue = new St.Label({
+         y_align: Clutter.ActorAlign.CENTER,
+         text: "--",
+@@ -402,15 +390,7 @@ const ResourceMonitor = GObject.registerClass(
+       this._cpuFrequencyValue.clutter_text.set({
+         x_align: Clutter.ActorAlign.END,
+       });
+-      this._cpuFrequencyBracketEnd = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "]",
+-      });
+ 
+-      this._cpuLoadAverageBracketStart = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "[",
+-      });
+       this._cpuLoadAverageValue = new St.Label({
+         y_align: Clutter.ActorAlign.CENTER,
+         text: "--",
+@@ -418,10 +398,6 @@ const ResourceMonitor = GObject.registerClass(
+       this._cpuLoadAverageValue.clutter_text.set({
+         x_align: Clutter.ActorAlign.END,
+       });
+-      this._cpuLoadAverageBracketEnd = new St.Label({
+-        y_align: Clutter.ActorAlign.CENTER,
+-        text: "]",
+-      });
+ 
+       this._gpuBox = new GpuContainer();
+     }
+@@ -438,15 +414,9 @@ const ResourceMonitor = GObject.registerClass(
+                 this._box.add_child(this._cpuIcon);
+                 this._box.add_child(this._cpuValue);
+ 
+-                this._box.add_child(this._cpuTemperatureBracketStart);
+                 this._box.add_child(this._cpuTemperatureValue);
+-                this._box.add_child(this._cpuTemperatureBracketEnd);
+-                this._box.add_child(this._cpuFrequencyBracketStart);
+                 this._box.add_child(this._cpuFrequencyValue);
+-                this._box.add_child(this._cpuFrequencyBracketEnd);
+-                this._box.add_child(this._cpuLoadAverageBracketStart);
+                 this._box.add_child(this._cpuLoadAverageValue);
+-                this._box.add_child(this._cpuLoadAverageBracketEnd);
+ 
+                 break;
+ 
+@@ -507,15 +477,9 @@ const ResourceMonitor = GObject.registerClass(
+               case "cpu":
+                 this._box.add_child(this._cpuValue);
+ 
+-                this._box.add_child(this._cpuTemperatureBracketStart);
+                 this._box.add_child(this._cpuTemperatureValue);
+-                this._box.add_child(this._cpuTemperatureBracketEnd);
+-                this._box.add_child(this._cpuFrequencyBracketStart);
+                 this._box.add_child(this._cpuFrequencyValue);
+-                this._box.add_child(this._cpuFrequencyBracketEnd);
+-                this._box.add_child(this._cpuLoadAverageBracketStart);
+                 this._box.add_child(this._cpuLoadAverageValue);
+-                this._box.add_child(this._cpuLoadAverageBracketEnd);
+                 this._box.add_child(this._cpuIcon);
+ 
+                 break;
+@@ -1244,9 +1208,7 @@ const ResourceMonitor = GObject.registerClass(
+           !this._thermalCpuTemperatureStatus &&
+           !this._cpuLoadAverageStatus,
+         this._cpuIcon,
+-        this._cpuFrequencyValue,
+-        this._cpuFrequencyBracketStart,
+-        this._cpuFrequencyBracketEnd
++        this._cpuFrequencyValue
+       );
+     }
+ 
+@@ -1288,9 +1250,7 @@ const ResourceMonitor = GObject.registerClass(
+           !this._thermalCpuTemperatureStatus &&
+           !this._cpuFrequencyStatus,
+         this._cpuIcon,
+-        this._cpuLoadAverageValue,
+-        this._cpuLoadAverageBracketStart,
+-        this._cpuLoadAverageBracketEnd
++        this._cpuLoadAverageValue
+       );
+     }
+ 
+@@ -1673,9 +1633,7 @@ const ResourceMonitor = GObject.registerClass(
+           !this._cpuFrequencyStatus &&
+           !this._cpuLoadAverageStatus,
+         this._cpuIcon,
+-        this._cpuTemperatureValue,
+-        this._cpuTemperatureBracketStart,
+-        this._cpuTemperatureBracketEnd
++        this._cpuTemperatureValue
+       );
+     }
+ 

@@ -12,8 +12,8 @@ pythonPackages.buildPythonApplication rec {
     pwd
     ls
     2to3 -wn snapperS/snapperS
-    substituteInPlace setup.py --replace '"argparse",' ""
-    substituteInPlace snapperS/snapperS --replace 'set -ts' 'set -ts -f'
+    substituteInPlace setup.py --replace-fail '"argparse",' ""
+    substituteInPlace snapperS/snapperS --replace-fail 'set -ts' 'set -ts -f'
   '';
 
   propagatedBuildInputs = [ pythonPackages.tabulate ];

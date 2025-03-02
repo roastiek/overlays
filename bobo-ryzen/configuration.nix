@@ -83,7 +83,9 @@
 
   services.samba = {
     enable = false;
-    enableNmbd = true;
+    nmbd = {
+      enable = true;
+    };
     #securityType = "user";
     #shares = {
     #  inspiron = {
@@ -121,14 +123,6 @@
   services.dnsmasq = {
     enable = false;
     resolveLocalQueries = false;
-    extraConfig = ''
-      server=127.0.0.1
-      no-resolv
-      no-hosts
-      no-negcache
-      except-interface=lo
-      bind-dynamic
-    '';
   };
 
   # services.earlyoom.enable = true;

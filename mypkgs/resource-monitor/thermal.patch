@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index d51b307..ec9726c 100644
+index b3f3276..83707d0 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -26,6 +26,8 @@ import GLib from "gi://GLib";
@@ -11,93 +11,98 @@ index d51b307..ec9726c 100644
  import * as Main from "resource:///org/gnome/shell/ui/main.js";
  import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
  import * as Util from "resource:///org/gnome/shell/misc/util.js";
-@@ -2541,53 +2543,51 @@ const ResourceMonitor = GObject.registerClass(
-             continue;
-           }
+@@ -2637,6 +2639,8 @@ const ResourceMonitor = GObject.registerClass(
  
--          if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
--            this._loadFile(path).then((contents) => {
--              const value = parseInt(new TextDecoder().decode(contents));
-+          let temps = [];
+     _refreshCpuTemperatureValue() {
+       if (this._thermalCpuTemperatureDevicesList.length > 0) {
++        let temps = [];
++
+         this._thermalCpuTemperatureDevicesList.forEach((element) => {
+           const [, status, path] = element.split(
+             THERMAL_CPU_TEMPERATURE_DEVICES_LIST_SEPARATOR
+@@ -2646,6 +2650,7 @@ const ResourceMonitor = GObject.registerClass(
+           if (status === "false" || !GLib.file_test(path, GLib.FileTest.EXISTS))
+             return;
  
--              this._cpuTemperatures += value / 1000;
--              this._cpuTemperaturesReads++;
-+          if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
-+            temps.push(this._loadFile(path).then(contents => {
-+              return parseInt(ByteArray.toString(contents)) / 1000;
-+            }).catch(reason => {
-+              log(`FAILED TEMP READ ${reason}`);
-+            }));
-+          }
-+          Promise.all(temps).then(values => {
-+            let temp = values.reduce((a, b) => a + b, 0)
++          temps.push(
+           this._loadFile(path)
+             .then((contents) => {
+               const temperature = parseInt(
+@@ -2653,43 +2658,46 @@ const ResourceMonitor = GObject.registerClass(
+                 10
+               );
  
+-              if (!isNaN(temperature)) {
+-                this._cpuTemperatures += temperature / 1000;
+-                this._cpuTemperaturesReadings++;
+-              }
+-
+-              // Process the final average once all readings are completed
 -              if (
--                this._cpuTemperaturesReads >=
+-                this._cpuTemperaturesReadings >=
 -                this._thermalCpuTemperatureDevicesList.length
 -              ) {
--                // Temperatures Average
--                let unit = "";
--                this._cpuTemperatures /= this._cpuTemperaturesReads;
-+            // Temperatures Average
-+            let unit = "";
-+            this._cpuTemperatures = temp / values.length;
- 
--                switch (this._thermalTemperatureUnit) {
--                  case "f":
--                    this._cpuTemperatures = this._cpuTemperatures * 1.8 + 32;
--                    unit = "°F";
-+            switch (this._thermalTemperatureUnit) {
-+              case "f":
-+                this._cpuTemperatures = (this._cpuTemperatures * 1.8) + 32;
-+                unit = "°F";
- 
--                    break;
-+                break;
- 
--                  case "c":
-+              case "c":
- 
--                  default:
--                    unit = "°C";
-+              default:
-+                unit = "°C";
- 
--                    break;
--                }
-+                break;
-+            }
- 
--                if (this._decimalsStatus) {
--                  this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
--                    1
--                  )}${unit}`;
--                } else {
--                  this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
--                    0
--                  )}${unit}`;
--                }
-+            if (this._decimalsStatus) {
-+              this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
-+                1
-+              )}${unit}`;
-+            } else {
-+              this._cpuTemperatureValue.text = `[${this._cpuTemperatures.toFixed(
-+                0
-+              )}${unit}`;
-+            }
- 
+-                const avg =
+-                  this._cpuTemperatures / this._cpuTemperaturesReadings;
+-
+-                // Convert temperature to desired unit
+-                const [value, unit] = this._convertTemperature(avg);
+-
+-                this._cpuTemperatureValue.text = `${this._getValueFixed(
+-                  value
+-                )}${unit}`;
+-
+-                // Apply color based on thresholds
+-                this._cpuTemperatureValue.style = this._getUsageColor(
+-                  value,
+-                  this._thermalCpuColors
+-                );
+-
+-                // Reset totals
 -                this._cpuTemperatures = 0;
--                this._cpuTemperaturesReads = 0;
+-                this._cpuTemperaturesReadings = 0;
 -              }
++              return temperature;
+             })
+             .catch((error) => {
+               console.error(
+                 "[Resource_Monitor] Error reading cpu thermal:",
+                 error
+               );
 -            });
--          } else {
--            this._cpuTemperatureValue.text = _("[Temperature Error");
--          }
-+            this._cpuTemperatures = 0;
-+          }).catch(reason => {
-+              log(`FAILED TEMP READ ${reason}`);
++            })
++          );
++        });
++
++        Promise.all(temps).then(values => {
++          let temp = 0;
++          let count = 0;
++
++          values.forEach((temperature) => {
++            if (!isNaN(temperature)) {
++              temp = temp + temperature / 1000;
++              count++;
++            }
 +          });
-         }
++
++          if (count > 0) {
++            let avg = temp / count
++
++            // Convert temperature to desired unit
++            const [value, unit] = this._convertTemperature(avg);
++
++            this._cpuTemperatureValue.text = `${this._getValueFixed(
++              value
++            )}${unit}`;
++
++            // Apply color based on thresholds
++            this._cpuTemperatureValue.style = this._getUsageColor(
++              value,
++              this._thermalCpuColors
++            );
++          }
++        }).catch(reason => {
++          log(`FAILED TEMP READ ${reason}`);
+         });
        } else {
-         this._cpuTemperatureValue.text = _("[--");
+         this._cpuTemperatureValue.text = "--";
