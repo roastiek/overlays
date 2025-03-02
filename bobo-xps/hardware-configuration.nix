@@ -27,8 +27,8 @@
     #"memmap=0x1000%0x59782000-1+2"
     # "intel_pstate=no_hwp"
     # "initcall_debug"
-    #"intel_pstate=active"
-    "intel_pstate=passive"
+    "intel_pstate=active"
+    #"intel_pstate=passive"
   ];
 
   system.fsPackages = [ pkgs.ntfs3g ];
@@ -104,10 +104,10 @@
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = true;
   services.tlp.settings = {
-    #CPU_SCALING_GOVERNOR_ON_AC = "powersave";
-    #CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-    CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
-    CPU_SCALING_GOVERNOR_ON_BAT = "schedutil";
+    CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+    CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    #CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
+    #CPU_SCALING_GOVERNOR_ON_BAT = "schedutil";
     CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
     SCHED_POWERSAVE_ON_AC = 1;

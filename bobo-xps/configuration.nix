@@ -18,7 +18,8 @@
 
   nix = {
     settings = {
-      substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
+      substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/"
+      ];
       trusted-substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
       trusted-public-keys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
     };
@@ -29,7 +30,7 @@
   };
 
   networking.useDHCP = false;
-  networking.firewall = with lib; {
+  networking.firewall = {
     enable = true;
   };
 
@@ -46,10 +47,18 @@
   #   # append_search="dev.dszn.cz test.dszn.cz dszn.cz"
   # '';
 
+  # networking.networkmanager.appendNameservers = [ "172.17.0.1" ];
+  virtualisation.docker.daemon.settings = {
+    dns = [ "172.17.0.1" ];
+  };
+  networking.firewall.interfaces.docker0.allowedUDPPorts = [ 53 ];
+  networking.firewall.interfaces.docker0.allowedTCPPorts = [ 53 ];
+
   virtualisation.lxd.enable = true;
   environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
     server=/lxd/172.20.0.1
     rev-server=172.20.0.0/16,172.20.0.1
+    listen-address=172.17.0.1
     # rev-server=fd42:52bb:7b8c:d18e::0/64,172.20.0.1
     # log-queries
     # dns-loop-detect
@@ -60,8 +69,6 @@
   virtualisation.podman.enable = true;
 
   virtualisation.docker.enable = true;
-
-  services.xserver.displayManager.defaultSession = "gnome";
 
   services.nix-serve = {
     enable = true;
@@ -113,7 +120,7 @@
     nil
     nixd
     nixpkgs-fmt
-    nixfmt
+    nixfmt-classic
     alejandra
 
     gnupg1

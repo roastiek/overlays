@@ -96,37 +96,46 @@ in rec {
 
   boostStatic = self.boost.override { enableShared = false; enableStatic = true; };
 
+    glibcSt = self.runCommand "glibc" {} ''
+      mkdir -p $out/lib
+      ln -s ${self.glibc.static}/lib/libpthread.a $out/lib/
+      ln -s ${self.glibc.static}/lib/libc.a $out/lib/
+      ln -s ${self.glibc.static}/lib/libm.a $out/lib/
+    '';
+
   vw = self.stdenv.mkDerivation {
     name = "vw";
 
     src = self.fetchFromGitHub {
       owner = "VowpalWabbit";
       repo = "vowpal_wabbit";
-      rev = "9.0.1";
+      rev = "9.10.0";
       fetchSubmodules = true;
-      sha256 = "sha256-4Ye+tsJ0zfScDTAO/cckgyTs2j1ihkl72tSglBkCMG0=";
+      sha256 = "sha256-HKxhEB4ph2tOWgvYngYTcv0OCMISj3KqZpP2zsEUPs0=";
     };
 
     postPatch = ''
-      substituteInPlace ext_libs/spdlog/cmake/spdlog.pc.in \
-        --replace '$'{exec_prefix}/@CMAKE_INSTALL_LIBDIR@ @CMAKE_INSTALL_FULL_LIBDIR@
+      substituteInPlace vowpalwabbit/c_wrapper/CMakeLists.txt \
+        --replace-fail 'SHARED_ONLY' 'STATIC_OR_SHARED'
     '';
 
     nativeBuildInputs = with self; [ cmake ];
-    buildInputs = with self; [ boost zlib ]; #spdlog rapidjson ];
+    buildInputs = with self; [ boost zlib perl ];   #spdlog rapidjson ];
     enableParallelBuilding = true;
     cmakeFlags = [
       "-DFMT_SYS_DEP=OFF"
       "-DSPDLOG_SYS_DEP=OFF"
       "-DRAPIDJSON_SYS_DEP=OFF"
+      "-DVW_INSTALL=ON"
       # "-DSTATIC_LINK_VW=ON"
     ];
     #configureFlags = with self; [ "--with-boost-libdir=${boost.out}/lib" "--enable-static" ];
 
-    postInstall = ''
-      cp ../vowpalwabbit/io/* $out/include/vowpalwabbit/io
-      cp -r ../ext_libs/spdlog/include/spdlog/fmt/bundled $out/include/spdlog/fmt/
-    '';
+    # postInstall = ''
+    #   cp ../vowpalwabbit/io/* $out/include/vw/io
+    #   cp -r ../ext_libs/spdlog/include/spdlog/fmt/bundled $out/include/spdlog/fmt/
+    #   cp ../utl/vw-varinfo $out/bin
+    # '';
   };
 
   vw-deps = self.symlinkJoin {
@@ -144,22 +153,93 @@ in rec {
   #   });
   # };
 
-  thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
+  # thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
+  #   version = "2.4.6";
+  #   src = self.fetchFromGitHub {
+  #     owner = "intel";
+  #     repo = "thermal_daemon";
+  #     rev = "v${version}";
+  #     sha256 = "1lgaky8cmxbi17zpymy2v9wgknx1g92bq50j6kfpsm8qgb7djjb6";
+  #   };
+  #   CFLAGS="-Wno-error";
+
+  #   outputs = ["out"];
+
+  #   buildFlags = [ "CFLAGS=-Wno-error" "CXXFLAGS=-Wno-error" ];
+  #   # configureFlags = oldAttrs.configureFlags ++ [
+  #   #   "--help"
+  #   #   "--disable-error-on-warning"
+  #   # ];
+
+  #   buildInputs =  oldAttrs.buildInputs ++ [ self.xz ];
+
+  #   preConfigure = ''
+  #     echo PKG_CONFIG_PATH=$PKG_CONFIG_PATH
+  #   '';
+
+  #   postInstall = ''
+  #     mkdir -p $out/etc/thermald
+  #     ${oldAttrs.postInstall}
+  #   '';
+  # });
+
+  thermald = self.stdenv.mkDerivation rec {
+    pname = "thermald";
     version = "2.4.6";
+
+    outputs = [ "out" "devdoc" ];
+
     src = self.fetchFromGitHub {
       owner = "intel";
       repo = "thermal_daemon";
       rev = "v${version}";
       sha256 = "1lgaky8cmxbi17zpymy2v9wgknx1g92bq50j6kfpsm8qgb7djjb6";
     };
-    CFLAGS="-Wno-error";
 
-    buildFlags = [ "CFLAGS=-Wno-error" "CXXFLAGS=-Wno-error" ];
-    # configureFlags = oldAttrs.configureFlags ++ [
-    #   "--help"
-    #   "--disable-error-on-warning"
-    # ];
-  });
+    nativeBuildInputs = with self; [
+      autoconf
+      autoconf-archive
+      automake
+      docbook-xsl-nons
+      docbook_xml_dtd_412
+      gtk-doc
+      libtool
+      pkg-config
+    ];
+
+    buildInputs = with self; [
+      dbus
+      dbus-glib
+      libevdev
+      libxml2
+      xz
+      upower
+    ];
+
+    configureFlags = [
+      "--sysconfdir=${placeholder "out"}/etc"
+      "--localstatedir=/var"
+      "--enable-gtk-doc"
+      "--with-dbus-sys-dir=${placeholder "out"}/share/dbus-1/system.d"
+      "--with-systemdsystemunitdir=${placeholder "out"}/etc/systemd/system"
+      "--disable-werror"
+    ];
+
+    preConfigure = "NO_CONFIGURE=1 ./autogen.sh";
+
+    postInstall = ''
+      cp ./data/thermal-conf.xml $out/etc/thermald/
+    '';
+
+    meta = with self.lib; {
+      description = "Thermal Daemon";
+      homepage = "https://github.com/intel/thermal_daemon";
+      changelog = "https://github.com/intel/thermal_daemon/blob/master/README.txt";
+      license = licenses.gpl2Plus;
+      platforms = [ "x86_64-linux" "i686-linux" ];
+      maintainers = with maintainers; [ abbradar ];
+    };
+  };
 
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
