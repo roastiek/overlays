@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index 92d07a0..158f47e 100644
+index 92d07a0..bb58b85 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -322,49 +322,6 @@ const ResourceMonitor = GObject.registerClass(
@@ -353,7 +353,59 @@ index 92d07a0..158f47e 100644
                  this._getUsageColor(value, this._diskSpaceColors)
                );
              }
-@@ -2677,8 +2599,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2541,6 +2463,7 @@ const ResourceMonitor = GObject.registerClass(
+ 
+           let duTot = [0, 0];
+           let du = [0, 0];
++          let unit = "";
+ 
+           // Exclude the first two header lines
+           for (let i = 2; i < lines.length - 1; i++) {
+@@ -2576,7 +2499,7 @@ const ResourceMonitor = GObject.registerClass(
+               this._netUnit === "bits"
+             );
+             du = result.values;
+-            this._ethUnit.text = result.unit;
++            unit = result.unit;
+           }
+ 
+           // Set color based on thresholds
+@@ -2585,7 +2508,7 @@ const ResourceMonitor = GObject.registerClass(
+           // Display the download/upload values with appropriate decimal places
+           this._ethValue.text = `${this._getValueFixed(
+             du[0]
+-          )}|${this._getValueFixed(du[1])}`;
++          )}|${this._getValueFixed(du[1])}${unit}`;
+         })
+         .catch((error) =>
+           console.error("[Resource_Monitor] Error reading eth:", error)
+@@ -2599,6 +2522,7 @@ const ResourceMonitor = GObject.registerClass(
+ 
+           let duTot = [0, 0];
+           let du = [0, 0];
++          let unit = "";
+ 
+           // Exclude the first two header lines
+           for (let i = 2; i < lines.length - 1; i++) {
+@@ -2634,7 +2558,7 @@ const ResourceMonitor = GObject.registerClass(
+               this._netUnit === "bits"
+             );
+             du = result.values;
+-            this._wlanUnit.text = result.unit;
++            unit = result.unit;
+           }
+ 
+           // Set color based on thresholds
+@@ -2643,7 +2567,7 @@ const ResourceMonitor = GObject.registerClass(
+           // Display the download/upload values with appropriate decimal places
+           this._wlanValue.text = `${this._getValueFixed(
+             du[0]
+-          )}|${this._getValueFixed(du[1])}`;
++          )}|${this._getValueFixed(du[1])}${unit}`;
+         })
+         .catch((error) =>
+           console.error("[Resource_Monitor] Error reading wlan:", error)
+@@ -2677,8 +2601,7 @@ const ResourceMonitor = GObject.registerClass(
              value,
              this._cpuFrequencyColors
            );
@@ -363,7 +415,7 @@ index 92d07a0..158f47e 100644
          })
          .catch((error) =>
            console.error("[Resource_Monitor] Error reading cpu frequncy:", error)
-@@ -2749,8 +2670,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2749,8 +2672,7 @@ const ResourceMonitor = GObject.registerClass(
  
                  this._cpuTemperatureValue.text = `${this._getValueFixed(
                    value
@@ -373,7 +425,7 @@ index 92d07a0..158f47e 100644
  
                  // Apply color based on thresholds
                  this._cpuTemperatureValue.style = this._getUsageColor(
-@@ -2806,8 +2726,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2806,8 +2728,7 @@ const ResourceMonitor = GObject.registerClass(
              // GPU utilization
              this._gpuBox.update_element_value(
                uuid,
@@ -383,7 +435,7 @@ index 92d07a0..158f47e 100644
                this._getUsageColor(usage, this._gpuColors)
              );
  
-@@ -2831,8 +2750,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2831,8 +2752,7 @@ const ResourceMonitor = GObject.registerClass(
                const percentValue = (100 * memoryValue) / memoryTotal;
                this._gpuBox.update_element_memory_value(
                  uuid,
@@ -393,7 +445,7 @@ index 92d07a0..158f47e 100644
                  this._getUsageColor(percentValue, this._gpuMemoryColors)
                );
              } else {
-@@ -2843,8 +2761,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2843,8 +2763,7 @@ const ResourceMonitor = GObject.registerClass(
  
                this._gpuBox.update_element_memory_value(
                  uuid,
@@ -403,7 +455,7 @@ index 92d07a0..158f47e 100644
                  this._getUsageColor(memoryValue, this._gpuMemoryColors)
                );
              }
-@@ -2855,8 +2772,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2855,8 +2774,7 @@ const ResourceMonitor = GObject.registerClass(
  
              this._gpuBox.update_element_thermal_value(
                uuid,
@@ -413,7 +465,7 @@ index 92d07a0..158f47e 100644
                this._getUsageColor(tempValue, this._thermalGpuColors)
              );
            });
-@@ -2970,7 +2886,6 @@ const DiskContainer = GObject.registerClass(
+@@ -2970,7 +2888,6 @@ const DiskContainer = GObject.registerClass(
        this._elementsName = [];
        this._elementsLabel = [];
        this._elementsValue = [];
@@ -421,7 +473,7 @@ index 92d07a0..158f47e 100644
      }
  
      set_element_width(width) {
-@@ -2993,7 +2908,6 @@ const DiskContainer = GObject.registerClass(
+@@ -2993,7 +2910,6 @@ const DiskContainer = GObject.registerClass(
        this._elementsName = [];
        this._elementsLabel = [];
        this._elementsValue = [];
@@ -429,7 +481,7 @@ index 92d07a0..158f47e 100644
  
        this.remove_all_children();
      }
-@@ -3022,14 +2936,7 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3022,14 +2938,7 @@ const DiskContainerStats = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -444,7 +496,7 @@ index 92d07a0..158f47e 100644
  
        this.idleOld["single"] = 0;
        this.rwTotOld["single"] = [0, 0];
-@@ -3051,15 +2958,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3051,15 +2960,8 @@ const DiskContainerStats = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -460,7 +512,7 @@ index 92d07a0..158f47e 100644
  
        this.idleOld[filesystem] = 0;
        this.rwTotOld[filesystem] = [0, 0];
-@@ -3072,10 +2972,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3072,10 +2974,8 @@ const DiskContainerStats = GObject.registerClass(
              if (element !== "single") {
                this._elementsName[element].hide();
                this._elementsValue[element].hide();
@@ -471,7 +523,7 @@ index 92d07a0..158f47e 100644
              }
            });
  
-@@ -3088,10 +2986,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3088,10 +2988,8 @@ const DiskContainerStats = GObject.registerClass(
              if (element !== "single") {
                this._elementsName[element].show();
                this._elementsValue[element].show();
@@ -482,7 +534,7 @@ index 92d07a0..158f47e 100644
              }
            });
  
-@@ -3119,11 +3015,10 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3119,11 +3017,10 @@ const DiskContainerStats = GObject.registerClass(
        this.rwTotOld[filesystem] = rwTot;
      }
  
@@ -495,7 +547,7 @@ index 92d07a0..158f47e 100644
        }
      }
    }
-@@ -3147,22 +3042,14 @@ const DiskContainerSpace = GObject.registerClass(
+@@ -3147,22 +3044,14 @@ const DiskContainerSpace = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -519,7 +571,7 @@ index 92d07a0..158f47e 100644
        }
      }
    }
-@@ -3176,11 +3063,8 @@ const GpuContainer = GObject.registerClass(
+@@ -3176,11 +3065,8 @@ const GpuContainer = GObject.registerClass(
        this._elementsUuid = [];
        this._elementsName = [];
        this._elementsValue = [];
@@ -531,7 +583,7 @@ index 92d07a0..158f47e 100644
      }
  
      set_element_width(width) {
-@@ -3236,11 +3120,8 @@ const GpuContainer = GObject.registerClass(
+@@ -3236,11 +3122,8 @@ const GpuContainer = GObject.registerClass(
        this._elementsUuid = [];
        this._elementsName = [];
        this._elementsValue = [];
@@ -543,7 +595,7 @@ index 92d07a0..158f47e 100644
  
        this.remove_all_children();
      }
-@@ -3266,12 +3147,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3266,12 +3149,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -556,7 +608,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3279,7 +3154,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3279,7 +3156,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsValue[uuid]);
@@ -564,7 +616,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3298,12 +3172,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3298,12 +3174,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -577,7 +629,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3311,7 +3179,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3311,7 +3181,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsMemoryValue[uuid]);
@@ -585,7 +637,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3330,12 +3197,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3330,12 +3199,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -598,7 +650,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3343,7 +3204,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3343,7 +3206,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsThermalValue[uuid]);
@@ -606,7 +658,7 @@ index 92d07a0..158f47e 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3353,27 +3213,24 @@ const GpuContainer = GObject.registerClass(
+@@ -3353,27 +3215,24 @@ const GpuContainer = GObject.registerClass(
        }
      }
  
