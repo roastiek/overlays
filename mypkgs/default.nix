@@ -149,12 +149,13 @@ in rec {
     });
     resource-monitor = resource-monitor.overrideAttrs ( oldAttrs: {
       patches = ( oldAttrs.patches or [] ) ++ [
-        ../mypkgs/resource-monitor/disk.patch
-        ../mypkgs/resource-monitor/units.patch
-        ../mypkgs/resource-monitor/autohide.patch
-        ../mypkgs/resource-monitor/thermal.patch
-        ../mypkgs/resource-monitor/freqs.patch
-        ../mypkgs/resource-monitor/no_brackets.patch
+        ./resource-monitor/disk.patch
+        ./resource-monitor/units.patch
+        ./resource-monitor/autohide.patch
+        ./resource-monitor/thermal.patch
+        ./resource-monitor/freqs.patch
+        ./resource-monitor/no_brackets.patch
+        ./resource-monitor/fix_unit_scaling.patch
       ];
     });
   });

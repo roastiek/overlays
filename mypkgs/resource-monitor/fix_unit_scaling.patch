@@ -1,0 +1,13 @@
+diff --git a/extension.js b/extension.js
+index e60be3f..cfe3ee8 100644
+--- a/extension.js
++++ b/extension.js
+@@ -2087,7 +2087,7 @@ const ResourceMonitor = GObject.registerClass(
+           ]) {
+             if (values.some((v) => v > factor)) {
+               unit = suffix;
+-              values = values.map((v) => v / factor ** exponent);
++              values = values.map((v) => v / factor);
+             } else break;
+           }
+           break;
