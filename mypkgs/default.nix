@@ -285,4 +285,6 @@ in rec {
   #   subPackages = [ "." ];
   # };
 
+  tlp = callPackage ./tlp { inherit (self.linuxPackages) x86_energy_perf_policy; };
+
 }

@@ -112,7 +112,7 @@
     gnomeExtensions.gsconnect
 
   # work tools
-    goenvtemplator
+  # goenvtemplator
     kube-login
     whois
     maven

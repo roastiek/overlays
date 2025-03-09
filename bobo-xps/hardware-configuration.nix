@@ -97,7 +97,7 @@
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 
   # high-resolution display
-  hardware.opengl.driSupport32Bit = true;
+  hardware.graphics.enable32Bit = true;
   hardware.cpu.intel.updateMicrocode = true;
   hardware.sensor.iio.enable = true;
 

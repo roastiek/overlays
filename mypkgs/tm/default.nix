@@ -1,4 +1,4 @@
-{ stdenv, thermald, wrapQtAppsHook, qmake, fetchFromGitHub, lzma, pkg-config }:
+{ stdenv, thermald, wrapQtAppsHook, qmake, fetchFromGitHub, xz, pkg-config }:
 stdenv.mkDerivation rec {
   pname = "thermal-monitor";
   version = "2.4.8";
@@ -14,9 +14,9 @@ stdenv.mkDerivation rec {
     pwd
   '';
 
-  nativeBuildInputs = [ qmake wrapQtAppsHook pkg-config lzma.dev ];
+  nativeBuildInputs = [ qmake wrapQtAppsHook pkg-config xz.dev ];
 
-  buildInputs = [ lzma.dev ];
+  buildInputs = [ xz.dev ];
 
   preInstall = ''
     mkdir -p $out/bin
