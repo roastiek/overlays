@@ -34,6 +34,10 @@
     enable = true;
   };
 
+  # services.samba.enable = true;
+
+  environment.etc."samba/smb.conf".text = "";
+
   networking.hostName = "bobo-laptop"; # Define your hostname.
   networking.extraHosts = ''
     # 10.0.0.140      bobo-machine
@@ -133,6 +137,12 @@
     matcha-gtk-theme
     qogir-theme
     theme-jade1
+
+    (wrapHelm kubernetes-helm {
+      plugins = with kubernetes-helmPlugins; [
+        helm-unittest
+      ];
+    })
   ];
 
   environment.variables.JAVAX_NET_SSL_TRUSTSTORE =

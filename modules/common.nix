@@ -208,8 +208,44 @@
   #   load-module module-switch-on-connect
   # '';
 
-  services.pipewire.enable = true;
-  services.pipewire.pulse.enable = true;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+    extraConfig.pipewire = {
+      "10-clock-rate" = {
+        "context.properties" = {
+        #default.clock.rate          = 192000;
+          "default.clock.allowed-rates" = [ 48000 44100 88200 96000 192000 ];
+        };
+      };
+    };
+    wireplumber.extraConfig = {
+      # "log-level-debug" = {
+      #   "context.properties" = {
+      #     # Output Debug log messages as opposed to only the default level (Notice)
+      #     "log.level" = "D";
+      #   };
+      # };
+
+      "a80-channel-swap" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [
+              {
+                "node.name" = "alsa_output.usb-EDIFIER_AIRPULSE_A80-00.analog-stereo";
+              }
+            ];
+            actions = {
+              update-props = {
+                "audio.position" = "FR,FL";
+              };
+            };
+          }
+        ];
+      };
+    };
+  };
+
   security.rtkit.enable = true;
 
   fileSystems."/remote/amour" =
