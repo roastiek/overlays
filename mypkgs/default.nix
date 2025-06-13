@@ -307,4 +307,48 @@ in rec {
 
   tlp = callPackage ./tlp { inherit (self.linuxPackages) x86_energy_perf_policy; };
 
+  kubernetes-helmPlugins = super.kubernetes-helmPlugins // {
+    helm-unittest =
+      let
+        buildGoModule = self.buildGoModule;
+        fetchFromGitHub = self. fetchFromGitHub;
+        lib = self.lib;
+        yq = self.yq-go;
+      in
+      buildGoModule rec {
+        pname = "helm-unittest";
+        version = "0.8.0";
+
+        src = fetchFromGitHub {
+          owner = pname;
+          repo = pname;
+          rev = "v${version}";
+          hash = "sha256-GlFpGipQurMLzZmyEui3/HLBDiDvdpXGxavTLThvo9A=";
+        };
+
+        nativeBuildInputs = [ yq ];
+
+        vendorHash = "sha256-U4E/asmgGC464FYRPdCBw4jFtK/noTzWpVcyYFFuBoY=";
+
+        # NOTE: Remove the install and upgrade hooks.
+        postPatch = ''
+          sed -i '/^hooks:/,+2 d' plugin.yaml
+        '';
+
+        postInstall = ''
+          install -dm755 $out/${pname}
+          mv $out/bin/helm-unittest $out/${pname}/untt
+          rmdir $out/bin
+          install -m644 -Dt $out/${pname} plugin.yaml
+        '';
+
+        meta = with lib; {
+          description = "BDD styled unit test framework for Kubernetes Helm charts as a Helm plugin";
+          homepage = "https://github.com/helm-unittest/helm-unittest";
+          license = licenses.mit;
+          maintainers = with maintainers; [ yurrriq ];
+        };
+      };
+  };
+
 }
