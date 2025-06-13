@@ -156,27 +156,28 @@ in rec {
         ./resource-monitor/freqs.patch
         ./resource-monitor/no_brackets.patch
         ./resource-monitor/fix_unit_scaling.patch
+        ./resource-monitor/48.patch
       ];
     });
-    vertical-workspaces = vertical-workspaces.overrideAttrs ( oldAttrs:
-    let
-      uuid = "vertical-workspaces@G-dH.github.com";
-      version = "71";
-      metadata = "ewogICJfZ2VuZXJhdGVkIjogIkdlbmVyYXRlZCBieSBTd2VldFRvb3RoLCBkbyBub3QgZWRpdCIsCiAgImRlc2NyaXB0aW9uIjogIkN1c3RvbWl6ZSB5b3VyIEdOT01FIFNoZWxsIFVYIHRvIHN1aXQgeW91ciB3b3JrZmxvdywgd2hldGhlciB5b3UgbGlrZSBob3Jpem9udGFsbHkgb3IgdmVydGljYWxseSBzdGFja2VkIHdvcmtzcGFjZXMuIiwKICAiZG9uYXRpb25zIjogewogICAgImJ1eW1lYWNvZmZlZSI6ICJnZW9yZ2RoIgogIH0sCiAgImdldHRleHQtZG9tYWluIjogInZlcnRpY2FsLXdvcmtzcGFjZXMiLAogICJuYW1lIjogIlYtU2hlbGwgKFZlcnRpY2FsIFdvcmtzcGFjZXMpIiwKICAic2Vzc2lvbi1tb2RlcyI6IFsKICAgICJ1bmxvY2stZGlhbG9nIiwKICAgICJ1c2VyIgogIF0sCiAgInNldHRpbmdzLXNjaGVtYSI6ICJvcmcuZ25vbWUuc2hlbGwuZXh0ZW5zaW9ucy52ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAic2hlbGwtdmVyc2lvbiI6IFsKICAgICI0NSIsCiAgICAiNDYiLAogICAgIjQ3IgogIF0sCiAgInVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vRy1kSC92ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAidXVpZCI6ICJ2ZXJ0aWNhbC13b3Jrc3BhY2VzQEctZEguZ2l0aHViLmNvbSIsCiAgInZlcnNpb24iOiA3MSwKICAidmVyc2lvbi1uYW1lIjogIjQ3LjEiCn0=";
-      sha256 = "sha256-puYXnq+dyLhh//PC/EkWBsKRgPuGxtmpCVh6KNKKayc=";
-    in {
-      inherit version;
-      src = super.fetchzip {
-        url = "https://extensions.gnome.org/extension-data/${
-            builtins.replaceStrings [ "@" ] [ "" ] uuid
-          }.v${builtins.toString version}.shell-extension.zip";
-        inherit sha256;
-        stripRoot = false;
-        postFetch = ''
-          echo "${metadata}" | base64 --decode > $out/metadata.json
-        '';
-      };
-    });
+    # vertical-workspaces = vertical-workspaces.overrideAttrs ( oldAttrs:
+    # let
+    #   uuid = "vertical-workspaces@G-dH.github.com";
+    #   version = "71";
+    #   metadata = "ewogICJfZ2VuZXJhdGVkIjogIkdlbmVyYXRlZCBieSBTd2VldFRvb3RoLCBkbyBub3QgZWRpdCIsCiAgImRlc2NyaXB0aW9uIjogIkN1c3RvbWl6ZSB5b3VyIEdOT01FIFNoZWxsIFVYIHRvIHN1aXQgeW91ciB3b3JrZmxvdywgd2hldGhlciB5b3UgbGlrZSBob3Jpem9udGFsbHkgb3IgdmVydGljYWxseSBzdGFja2VkIHdvcmtzcGFjZXMuIiwKICAiZG9uYXRpb25zIjogewogICAgImJ1eW1lYWNvZmZlZSI6ICJnZW9yZ2RoIgogIH0sCiAgImdldHRleHQtZG9tYWluIjogInZlcnRpY2FsLXdvcmtzcGFjZXMiLAogICJuYW1lIjogIlYtU2hlbGwgKFZlcnRpY2FsIFdvcmtzcGFjZXMpIiwKICAic2Vzc2lvbi1tb2RlcyI6IFsKICAgICJ1bmxvY2stZGlhbG9nIiwKICAgICJ1c2VyIgogIF0sCiAgInNldHRpbmdzLXNjaGVtYSI6ICJvcmcuZ25vbWUuc2hlbGwuZXh0ZW5zaW9ucy52ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAic2hlbGwtdmVyc2lvbiI6IFsKICAgICI0NSIsCiAgICAiNDYiLAogICAgIjQ3IgogIF0sCiAgInVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vRy1kSC92ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAidXVpZCI6ICJ2ZXJ0aWNhbC13b3Jrc3BhY2VzQEctZEguZ2l0aHViLmNvbSIsCiAgInZlcnNpb24iOiA3MSwKICAidmVyc2lvbi1uYW1lIjogIjQ3LjEiCn0=";
+    #   sha256 = "sha256-puYXnq+dyLhh//PC/EkWBsKRgPuGxtmpCVh6KNKKayc=";
+    # in {
+    #   inherit version;
+    #   src = super.fetchzip {
+    #     url = "https://extensions.gnome.org/extension-data/${
+    #         builtins.replaceStrings [ "@" ] [ "" ] uuid
+    #       }.v${builtins.toString version}.shell-extension.zip";
+    #     inherit sha256;
+    #     stripRoot = false;
+    #     postFetch = ''
+    #       echo "${metadata}" | base64 --decode > $out/metadata.json
+    #     '';
+    #   };
+    # });
   });
 
   # thermald = super.thermald.overrideAttrs ( oldAttrs: rec {

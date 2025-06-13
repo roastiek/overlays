@@ -9,5 +9,6 @@
     no-titlebar-when-maximized
     vertical-workspaces
     resource-monitor
+    gnome-shell-extensions
   ];
 }

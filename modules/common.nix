@@ -148,7 +148,7 @@
       ankacoder
       inconsolata
       iosevka
-      maple-mono-otf
+      maple-mono.opentype
       liberation_ttf
       gyre-fonts # TrueType substitutes for standard PostScript fonts
       unifont
@@ -201,7 +201,7 @@
   systemd.timers.docker-prune.timerConfig.Persistent = true;
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   # hardware.pulseaudio.package = pkgs.pulseaudioFull;
   # hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
   # hardware.pulseaudio.extraConfig = ''

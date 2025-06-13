@@ -1,0 +1,14 @@
+diff --git a/metadata.json b/metadata.json
+index ce84cf0..4a4613c 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -10,7 +10,8 @@
+   "shell-version": [
+     "45",
+     "46",
+-    "47"
++    "47",
++    "48"
+   ],
+   "url": "https://github.com/0ry0n/Resource_Monitor/",
+   "uuid": "Resource_Monitor@Ory0n",
