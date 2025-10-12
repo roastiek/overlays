@@ -53,8 +53,11 @@ in {
             ${optionalString (cfg.configFile != null) "--config-file ${cfg.configFile}"} \
             --dbus-enable \
             --systemd \
-            --exclusive-control \
-            --ignore-default-control \
+            --adaptive \
+            # --exclusive-control \
+            # --ignore-default-control \
+            # --workaround-enabled \
+            # --disable-active-power \
         ''];
       };
     };

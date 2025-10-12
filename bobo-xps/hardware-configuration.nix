@@ -9,10 +9,10 @@
     ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  # boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPackages = pkgs.linuxPackages_6_13;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_6_13;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "i915"
     "nvme" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -30,6 +30,17 @@
     "intel_pstate=active"
     #"intel_pstate=passive"
   ];
+
+  # Lanzaboote currently replaces the systemd-boot module.
+  # This setting is usually set to true in configuration.nix
+  # generated at installation time. So we force it to false
+  # for now.
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
 
   system.fsPackages = [ pkgs.ntfs3g ];
 
@@ -127,7 +138,7 @@
   services.thermald = {
     enable = true;
     debug = false;
-    configFile = ./thermal-conf.xml.default;
+    # configFile = ./thermal-conf.xml.default;
   };
 
 }

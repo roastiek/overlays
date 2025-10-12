@@ -117,6 +117,7 @@ in rec {
     postPatch = ''
       substituteInPlace vowpalwabbit/c_wrapper/CMakeLists.txt \
         --replace-fail 'SHARED_ONLY' 'STATIC_OR_SHARED'
+      patch -d ext_libs/rapidjson -p1 <${./vw_rapidjson_fix.patch}
     '';
 
     nativeBuildInputs = with self; [ cmake ];
@@ -210,7 +211,7 @@ in rec {
   #   '';
   # });
 
-  thermald = self.stdenv.mkDerivation rec {
+  thermald2 = self.stdenv.mkDerivation rec {
     pname = "thermald";
     version = "2.4.6";
 
@@ -271,7 +272,12 @@ in rec {
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
 
-  mutter = super.mutter.overrideAttrs ( oldAttrs: { patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ]; });
+  mutter = super.mutter.overrideAttrs ( oldAttrs: {
+    patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ];
+    postPatch = oldAttrs.postPatch + ''
+      sed -i '43i    (2880, 1800),' src/backends/native/gen-default-modes.py
+    '';
+  });
 
   # qsync = self.libsForQt512.callPackage ./qsync {};
 
@@ -304,8 +310,6 @@ in rec {
   #   # Only build gopls, and not the integration tests or documentation generator.
   #   subPackages = [ "." ];
   # };
-
-  tlp = callPackage ./tlp { inherit (self.linuxPackages) x86_energy_perf_policy; };
 
   kubernetes-helmPlugins = super.kubernetes-helmPlugins // {
     helm-unittest =
@@ -350,5 +354,49 @@ in rec {
         };
       };
   };
+
+  kopia-ui = super.kopia-ui.overrideAttrs (oldAttrs: {
+    installPhase = oldAttrs.installPhase + ''
+      rm $out/share/icons/hicolor/scalable/apps/kopia.svg
+      cp ${./kopia-ui.svg} $out/share/icons/hicolor/scalable/apps/kopia-ui.svg
+      cp ${./kopia32.png} $out/share/kopia/resources/icons/kopia-tray.png
+    '';
+  });
+
+  clementine = super.clementine.overrideAttrs (oldAttrs: {
+    postPatch = oldAttrs.postPatch + ''
+      sed -i '4i StartupWMClass=Clementine' dist/org.clementine_player.Clementine.desktop
+    '';
+  });
+
+  gnome-control-center = super.gnome-control-center.overrideAttrs (oldAttrs: {
+    patches = oldAttrs.patches ++ [ ./debug.patch ];
+  });
+
+
+  # linux-enable-ir-emitter = super.stdenv.mkDerivation {
+  #   name = "linux-enable-ir-emitter";
+  #   src = super.fetchFromGitHub {
+  #     owner = "EmixamPP";
+  #     repo = "linux-enable-ir-emitter";
+  #     rev = "6.1.1";
+  #     hash = "sha256-Pi+PnhuvYXJEScMBhWDlo22iOlWpNFW0Q0OVjRkGpww=";
+  #   };
+
+  #   nativeBuildInputs = with super; [ meson cmake pkg-config ninja ];
+
+  #   buildInputs = with super; [ (opencv4.override {enableGtk3=true;})  gtk3 yaml-cpp argparse ];
+
+  #   postPatch = ''
+  #     substituteInPlace "meson_options.txt" --replace-fail "['systemd', 'openrc']" "['systemd', 'openrc', 'none']"
+  #     substituteInPlace "meson.build" --replace-fail 'install_emptydir(config_dir)' ' ' --replace-fail 'install_emptydir(log_dir)' ' '
+  #   '';
+
+  #   mesonFlags = [
+  #     (super.lib.mesonOption "localstatedir" "/var")
+  #     (super.lib.mesonOption "sysconfdir" "/etc")
+  #     (super.lib.mesonOption "boot_service" "none")
+  #   ];
+  # };
 
 }

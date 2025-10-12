@@ -3,12 +3,18 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, ... }:
-
+let
+  lanzaboote = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/lanzaboote";
+    ref = "refs/tags/v0.4.2";
+  });
+in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../modules/common.nix
+      lanzaboote.nixosModules.lanzaboote
     ];
 
   #boot.kernel.sysctl = {
@@ -18,8 +24,8 @@
 
   nix = {
     settings = {
-      substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/"
-      ];
+      # substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/"
+      # ];
       trusted-substituters = [ "https://cache.nixos.org/" "http://hydra.dev.dszn.cz/" ];
       trusted-public-keys = [ "hydra0:AlUk3PBEX4hBeQin6SdNyabXksKhvIfg3wWpmNiQMoc=" ];
     };
@@ -52,23 +58,23 @@
   # '';
 
   # networking.networkmanager.appendNameservers = [ "172.17.0.1" ];
-  virtualisation.docker.daemon.settings = {
-    dns = [ "172.17.0.1" ];
-  };
-  networking.firewall.interfaces.docker0.allowedUDPPorts = [ 53 ];
-  networking.firewall.interfaces.docker0.allowedTCPPorts = [ 53 ];
+  # virtualisation.docker.daemon.settings = {
+  #   dns = [ "172.17.0.1" ];
+  # };
+  # networking.firewall.interfaces.docker0.allowedUDPPorts = [ 53 ];
+  # networking.firewall.interfaces.docker0.allowedTCPPorts = [ 53 ];
 
-  virtualisation.lxd.enable = true;
-  environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
-    server=/lxd/172.20.0.1
-    rev-server=172.20.0.0/16,172.20.0.1
-    listen-address=172.17.0.1
-    # rev-server=fd42:52bb:7b8c:d18e::0/64,172.20.0.1
-    # log-queries
-    # dns-loop-detect
-  '';
-  systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
-  systemd.services.NetworkManager.reloadIfChanged = true;
+  # virtualisation.lxd.enable = true;
+  # environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".text = ''
+  #   server=/lxd/172.20.0.1
+  #   rev-server=172.20.0.0/16,172.20.0.1
+  #   listen-address=172.17.0.1
+  #   # rev-server=fd42:52bb:7b8c:d18e::0/64,172.20.0.1
+  #   # log-queries
+  #   # dns-loop-detect
+  # '';
+  # systemd.services.NetworkManager.restartTriggers = [ config.environment.etc."NetworkManager/dnsmasq.d/50-lxd.conf".source ];
+  # systemd.services.NetworkManager.reloadIfChanged = true;
 
   virtualisation.podman.enable = true;
 
@@ -111,9 +117,13 @@
     thermald
     thermal-monitor
     config.boot.kernelPackages.cpupower
+    sbctl
     # qsync
 
     gnomeExtensions.gsconnect
+
+    kopia kopia-ui
+
 
   # work tools
   # goenvtemplator
@@ -129,7 +139,6 @@
 
     gnupg1
     openssl
-    # binance
 
     arc-theme
     adwaita-qt
@@ -222,4 +231,28 @@
   #   };
   # };
 
+  services.usbguard.enable = true;
+  services.usbguard.dbus.enable = true;
+  # #services.usbguard.implictPolicyTarget = "allow";
+  # #services.usbguard.presentDevicePolicy = "keep";
+  services.usbguard.IPCAllowedGroups = [ "wheel" ];
+  # systemd.services.usbguard-dbus = {
+  #   requires = [ "usbguard.service" ];
+  #   description =  "USBGuard D-Bus Service";
+  #   documentation = [ "man:usbguard-dbus(8)" ];
+  #   serviceConfig = {
+  #     Type = "dbus";
+  #     BusName = "org.usbguard1";
+  #     ExecStart="${config.services.usbguard.package}/bin/usbguard-dbus --system";
+  #   };
+  #   wantedBy = [ "multi-user.target" ];
+  #   aliases = [ "dbus-org.usbguard.service" ];
+  # };
+
+  # systemd.services.usbguard = {
+  #   serviceConfig = {
+  #     DevicePolicy = lib.mkForce "closed";
+  #     ReadWritePaths = lib.mkForce "-/dev/shm -/tmp -/var/lib/usbguard -/etc/usbgurad";
+  #   };
+  # };
 }

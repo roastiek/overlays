@@ -5,7 +5,7 @@
     ./chrome-gnome-shell.nix
     ./extensions.nix
     ./basic-apps.nix
-    ./thermald.nix
+    # ./thermald.nix
   ];
 
   nix = {
@@ -89,30 +89,6 @@
 
   programs.gpaste.enable = true;
 
-  # services.usbguard.enable = true;
-  # #services.usbguard.implictPolicyTarget = "allow";
-  # #services.usbguard.presentDevicePolicy = "keep";
-  # services.usbguard.IPCAllowedGroups = [ "wheel" ];
-  # systemd.services.usbguard-dbus = {
-  #   requires = [ "usbguard.service" ];
-  #   description =  "USBGuard D-Bus Service";
-  #   documentation = [ "man:usbguard-dbus(8)" ];
-  #   serviceConfig = {
-  #     Type = "dbus";
-  #     BusName = "org.usbguard1";
-  #     ExecStart="${config.services.usbguard.package}/bin/usbguard-dbus --system";
-  #   };
-  #   wantedBy = [ "multi-user.target" ];
-  #   aliases = [ "dbus-org.usbguard.service" ];
-  # };
-
-  # systemd.services.usbguard = {
-  #   serviceConfig = {
-  #     DevicePolicy = lib.mkForce "closed";
-  #     ReadWritePaths = lib.mkForce "-/dev/shm -/tmp -/var/lib/usbguard -/etc/usbgurad";
-  #   };
-  # };
-
   services.journald.rateLimitInterval = "0";
 
   services.fstrim.enable = true;
@@ -152,7 +128,7 @@
       liberation_ttf
       gyre-fonts # TrueType substitutes for standard PostScript fonts
       unifont
-      noto-fonts-color-emoji
+      # noto-fonts-color-emoji
     ];
     fontconfig.defaultFonts = {
       serif = [ "Liberation Serif" ];
@@ -214,8 +190,13 @@
     extraConfig.pipewire = {
       "10-clock-rate" = {
         "context.properties" = {
-        #default.clock.rate          = 192000;
+          # "default.clock.rate"          = 192000;
           "default.clock.allowed-rates" = [ 48000 44100 88200 96000 192000 ];
+        };
+      };
+      "11-high-quality-resample" = {
+        "stream.properties" = {
+           "resample.quality" = 10;
         };
       };
     };
@@ -238,6 +219,7 @@
             actions = {
               update-props = {
                 "audio.position" = "FR,FL";
+                "audio.rate" = 96000;
               };
             };
           }
