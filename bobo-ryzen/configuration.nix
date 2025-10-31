@@ -43,7 +43,7 @@
 #    ];*/
 #  };
 
-  boot.consoleLogLevel = 6;
+  # boot.consoleLogLevel = 6;
 
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = 1;
@@ -90,6 +90,7 @@
       enableTWBT = true;
     } )
     vscodium
+    git
   ];
 
   services.resolved.enable = false;
@@ -174,4 +175,10 @@
 # boot.plymouth.enable = true;
 
   # networking.firewall.enable = false;
+
+  environment.etc = {
+    "xdg/monitors.xml" = {
+      source = ./monitors.xml;
+    };
+  };
 }

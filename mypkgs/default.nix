@@ -158,6 +158,7 @@ in rec {
         ./resource-monitor/no_brackets.patch
         ./resource-monitor/fix_unit_scaling.patch
         ./resource-monitor/48.patch
+        ./resource-monitor/box_redraw.patch
       ];
     });
     # vertical-workspaces = vertical-workspaces.overrideAttrs ( oldAttrs:
