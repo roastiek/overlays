@@ -8,7 +8,23 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../modules/common.nix
+
+      ../modules/audio.nix
+      ../modules/backup.nix
+      ../modules/boot-splash.nix
+      ../modules/channel.nix
+      ../modules/chrome-gnome-shell.nix
+      ../modules/desktop.nix
+      ../modules/extensions.nix
+      ../modules/fonts.nix
+      ../modules/games.nix
+      ../modules/locales.nix
+      ../modules/mypkgs.nix
+      ../modules/network-shares.nix
+      ../modules/network.nix
+      ../modules/nix.nix
+      ../modules/snapshots.nix
+      ../modules/system-services.nix
     ];
 
 #  nix = {
@@ -63,8 +79,6 @@
   # The NixOS release to be compatible with for stateful data such as databases.
   # system.stateVersion = "20.09";
 
-  programs.steam.enable = true;
-
   environment.systemPackages = with pkgs; [
     config.boot.kernelPackages.cpupower
     ( dwarf-fortress-packages.dwarf-fortress-full.override {
@@ -75,7 +89,7 @@
       enableSound = false;
       enableTWBT = true;
     } )
-    iptables
+    vscodium
   ];
 
   services.resolved.enable = false;

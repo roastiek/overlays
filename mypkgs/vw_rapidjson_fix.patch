@@ -1,0 +1,14 @@
+diff --git a/include/rapidjson/document.h b/include/rapidjson/document.h
+index e3e20dfb..ed81fc6d 100644
+--- a/include/rapidjson/document.h
++++ b/include/rapidjson/document.h
+@@ -316,7 +316,8 @@ struct GenericStringRef {
+ 
+     GenericStringRef(const GenericStringRef& rhs) : s(rhs.s), length(rhs.length) {}
+ 
+-    GenericStringRef& operator=(const GenericStringRef& rhs) { s = rhs.s; length = rhs.length; }
++    //! Copy assignment operator not permitted - immutable type
++    GenericStringRef& operator=(const GenericStringRef& rhs) /* = delete */;
+ 
+     //! implicit conversion to plain CharType pointer
+     operator const Ch *() const { return s; }

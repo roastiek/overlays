@@ -1,0 +1,15 @@
+{ config, pkgs, lib, ... }:
+{
+  imports = [
+    ./channel.nix
+    ./chrome-gnome-shell.nix
+    ./extensions.nix
+    ./basic-apps.nix
+    # ./thermald.nix
+  ];
+
+  systemd.services."save-hwclock".wantedBy = lib.mkForce [];
+
+  nixpkgs.overlays = [ ( import ../mypkgs ) ];
+
+}

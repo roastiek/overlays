@@ -1,0 +1,62 @@
+diff --git a/BUILD b/BUILD
+index 4dc2cadee..cf5e2db3d 100644
+--- a/BUILD
++++ b/BUILD
+@@ -4,3 +4,30 @@ exports_files([
+     "VERSION",
+     ".clang-format",
+ ])
++
++load(
++    "@rules_foreign_cc//tools/build_defs/native_tools:native_tools_toolchain.bzl",
++    "native_tool_toolchain",
++)
++
++native_tool_toolchain(
++  name = "local_cmake",
++  path = "/usr/bin/cmake3",
++  visibility = ["//visibility:public"],
++)
++toolchain(
++  name = "local_cmake_toolchain",
++  toolchain = ":local_cmake",
++  toolchain_type = "@rules_foreign_cc//tools/build_defs:cmake_toolchain",
++)
++
++native_tool_toolchain(
++  name = "local_ninja",
++  path = "/usr/bin/ninja-build",
++  visibility = ["//visibility:public"],
++)
++toolchain(
++  name = "local_ninja_toolchain",
++  toolchain = ":local_ninja",
++  toolchain_type = "@rules_foreign_cc//tools/build_defs:ninja_toolchain",
++)
+diff --git a/bazel/dependency_imports.bzl b/bazel/dependency_imports.bzl
+index 051923e31..55683a44e 100644
+--- a/bazel/dependency_imports.bzl
++++ b/bazel/dependency_imports.bzl
+@@ -9,7 +9,7 @@ load("@upb//bazel:repository_defs.bzl", upb_bazel_version_repository = "bazel_ve
+ GO_VERSION = "1.13.5"
+ 
+ def envoy_dependency_imports(go_version = GO_VERSION):
+-    rules_foreign_cc_dependencies()
++    rules_foreign_cc_dependencies(["//:local_cmake_toolchain", "//:local_ninja_toolchain"], False)
+     go_rules_dependencies()
+     go_register_toolchains(go_version)
+     rbe_toolchains_config()
+diff --git a/source/common/http/header_map_impl.cc b/source/common/http/header_map_impl.cc
+index 2f407c435..4ed4ab689 100644
+--- a/source/common/http/header_map_impl.cc
++++ b/source/common/http/header_map_impl.cc
+@@ -1,3 +1,9 @@
++#ifndef _MSC_VER
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
++#pragma GCC diagnostic ignored "-Wuninitialized"
++#endif
++
+ #include "common/http/header_map_impl.h"
+ 
+ #include <cstdint>

@@ -1,0 +1,146 @@
+diff --git a/panels/display/cc-display-config-dbus.c b/panels/display/cc-display-config-dbus.c
+index f9a4f0f..5b2c238 100644
+--- a/panels/display/cc-display-config-dbus.c
++++ b/panels/display/cc-display-config-dbus.c
+@@ -21,6 +21,7 @@
+ #include <math.h>
+ #include <gio/gio.h>
+ #include <stdint.h>
++#include <stdio.h>
+ 
+ #include "cc-display-config-dbus.h"
+ 
+@@ -93,6 +94,7 @@ cc_display_mode_dbus_get_resolution (CcDisplayMode *pself,
+ {
+   CcDisplayModeDBus *self = CC_DISPLAY_MODE_DBUS (pself);
+ 
++  printf("cc_display_mode_dbus_get_resolution %d %d\n", self->width, self->height);
+   if (w)
+     *w = self->width;
+   if (h)
+@@ -664,6 +666,7 @@ cc_display_monitor_dbus_get_modes (CcDisplayMonitor *pself)
+ {
+   CcDisplayMonitorDBus *self = CC_DISPLAY_MONITOR_DBUS (pself);
+ 
++  printf("cc_display_monitor_dbus_get_modes\n");
+   return self->modes;
+ }
+ 
+@@ -750,6 +753,7 @@ cc_display_monitor_dbus_get_closest_mode (CcDisplayMonitorDBus         *self,
+   CcDisplayModeDBus *best = NULL;
+   GList *l;
+ 
++  printf("cc_display_monitor_dbus_get_closest_mode: %d %d\n", width, height);
+   for (l = self->modes; l != NULL; l = l->next)
+     {
+       CcDisplayModeDBus *similar = l->data;
+@@ -787,6 +791,7 @@ cc_display_monitor_dbus_set_mode (CcDisplayMonitor *pself,
+ 
+   g_return_if_fail (mode_dbus != NULL);
+ 
++  printf("cc_display_monitor_dbus_set_mode %d %d\n", mode_dbus->width, mode_dbus->height);
+   new_mode = cc_display_monitor_dbus_get_closest_mode (self,
+                                                        mode_dbus->width,
+                                                        mode_dbus->height,
+@@ -999,6 +1004,7 @@ construct_modes (CcDisplayMonitorDBus *self,
+ {
+   CcDisplayModeDBus *mode;
+ 
++  printf("construct_modes\n");
+   while (TRUE)
+     {
+       g_autoptr(GVariant) variant = NULL;
+@@ -1007,6 +1013,7 @@ construct_modes (CcDisplayMonitorDBus *self,
+         break;
+ 
+       mode = cc_display_mode_dbus_new (self, variant);
++      printf("construct_modes.loop %d %d\n", mode->width, mode->height);
+       self->modes = g_list_prepend (self->modes, mode);
+ 
+       if (mode->flags & MODE_PREFERRED)
+@@ -1030,6 +1037,7 @@ cc_display_monitor_dbus_new (GVariant *variant,
+   g_autoptr(GVariantIter) modes = NULL;
+   g_autoptr(GVariantIter) props = NULL;
+ 
++  printf("cc_display_monitor_dbus_new\n");
+   self->config = config;
+ 
+   g_variant_get (variant, MONITOR_FORMAT,
+@@ -1834,6 +1842,7 @@ construct_monitors (CcDisplayConfigDBus *self,
+                     GVariantIter *monitors,
+                     GVariantIter *logical_monitors)
+ {
++  printf("construct_monitors\n");
+   while (TRUE)
+     {
+       CcDisplayMonitorDBus *monitor;
+diff --git a/panels/display/cc-display-panel.c b/panels/display/cc-display-panel.c
+index f0ab11b..b60a48a 100644
+--- a/panels/display/cc-display-panel.c
++++ b/panels/display/cc-display-panel.c
+@@ -141,6 +141,7 @@ config_get_current_type (CcDisplayPanel *self)
+   guint n_active_outputs;
+   GList *outputs, *l;
+ 
++  printf("config_get_current_type\n");
+   outputs = cc_display_config_get_ui_sorted_monitors (self->current_config);
+   n_active_outputs = 0;
+   for (l = outputs; l; l = l->next)
+@@ -551,6 +552,7 @@ on_toplevel_escape_pressed_cb (GtkWidget      *widget,
+ static void
+ cc_display_panel_constructed (GObject *object)
+ {
++  printf("cc_display_panel_constructed\n");
+   CcShell *shell = cc_panel_get_shell (CC_PANEL (object));
+   GtkWidget *toplevel = cc_shell_get_toplevel (shell);
+ 
+@@ -627,6 +629,7 @@ set_current_output (CcDisplayPanel   *self,
+ {
+   gboolean changed;
+ 
++  printf("set_current_output\n");
+   /* Note, this function is also called if the internal UI needs updating after a rebuild. */
+   changed = (output != self->current_output);
+ 
+@@ -665,6 +668,7 @@ static void
+ add_display_row (CcDisplayPanel   *self,
+                  CcDisplayMonitor *monitor)
+ {
++  printf("add_display_row\n");
+   g_autofree gchar *number_string = NULL;
+   GtkWidget *number_label;
+   GtkWidget *icon;
+@@ -1026,6 +1030,8 @@ shell_proxy_ready (GObject        *source,
+   GDBusProxy *proxy;
+   g_autoptr(GError) error = NULL;
+ 
++  printf("shell_proxy_ready\n");
++
+   proxy = cc_object_storage_create_dbus_proxy_finish (res, &error);
+   if (!proxy)
+     {
+@@ -1047,6 +1053,8 @@ session_bus_ready (GObject        *source,
+   GDBusConnection *bus;
+   g_autoptr(GError) error = NULL;
+ 
++  printf("session_bus_ready\n");
++
+   bus = g_bus_get_finish (res, &error);
+   if (!bus)
+     {
+@@ -1067,6 +1075,7 @@ session_bus_ready (GObject        *source,
+ static void
+ cc_display_panel_init (CcDisplayPanel *self)
+ {
++  printf("cc_display_panel_init\n");
+   g_autoptr(GtkCssProvider) provider = NULL;
+   GtkExpression *expression;
+ 
+@@ -1124,6 +1133,7 @@ cc_display_panel_init (CcDisplayPanel *self)
+                                        (GAsyncReadyCallback) shell_proxy_ready,
+                                        self);
+ 
++  printf("cc_display_panel_init.g_bus_get\n");
+   g_bus_get (G_BUS_TYPE_SESSION,
+              cc_panel_get_cancellable (CC_PANEL (self)),
+              (GAsyncReadyCallback) session_bus_ready,
