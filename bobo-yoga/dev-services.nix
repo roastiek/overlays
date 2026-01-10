@@ -66,7 +66,7 @@
     zoom-us
 
     # nix lsps
-    # nil
+    nil
     # nixd
   ];
 }

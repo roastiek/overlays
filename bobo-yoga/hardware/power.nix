@@ -1,18 +1,18 @@
 { config, lib, pkgs, ... }:
 {
-  services.power-profiles-daemon.enable = false;
+  # services.power-profiles-daemon.enable = false;
 
   services.tlp = {
     enable = true;
     settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "powersave";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-      CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-      
-      #PLATFORM_PROFILE_ON_AC = "balanced"; #performance 
+      # CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+      # CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      # CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
+      # CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+
+      #PLATFORM_PROFILE_ON_AC = "balanced"; #performance
       #PLATFORM_PROFILE_ON_BAT = "low-power";
-      
+
       DISK_DEVICES = "nvme0n1";
 
       USB_AUTOSUSPEND = 1;
@@ -28,7 +28,7 @@
       START_CHARGE_THRESH_BAT0 = 0;
       STOP_CHARGE_THRESH_BAT0 = 1;
 
-      TLP_DEBUG="arg bat disk lock nm path pm ps rf run sysfs udev usb";
+      # TLP_DEBUG="arg bat disk lock nm path pm ps rf run sysfs udev usb";
     };
   };
 
@@ -45,5 +45,10 @@
   systemd.services.tlp = {
     before = [ "bluetooth.service" ];
     after = [ "NetworkManager.service" ];
+  };
+
+  services.thermald = {
+    enable = true;
+    debug = false;
   };
 }

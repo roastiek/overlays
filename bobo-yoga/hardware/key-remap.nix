@@ -14,13 +14,17 @@
           main = {
             "leftshift+leftmeta+f23" = "layer(control)";
           };
-        }; 
+        };
       };
     };
   };
 
-  systemd.services.keyd.serviceConfig.Group = "keyd";
-  systemd.services.keyd.serviceConfig.SuccessExitStatus= "15";
+  systemd.services.keyd.serviceConfig= {
+    Group = "keyd";
+    SuccessExitStatus= "15";
+    # CapabilityBoundingSet = [ "CAP_IPC_LOCK" ];
+    # RestrictRealtime = lib.mkForce false;
+  };
 
   users.groups.keyd = {};
 }

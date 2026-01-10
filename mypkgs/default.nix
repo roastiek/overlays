@@ -400,4 +400,13 @@ in rec {
   #   ];
   # };
 
+  # keyd = super.keyd.overrideAttrs ( oldAttrs: {
+  #   src = self.fetchFromGitHub {
+  #     owner = "rvaiya";
+  #     repo = "keyd";
+  #     rev = "30434c9382a24995e12d6c3f630cb28c48acdf66";
+  #     hash = "sha256-qPOP5X3Pcj+vA/00PBdBI+dRqfUPzxHL4Cz9e85delA=";
+  #   };
+  # });
+
 }

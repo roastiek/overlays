@@ -24,7 +24,7 @@
       ../modules/nix.nix
       ../modules/printing.nix
       ../modules/secure-boot.nix
-      # ../modules/snapshots.nix
+      ../modules/snapshots.nix
       ../modules/system-services.nix
       ../modules/users.nix
       ../modules/work-certs.nix
@@ -35,6 +35,7 @@
   system.stateVersion = "25.05"; # Did you read the comment?
 
   environment.systemPackages = with pkgs; [
+    easyeffects
   ];
 
   networking.hostName = "bobo-yoga"; # Define your hostname.
