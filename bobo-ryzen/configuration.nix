@@ -23,6 +23,7 @@
       ../modules/network-shares.nix
       ../modules/network.nix
       ../modules/nix.nix
+      ../modules/secure-boot.nix
       ../modules/snapshots.nix
       ../modules/system-services.nix
     ];
