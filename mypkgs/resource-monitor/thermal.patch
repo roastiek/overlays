@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index b3f3276..83707d0 100644
+index 9efb0f5..1610e96 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -26,6 +26,8 @@ import GLib from "gi://GLib";
@@ -11,7 +11,7 @@ index b3f3276..83707d0 100644
  import * as Main from "resource:///org/gnome/shell/ui/main.js";
  import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
  import * as Util from "resource:///org/gnome/shell/misc/util.js";
-@@ -2637,6 +2639,8 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2632,6 +2634,8 @@ const ResourceMonitor = GObject.registerClass(
  
      _refreshCpuTemperatureValue() {
        if (this._thermalCpuTemperatureDevicesList.length > 0) {
@@ -20,7 +20,7 @@ index b3f3276..83707d0 100644
          this._thermalCpuTemperatureDevicesList.forEach((element) => {
            const [, status, path] = element.split(
              THERMAL_CPU_TEMPERATURE_DEVICES_LIST_SEPARATOR
-@@ -2646,6 +2650,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2641,6 +2645,7 @@ const ResourceMonitor = GObject.registerClass(
            if (status === "false" || !GLib.file_test(path, GLib.FileTest.EXISTS))
              return;
  
@@ -28,7 +28,7 @@ index b3f3276..83707d0 100644
            this._loadFile(path)
              .then((contents) => {
                const temperature = parseInt(
-@@ -2653,43 +2658,46 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2648,43 +2653,46 @@ const ResourceMonitor = GObject.registerClass(
                  10
                );
  

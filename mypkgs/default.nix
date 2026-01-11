@@ -156,8 +156,7 @@ in rec {
         ./resource-monitor/thermal.patch
         ./resource-monitor/freqs.patch
         ./resource-monitor/no_brackets.patch
-        ./resource-monitor/fix_unit_scaling.patch
-        ./resource-monitor/48.patch
+#        ./resource-monitor/fix_unit_scaling.patch
         ./resource-monitor/box_redraw.patch
       ];
     });
@@ -368,10 +367,6 @@ in rec {
     postPatch = oldAttrs.postPatch + ''
       sed -i '4i StartupWMClass=Clementine' dist/org.clementine_player.Clementine.desktop
     '';
-  });
-
-  gnome-control-center = super.gnome-control-center.overrideAttrs (oldAttrs: {
-    patches = oldAttrs.patches ++ [ ./debug.patch ];
   });
 
 

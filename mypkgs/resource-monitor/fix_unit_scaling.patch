@@ -1,13 +1,55 @@
 diff --git a/extension.js b/extension.js
-index e60be3f..cfe3ee8 100644
+index 8dac5b1..8a92888 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -2087,7 +2087,7 @@ const ResourceMonitor = GObject.registerClass(
-           ]) {
-             if (values.some((v) => v > factor)) {
-               unit = suffix;
--              values = values.map((v) => v / factor ** exponent);
+@@ -2069,14 +2069,42 @@ const ResourceMonitor = GObject.registerClass(
+         ? ["b", "k", "m", "g", "t"]
+         : ["B", "K", "M", "G", "T"];
+ 
+-      let exponent = 0;
+-
+-      if (unitMeasure && unitSuffixes.includes(unitMeasure.toUpperCase())) {
+-        exponent = unitSuffixes.indexOf(unitMeasure.toUpperCase());
+-      } else {
+-        while (values.some(v => v >= factor ** (exponent + 1)) && exponent < 4) {
+-          exponent++;
+-        }
++      // Explicit conversions for 'b', 'k', 'm', 'g', 't'
++      switch (unitMeasure) {
++        case "b":
++          unit = unitSuffixes.b;
++          break;
++        case "k":
++          unit = unitSuffixes.k;
++          values = values.map((v) => v / factor);
++          break;
++        case "m":
++          unit = unitSuffixes.m;
++          values = values.map((v) => v / factor ** 2);
++          break;
++        case "g":
++          unit = unitSuffixes.g;
++          values = values.map((v) => v / factor ** 3);
++          break;
++        case "t":
++          unit = unitSuffixes.t;
++          values = values.map((v) => v / factor ** 4);
++          break;
++        case "auto":
++        default:
++          // Automatically determine the appropriate unit based on the values
++          for (const [suffix, exponent] of [
++            [unitSuffixes.k, 1],
++            [unitSuffixes.m, 2],
++            [unitSuffixes.g, 3],
++            [unitSuffixes.t, 4],
++          ]) {
++            if (values.some((v) => v > factor)) {
++              unit = suffix;
 +              values = values.map((v) => v / factor);
-             } else break;
-           }
-           break;
++            } else break;
++          }
++          break;
+       }
+ 
+       const unit = unitSuffixes[exponent];

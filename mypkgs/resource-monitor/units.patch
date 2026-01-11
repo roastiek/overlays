@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index 92d07a0..bb58b85 100644
+index bae7215..a289c10 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -322,49 +322,6 @@ const ResourceMonitor = GObject.registerClass(
+@@ -323,49 +323,6 @@ const ResourceMonitor = GObject.registerClass(
          style_class: "system-status-icon",
        });
  
@@ -52,7 +52,7 @@ index 92d07a0..bb58b85 100644
        // Value
        this._cpuValue = new St.Label({
          y_align: Clutter.ActorAlign.CENTER,
-@@ -471,15 +428,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -472,15 +429,12 @@ const ResourceMonitor = GObject.registerClass(
                case "cpu":
                  this._box.add_child(this._cpuIcon);
                  this._box.add_child(this._cpuValue);
@@ -68,7 +68,7 @@ index 92d07a0..bb58b85 100644
                  this._box.add_child(this._cpuFrequencyBracketEnd);
                  this._box.add_child(this._cpuLoadAverageBracketStart);
                  this._box.add_child(this._cpuLoadAverageValue);
-@@ -490,14 +444,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -491,14 +445,12 @@ const ResourceMonitor = GObject.registerClass(
                case "ram":
                  this._box.add_child(this._ramIcon);
                  this._box.add_child(this._ramValue);
@@ -83,7 +83,7 @@ index 92d07a0..bb58b85 100644
  
                  break;
  
-@@ -516,14 +468,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -517,14 +469,12 @@ const ResourceMonitor = GObject.registerClass(
                case "eth":
                  this._box.add_child(this._ethIcon);
                  this._box.add_child(this._ethValue);
@@ -98,7 +98,7 @@ index 92d07a0..bb58b85 100644
  
                  break;
  
-@@ -547,15 +497,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -548,15 +498,12 @@ const ResourceMonitor = GObject.registerClass(
              switch (element) {
                case "cpu":
                  this._box.add_child(this._cpuValue);
@@ -114,7 +114,7 @@ index 92d07a0..bb58b85 100644
                  this._box.add_child(this._cpuFrequencyBracketEnd);
                  this._box.add_child(this._cpuLoadAverageBracketStart);
                  this._box.add_child(this._cpuLoadAverageValue);
-@@ -566,14 +513,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -567,14 +514,12 @@ const ResourceMonitor = GObject.registerClass(
  
                case "ram":
                  this._box.add_child(this._ramValue);
@@ -129,7 +129,7 @@ index 92d07a0..bb58b85 100644
                  this._box.add_child(this._swapIcon);
  
                  break;
-@@ -592,14 +537,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -593,14 +538,12 @@ const ResourceMonitor = GObject.registerClass(
  
                case "eth":
                  this._box.add_child(this._ethValue);
@@ -144,8 +144,8 @@ index 92d07a0..bb58b85 100644
                  this._box.add_child(this._wlanIcon);
  
                  break;
-@@ -1109,16 +1052,14 @@ const ResourceMonitor = GObject.registerClass(
-           (this._netEthStatus && !this._netAutoHideStatus),
+@@ -1115,16 +1058,14 @@ const ResourceMonitor = GObject.registerClass(
+         (this._netEthStatus && !this._netAutoHideStatus),
          true,
          this._ethIcon,
 -        this._ethValue,
@@ -154,7 +154,7 @@ index 92d07a0..bb58b85 100644
        );
        this._basicItemStatus(
          (this._netWlanStatus && this._nmWlanStatus) ||
-           (this._netWlanStatus && !this._netAutoHideStatus),
+         (this._netWlanStatus && !this._netAutoHideStatus),
          true,
          this._wlanIcon,
 -        this._wlanValue,
@@ -163,8 +163,8 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1150,16 +1091,14 @@ const ResourceMonitor = GObject.registerClass(
-           (this._netEthStatus && !this._netAutoHideStatus),
+@@ -1156,16 +1097,14 @@ const ResourceMonitor = GObject.registerClass(
+         (this._netEthStatus && !this._netAutoHideStatus),
          true,
          this._ethIcon,
 -        this._ethValue,
@@ -173,7 +173,7 @@ index 92d07a0..bb58b85 100644
        );
        this._basicItemStatus(
          (this._netWlanStatus && this._nmWlanStatus) ||
-           (this._netWlanStatus && !this._netAutoHideStatus),
+         (this._netWlanStatus && !this._netAutoHideStatus),
          true,
          this._wlanIcon,
 -        this._wlanValue,
@@ -182,9 +182,9 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1268,8 +1207,7 @@ const ResourceMonitor = GObject.registerClass(
-           !this._cpuFrequencyStatus &&
-           !this._cpuLoadAverageStatus,
+@@ -1274,8 +1213,7 @@ const ResourceMonitor = GObject.registerClass(
+         !this._cpuFrequencyStatus &&
+         !this._cpuLoadAverageStatus,
          this._cpuIcon,
 -        this._cpuValue,
 -        this._cpuUnit
@@ -192,15 +192,15 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1298,7 +1236,6 @@ const ResourceMonitor = GObject.registerClass(
-           !this._cpuLoadAverageStatus,
+@@ -1304,7 +1242,6 @@ const ResourceMonitor = GObject.registerClass(
+         !this._cpuLoadAverageStatus,
          this._cpuIcon,
          this._cpuFrequencyValue,
 -        this._cpuFrequencyUnit,
          this._cpuFrequencyBracketStart,
          this._cpuFrequencyBracketEnd
        );
-@@ -1374,8 +1311,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1380,8 +1317,7 @@ const ResourceMonitor = GObject.registerClass(
          this._ramStatus,
          true,
          this._ramIcon,
@@ -210,7 +210,7 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1432,8 +1368,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -1438,8 +1374,7 @@ const ResourceMonitor = GObject.registerClass(
          this._swapStatus,
          true,
          this._swapIcon,
@@ -220,8 +220,8 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1627,16 +1562,14 @@ const ResourceMonitor = GObject.registerClass(
-           (this._netEthStatus && !this._netAutoHideStatus),
+@@ -1651,16 +1586,14 @@ const ResourceMonitor = GObject.registerClass(
+         (this._netEthStatus && !this._netAutoHideStatus),
          true,
          this._ethIcon,
 -        this._ethValue,
@@ -230,7 +230,7 @@ index 92d07a0..bb58b85 100644
        );
        this._basicItemStatus(
          (this._netWlanStatus && this._nmWlanStatus) ||
-           (this._netWlanStatus && !this._netAutoHideStatus),
+         (this._netWlanStatus && !this._netAutoHideStatus),
          true,
          this._wlanIcon,
 -        this._wlanValue,
@@ -239,8 +239,8 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1670,8 +1603,7 @@ const ResourceMonitor = GObject.registerClass(
-           (this._netEthStatus && !this._netAutoHideStatus),
+@@ -1694,8 +1627,7 @@ const ResourceMonitor = GObject.registerClass(
+         (this._netEthStatus && !this._netAutoHideStatus),
          true,
          this._ethIcon,
 -        this._ethValue,
@@ -249,8 +249,8 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1700,8 +1632,7 @@ const ResourceMonitor = GObject.registerClass(
-           (this._netWlanStatus && !this._netAutoHideStatus),
+@@ -1724,8 +1656,7 @@ const ResourceMonitor = GObject.registerClass(
+         (this._netWlanStatus && !this._netAutoHideStatus),
          true,
          this._wlanIcon,
 -        this._wlanValue,
@@ -259,15 +259,15 @@ index 92d07a0..bb58b85 100644
        );
      }
  
-@@ -1734,7 +1665,6 @@ const ResourceMonitor = GObject.registerClass(
-           !this._cpuLoadAverageStatus,
+@@ -1758,7 +1689,6 @@ const ResourceMonitor = GObject.registerClass(
+         !this._cpuLoadAverageStatus,
          this._cpuIcon,
          this._cpuTemperatureValue,
 -        this._cpuTemperatureUnit,
          this._cpuTemperatureBracketStart,
          this._cpuTemperatureBracketEnd
        );
-@@ -2235,7 +2165,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2228,7 +2158,7 @@ const ResourceMonitor = GObject.registerClass(
            this._cpuValue.style = this._getUsageColor(cpuCurr, this._cpuColors);
  
            // Update CPU usage display with optional decimal precision
@@ -276,10 +276,10 @@ index 92d07a0..bb58b85 100644
          })
          .catch((error) =>
            console.error("[Resource_Monitor] Error reading cpu:", error)
-@@ -2292,16 +2222,14 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2285,16 +2215,14 @@ const ResourceMonitor = GObject.registerClass(
            if (this._ramUnitType === "perc") {
              const percentValue = (100 * value) / total;
-             this._ramValue.style = this._getUsageColor(value, this._ramColors);
+             this._ramValue.style = this._getUsageColor(percentValue, this._ramColors);
 -            this._ramValue.text = `${this._getValueFixed(percentValue)}`;
 -            this._ramUnit.text = "%";
 +            this._ramValue.text = `${this._getValueFixed(percentValue)}%`;
@@ -295,8 +295,8 @@ index 92d07a0..bb58b85 100644
            }
          })
          .catch((error) =>
-@@ -2362,8 +2290,7 @@ const ResourceMonitor = GObject.registerClass(
-               value,
+@@ -2355,8 +2283,7 @@ const ResourceMonitor = GObject.registerClass(
+               percentValue,
                this._swapColors
              );
 -            this._swapValue.text = `${this._getValueFixed(percentValue)}`;
@@ -305,7 +305,7 @@ index 92d07a0..bb58b85 100644
            } else {
              [value, unit] = this._convertValueToUnit(
                value,
-@@ -2373,8 +2300,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2366,8 +2293,7 @@ const ResourceMonitor = GObject.registerClass(
                value,
                this._swapColors
              );
@@ -315,7 +315,7 @@ index 92d07a0..bb58b85 100644
            }
          })
          .catch((error) =>
-@@ -2416,8 +2342,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2409,8 +2335,7 @@ const ResourceMonitor = GObject.registerClass(
  
              this._diskStatsBox.update_element_value(
                filesystem,
@@ -325,7 +325,7 @@ index 92d07a0..bb58b85 100644
                this._getUsageColor(rw, this._diskStatsColors)
              );
            };
-@@ -2467,7 +2392,6 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2460,7 +2385,6 @@ const ResourceMonitor = GObject.registerClass(
                      this._diskStatsBox.update_element_value(
                        filesystem,
                        "--|--",
@@ -333,7 +333,7 @@ index 92d07a0..bb58b85 100644
                        ""
                      );
                    }
-@@ -2504,8 +2428,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2497,8 +2421,7 @@ const ResourceMonitor = GObject.registerClass(
  
                this._diskSpaceBox.update_element_value(
                  filesystem,
@@ -343,7 +343,7 @@ index 92d07a0..bb58b85 100644
                  this._getUsageColor(value, this._diskSpaceColors)
                );
              } else {
-@@ -2522,8 +2445,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2515,8 +2438,7 @@ const ResourceMonitor = GObject.registerClass(
  
                this._diskSpaceBox.update_element_value(
                  filesystem,
@@ -353,7 +353,7 @@ index 92d07a0..bb58b85 100644
                  this._getUsageColor(value, this._diskSpaceColors)
                );
              }
-@@ -2541,6 +2463,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2534,6 +2456,7 @@ const ResourceMonitor = GObject.registerClass(
  
            let duTot = [0, 0];
            let du = [0, 0];
@@ -361,7 +361,7 @@ index 92d07a0..bb58b85 100644
  
            // Exclude the first two header lines
            for (let i = 2; i < lines.length - 1; i++) {
-@@ -2576,7 +2499,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2569,7 +2492,7 @@ const ResourceMonitor = GObject.registerClass(
                this._netUnit === "bits"
              );
              du = result.values;
@@ -370,7 +370,7 @@ index 92d07a0..bb58b85 100644
            }
  
            // Set color based on thresholds
-@@ -2585,7 +2508,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2578,7 +2501,7 @@ const ResourceMonitor = GObject.registerClass(
            // Display the download/upload values with appropriate decimal places
            this._ethValue.text = `${this._getValueFixed(
              du[0]
@@ -379,7 +379,7 @@ index 92d07a0..bb58b85 100644
          })
          .catch((error) =>
            console.error("[Resource_Monitor] Error reading eth:", error)
-@@ -2599,6 +2522,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2592,6 +2515,7 @@ const ResourceMonitor = GObject.registerClass(
  
            let duTot = [0, 0];
            let du = [0, 0];
@@ -387,7 +387,7 @@ index 92d07a0..bb58b85 100644
  
            // Exclude the first two header lines
            for (let i = 2; i < lines.length - 1; i++) {
-@@ -2634,7 +2558,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2627,7 +2551,7 @@ const ResourceMonitor = GObject.registerClass(
                this._netUnit === "bits"
              );
              du = result.values;
@@ -396,7 +396,7 @@ index 92d07a0..bb58b85 100644
            }
  
            // Set color based on thresholds
-@@ -2643,7 +2567,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2636,7 +2560,7 @@ const ResourceMonitor = GObject.registerClass(
            // Display the download/upload values with appropriate decimal places
            this._wlanValue.text = `${this._getValueFixed(
              du[0]
@@ -405,7 +405,7 @@ index 92d07a0..bb58b85 100644
          })
          .catch((error) =>
            console.error("[Resource_Monitor] Error reading wlan:", error)
-@@ -2677,8 +2601,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2670,8 +2594,7 @@ const ResourceMonitor = GObject.registerClass(
              value,
              this._cpuFrequencyColors
            );
@@ -414,8 +414,8 @@ index 92d07a0..bb58b85 100644
 +          this._cpuFrequencyValue.text = `${this._getValueFixed(value)}${unit}`;
          })
          .catch((error) =>
-           console.error("[Resource_Monitor] Error reading cpu frequncy:", error)
-@@ -2749,8 +2672,7 @@ const ResourceMonitor = GObject.registerClass(
+           console.error("[Resource_Monitor] Error reading cpu frequency:", error)
+@@ -2742,8 +2665,7 @@ const ResourceMonitor = GObject.registerClass(
  
                  this._cpuTemperatureValue.text = `${this._getValueFixed(
                    value
@@ -425,7 +425,7 @@ index 92d07a0..bb58b85 100644
  
                  // Apply color based on thresholds
                  this._cpuTemperatureValue.style = this._getUsageColor(
-@@ -2806,8 +2728,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2799,8 +2721,7 @@ const ResourceMonitor = GObject.registerClass(
              // GPU utilization
              this._gpuBox.update_element_value(
                uuid,
@@ -435,7 +435,7 @@ index 92d07a0..bb58b85 100644
                this._getUsageColor(usage, this._gpuColors)
              );
  
-@@ -2831,8 +2752,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2824,8 +2745,7 @@ const ResourceMonitor = GObject.registerClass(
                const percentValue = (100 * memoryValue) / memoryTotal;
                this._gpuBox.update_element_memory_value(
                  uuid,
@@ -445,7 +445,7 @@ index 92d07a0..bb58b85 100644
                  this._getUsageColor(percentValue, this._gpuMemoryColors)
                );
              } else {
-@@ -2843,8 +2763,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2836,8 +2756,7 @@ const ResourceMonitor = GObject.registerClass(
  
                this._gpuBox.update_element_memory_value(
                  uuid,
@@ -455,7 +455,7 @@ index 92d07a0..bb58b85 100644
                  this._getUsageColor(memoryValue, this._gpuMemoryColors)
                );
              }
-@@ -2855,8 +2774,7 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2848,8 +2767,7 @@ const ResourceMonitor = GObject.registerClass(
  
              this._gpuBox.update_element_thermal_value(
                uuid,
@@ -465,23 +465,23 @@ index 92d07a0..bb58b85 100644
                this._getUsageColor(tempValue, this._thermalGpuColors)
              );
            });
-@@ -2970,7 +2888,6 @@ const DiskContainer = GObject.registerClass(
+@@ -2962,7 +2880,6 @@ const DiskContainer = GObject.registerClass(
+       this._elementsPath = [];
        this._elementsName = [];
-       this._elementsLabel = [];
        this._elementsValue = [];
 -      this._elementsUnit = [];
      }
  
      set_element_width(width) {
-@@ -2993,7 +2910,6 @@ const DiskContainer = GObject.registerClass(
+@@ -2996,7 +2913,6 @@ const DiskContainer = GObject.registerClass(
+       this._elementsPath = [];
        this._elementsName = [];
-       this._elementsLabel = [];
        this._elementsValue = [];
 -      this._elementsUnit = [];
  
        this.remove_all_children();
      }
-@@ -3022,14 +2938,7 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3025,14 +2941,7 @@ const DiskContainerStats = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -496,7 +496,7 @@ index 92d07a0..bb58b85 100644
  
        this.idleOld["single"] = 0;
        this.rwTotOld["single"] = [0, 0];
-@@ -3051,15 +2960,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3054,15 +2963,8 @@ const DiskContainerStats = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -512,7 +512,7 @@ index 92d07a0..bb58b85 100644
  
        this.idleOld[filesystem] = 0;
        this.rwTotOld[filesystem] = [0, 0];
-@@ -3072,10 +2974,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3075,10 +2977,8 @@ const DiskContainerStats = GObject.registerClass(
              if (element !== "single") {
                this._elementsName[element].hide();
                this._elementsValue[element].hide();
@@ -523,7 +523,7 @@ index 92d07a0..bb58b85 100644
              }
            });
  
-@@ -3088,10 +2988,8 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3091,10 +2991,8 @@ const DiskContainerStats = GObject.registerClass(
              if (element !== "single") {
                this._elementsName[element].show();
                this._elementsValue[element].show();
@@ -534,7 +534,7 @@ index 92d07a0..bb58b85 100644
              }
            });
  
-@@ -3119,11 +3017,10 @@ const DiskContainerStats = GObject.registerClass(
+@@ -3122,11 +3020,10 @@ const DiskContainerStats = GObject.registerClass(
        this.rwTotOld[filesystem] = rwTot;
      }
  
@@ -547,7 +547,7 @@ index 92d07a0..bb58b85 100644
        }
      }
    }
-@@ -3147,22 +3044,14 @@ const DiskContainerSpace = GObject.registerClass(
+@@ -3150,22 +3047,14 @@ const DiskContainerSpace = GObject.registerClass(
          x_align: Clutter.ActorAlign.END,
        });
  
@@ -571,7 +571,7 @@ index 92d07a0..bb58b85 100644
        }
      }
    }
-@@ -3176,11 +3065,8 @@ const GpuContainer = GObject.registerClass(
+@@ -3179,11 +3068,8 @@ const GpuContainer = GObject.registerClass(
        this._elementsUuid = [];
        this._elementsName = [];
        this._elementsValue = [];
@@ -583,7 +583,7 @@ index 92d07a0..bb58b85 100644
      }
  
      set_element_width(width) {
-@@ -3236,11 +3122,8 @@ const GpuContainer = GObject.registerClass(
+@@ -3239,11 +3125,8 @@ const GpuContainer = GObject.registerClass(
        this._elementsUuid = [];
        this._elementsName = [];
        this._elementsValue = [];
@@ -595,7 +595,7 @@ index 92d07a0..bb58b85 100644
  
        this.remove_all_children();
      }
-@@ -3266,12 +3149,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3269,12 +3152,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -608,7 +608,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3279,7 +3156,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3282,7 +3159,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsValue[uuid]);
@@ -616,7 +616,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3298,12 +3174,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3301,12 +3177,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -629,7 +629,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3311,7 +3181,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3314,7 +3184,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsMemoryValue[uuid]);
@@ -637,7 +637,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3330,12 +3199,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3333,12 +3202,6 @@ const GpuContainer = GObject.registerClass(
            x_align: Clutter.ActorAlign.END,
          });
  
@@ -650,7 +650,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3343,7 +3206,6 @@ const GpuContainer = GObject.registerClass(
+@@ -3346,7 +3209,6 @@ const GpuContainer = GObject.registerClass(
            })
          );
          this.add_child(this._elementsThermalValue[uuid]);
@@ -658,7 +658,7 @@ index 92d07a0..bb58b85 100644
          this.add_child(
            new St.Label({
              y_align: Clutter.ActorAlign.CENTER,
-@@ -3353,27 +3215,24 @@ const GpuContainer = GObject.registerClass(
+@@ -3356,27 +3218,24 @@ const GpuContainer = GObject.registerClass(
        }
      }
  

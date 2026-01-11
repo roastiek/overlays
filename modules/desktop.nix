@@ -6,10 +6,10 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gpaste pkgs.mutter pkgs.gnome-settings-daemon ];
-  services.xserver.desktopManager.gnome.sessionPath = [ pkgs.gnome-browser-connector ];
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gpaste pkgs.mutter pkgs.gnome-settings-daemon ];
+  services.desktopManager.gnome.sessionPath = [ pkgs.gnome-browser-connector ];
 
   services.displayManager.defaultSession = lib.mkDefault "gnome";
 

@@ -40,7 +40,7 @@
     '';
   };
 
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.desktop.interface]
     font-rendering='manual'
   '';

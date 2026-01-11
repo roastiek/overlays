@@ -3,20 +3,11 @@ pythonPackages.buildPythonApplication rec {
   pname = "snapperS";
   version = "1.1.8";
 
-  src = pythonPackages.fetchPypi {
-    inherit pname version;
-    sha256 = "sha256-AxuHiseNGvxUzITxU6z9T3t89YPlRRkA+21EO7Pyfi0=";
-  };
-
-  prePatch = ''
-    pwd
-    ls
-    2to3 -wn snapperS/snapperS
-    substituteInPlace setup.py --replace-fail '"argparse",' ""
-    substituteInPlace snapperS/snapperS --replace-fail 'set -ts' 'set -ts -f'
-  '';
+  src = ./src;
 
   propagatedBuildInputs = [ pythonPackages.tabulate ];
 
+  pyproject = true;
+  build-system = with pythonPackages; [ setuptools ];
 
 }

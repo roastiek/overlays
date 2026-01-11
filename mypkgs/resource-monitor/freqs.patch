@@ -1,8 +1,8 @@
 diff --git a/extension.js b/extension.js
-index 83707d0..489bc65 100644
+index 1610e96..48eecfd 100644
 --- a/extension.js
 +++ b/extension.js
-@@ -257,6 +257,12 @@ const ResourceMonitor = GObject.registerClass(
+@@ -258,6 +258,12 @@ const ResourceMonitor = GObject.registerClass(
          this._refreshTime,
          this._refreshHandler.bind(this)
        );
@@ -15,7 +15,7 @@ index 83707d0..489bc65 100644
        this._refreshHandler();
      }
  
-@@ -2576,37 +2582,38 @@ const ResourceMonitor = GObject.registerClass(
+@@ -2571,37 +2577,38 @@ const ResourceMonitor = GObject.registerClass(
      }
  
      _refreshCpuFrequencyValue() {
@@ -68,7 +68,7 @@ index 83707d0..489bc65 100644
 -          this._cpuFrequencyValue.text = `${this._getValueFixed(value)}${unit}`;
 -        })
 -        .catch((error) =>
--          console.error("[Resource_Monitor] Error reading cpu frequncy:", error)
+-          console.error("[Resource_Monitor] Error reading cpu frequency:", error)
 +        this._cpuFrequencyValue.style = this._getUsageColor(
 +          value,
 +          this._cpuFrequencyColors
@@ -76,7 +76,7 @@ index 83707d0..489bc65 100644
 +        this._cpuFrequencyValue.text = `${this._getValueFixed(value)}${unit}`;
 +      })
 +      .catch((error) =>
-+        console.error("[Resource_Monitor] Error reading cpu frequncy:", error)
++        console.error("[Resource_Monitor] Error reading cpu frequency:", error)
 +      );
      }
  
