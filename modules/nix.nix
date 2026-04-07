@@ -10,7 +10,7 @@
       keep-outputs = true
       keep-derivations = true
       keep-env-derivations = true
-      experimental-features = nix-command
+      experimental-features = nix-command flakes
       narinfo-cache-negative-ttl = 300
       http-connections = 100
     '';

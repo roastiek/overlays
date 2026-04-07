@@ -9,6 +9,7 @@
   };
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 
+  programs.direnv.enable = true;
   programs.git.enable = true;
 
   programs.java = {
@@ -47,7 +48,7 @@
     kube-login
     jq
     yq-go
-    direnv
+    # direnv
     maven
     vw
 
@@ -64,9 +65,34 @@
     })
 
     zoom-us
+    vscode
 
     # nix lsps
     nil
     # nixd
   ];
+
+  services.postgresql = {
+    enable = true;
+    ensureUsers = [
+      {
+        name = "bobo";
+        ensureDBOwnership = true;
+        ensureClauses = {
+          createrole = true;
+          createdb = true;
+        };
+      }
+    ];
+    ensureDatabases = [
+      "demopgx"
+      "demogorm"
+      "demogormcli"
+      "demoent"
+      "demopggo"
+      "demobun"
+      "demoxorm"
+      "bobo"
+    ];
+  };
 }

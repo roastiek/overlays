@@ -24,7 +24,7 @@ let
       echo ${config.system.nixos.versionSuffix} | sed -e s/pre// > $out/nixos/svn-revision
 
       cat <<EOF > $out/nixos/default.nix
-      { overlays ? [] }@ args:
+      { overlays ? [], ... }@ args:
       import ./pkgs/top-level/impure.nix ( args // { overlays = overlays ++ [ ( import ./overlay ) ]; } )
       EOF
 
@@ -37,10 +37,34 @@ let
   };
 
 in
-
 {
-  system.activationScripts = {
-    channel = ''
+  systemd.services.nixpkgs-system-channel = {
+    wantedBy = [ "sysinit.target" ];
+    requiredBy = [ "sysinit-reactivation.target" ];
+    after = [
+      "systemd-remount-fs.service"
+      "systemd-tmpfiles-setup-dev-early.service"
+    ];
+    before = [
+      "systemd-tmpfiles-setup-dev.service"
+      "sysinit.target"
+      "shutdown.target"
+      "sysinit-reactivation.target"
+    ];
+    conflicts = [ "shutdown.target" ];
+
+    unitConfig = {
+      Description = "Switch nixpkgs channel";
+      DefaultDependencies = false;
+    };
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      TimeoutSec = "90s";
+    };
+
+    script = ''
       echo "unpacking the NixOS/Nixpkgs sources..."
       mkdir -p /nix/var/nix/profiles/per-user/root
       ${config.nix.package.out}/bin/nix-env -p /nix/var/nix/profiles/per-user/root/channels -i ${channelSources} --quiet --option build-use-substitutes false

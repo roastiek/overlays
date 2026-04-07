@@ -6,7 +6,7 @@
 {
   imports =
     [ (modulesPath + "/installer/scan/not-detected.nix")
-      ./builtin-audio.nix
+      # ./builtin-audio.nix
       ./disable-i2c-wakeup.nix
       ./displays.nix
       ./fix-ish-firmware.nix
@@ -17,6 +17,11 @@
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPatches = [
+  #   { name = "sound";
+  #     patch = ./sound.patch;
+  #   }
+  # ];
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "xe" "usbhid" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
