@@ -44,7 +44,7 @@
           open-vsx-release
           ;
 
-        vscode.default = vscode-with-extensions.override {
+        vscode = vscode-with-extensions.override {
           vscodeExtensions = (
             with vscode-marketplace-release;
             [
@@ -57,16 +57,17 @@
               # redhat.vscode-yaml
 
               raillyhugo.one-hunter
+
+              # golang
               miguelsolorio.symbols
+              vscode-marketplace-release.golang.go
+              vscode-marketplace-release.casualjim.gotemplate
             ]
           );
         };
 
-        vscode.go = vscode.default.override (super: {
-          vscodeExtensions = super.vscodeExtensions ++ [
-            vscode-marketplace-release.golang.go
-          ];
-        });
+        packages.default = [ ];
+
         packages.go = (
           with pkgs;
           [
@@ -78,7 +79,6 @@
           ]
         );
 
-        vscode.python = vscode.default;
         packages.python = (
           with pkgs;
           [
@@ -89,27 +89,29 @@
           ]
         );
 
+        packages.gopython = packages.go ++ packages.python;
+
       in
       {
         inherit pkgs;
       }
       // {
         devShells = builtins.mapAttrs (
-          set: vscode:
+          set: packages:
           pkgs.mkShell {
             packages = [
               vscode
+              packages
               pkgs.bashInteractive
               pkgs.ripgrep
               pkgs.openssl
-            ]
-            ++ (packages."${set}" or [ ]);
+            ];
             shellHook = ''
               # export NIXOS_OZONE_WL=0
               # export UV_NO_BINARY_PACKAGE=ruff
             '';
           }
-        ) vscode;
+        ) packages;
       }
     );
 }
