@@ -99,12 +99,12 @@
         devShells = builtins.mapAttrs (
           set: packages:
           pkgs.mkShell {
-            packages = [
+            packages = packages ++ [
               vscode
-              packages
               pkgs.bashInteractive
               pkgs.ripgrep
               pkgs.openssl
+              pkgs.buildah
             ];
             shellHook = ''
               # export NIXOS_OZONE_WL=0
