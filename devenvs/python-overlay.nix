@@ -27,4 +27,6 @@ self: super: {
         super.uv
       ];
     };
+
+  mnemebrain-lite = self.callPackage ./pkgs/mnemebrain-lite { };
 }

@@ -1,0 +1,25 @@
+--- a/src/mnemebrain_core/__main__.py
++++ b/src/mnemebrain_core/__main__.py
+@@ -15,11 +15,18 @@
+ 
+     from mnemebrain_core.api.app import create_app
+ 
+-    db_path = sys.argv[1] if len(sys.argv) > 1 else "./mnemebrain_data"
+-    host = os.environ.get("MNEMEBRAIN_HOST", "127.0.0.1")
+-    port = int(os.environ.get("MNEMEBRAIN_PORT", "8000"))
++    db_path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
++        "MNEMEBRAIN_DB_PATH", "./mnemebrain_data"
++    )
+     app = create_app(db_path=db_path)
+-    uvicorn.run(app, host=host, port=port)
++
++    kwargs = {}
++    if int(os.environ.get("LISTEN_FDS", "0")) > 0:
++        kwargs["fd"] = 3
++    else:
++        kwargs["host"] = os.environ.get("MNEMEBRAIN_HOST", "127.0.0.1")
++        kwargs["port"] = int(os.environ.get("MNEMEBRAIN_PORT", "8000"))
++    uvicorn.run(app, **kwargs)
+ 
+ 
+ if __name__ == "__main__":  # pragma: no cover 

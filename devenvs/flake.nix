@@ -42,6 +42,7 @@
           vscode-marketplace-release
           open-vsx
           open-vsx-release
+          mnemebrain-lite
           ;
 
         vscode = vscode-with-extensions.override {
@@ -76,6 +77,7 @@
             delve
             golangci-lint
             gotools
+            protobuf
           ]
         );
 
@@ -94,6 +96,7 @@
       in
       {
         inherit pkgs;
+        packages.mnemebrain = mnemebrain-lite;
       }
       // {
         devShells = builtins.mapAttrs (
