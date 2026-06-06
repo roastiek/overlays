@@ -16,6 +16,7 @@
 
   outputs =
     {
+      self,
       nix-vscode-extensions,
       nixpkgs,
       flake-utils,
@@ -67,29 +68,34 @@
           );
         };
 
-        packages.default = [ ];
+        packages.default = [
+          vscode
+          vscode
+          pkgs.bashInteractive
+          pkgs.ripgrep
+          pkgs.openssl
+          pkgs.buildah
+        ];
 
-        packages.go = (
-          with pkgs;
-          [
+        packages.go =
+          packages.default
+          ++ (with pkgs; [
             go_latest
             gopls
             delve
             golangci-lint
             gotools
             protobuf
-          ]
-        );
+          ]);
 
-        packages.python = (
-          with pkgs;
-          [
+        packages.python =
+          packages.default
+          ++ (with pkgs; [
             python313
             uv-fhs
 
             #rust-bin.stable.latest.default
-          ]
-        );
+          ]);
 
         packages.gopython = packages.go ++ packages.python;
 
@@ -102,13 +108,7 @@
         devShells = builtins.mapAttrs (
           set: packages:
           pkgs.mkShell {
-            packages = packages ++ [
-              vscode
-              pkgs.bashInteractive
-              pkgs.ripgrep
-              pkgs.openssl
-              pkgs.buildah
-            ];
+            inherit packages;
             shellHook = ''
               # export NIXOS_OZONE_WL=0
               # export UV_NO_BINARY_PACKAGE=ruff
