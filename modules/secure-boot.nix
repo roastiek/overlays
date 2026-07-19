@@ -2,8 +2,8 @@
 let
   lanzaboote = import (builtins.fetchGit {
     url = "https://github.com/nix-community/lanzaboote";
-    ref = "refs/tags/v0.4.2";
-  });
+    ref = "refs/tags/v1.1.0";
+  }) { };
 in
 {
 
@@ -24,6 +24,10 @@ in
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/var/lib/sbctl";
+    measuredBoot = {
+      enable = true;
+      pcrs = [ 0 4 7 ];
+    };
   };
 
   boot.loader.systemd-boot.configurationLimit = 4;

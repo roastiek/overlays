@@ -1,14 +1,17 @@
 { config, pkgs, lib, ... }:
 {
   environment.systemPackages = with pkgs; with pkgs.gnomeExtensions; [
-    gnome47Extensions."impatience@gfxmonk.net"
+    # gnome50Extensions."impatience@gfxmonk.net"
     appindicator
-    no-overview
-    gnome47Extensions."upower-battery@codilia.com"
+    # no-overview
+    gnome50Extensions."upower-battery@codilia.com"
     unblank
     no-titlebar-when-maximized
     vertical-workspaces
-    resource-monitor
+    # resource-monitor
+    astra-monitor
     gnome-shell-extensions
   ];
+
+  services.desktopManager.gnome.sessionPath = with pkgs; [ libgtop ];
 }

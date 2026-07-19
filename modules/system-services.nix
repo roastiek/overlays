@@ -15,7 +15,8 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  programs.command-not-found.enable = true;
+  # programs.command-not-found.enable = true;
+  # programs.nix-index.enable = true;
   programs.bash.completion.enable = true;
   programs.zsh.enable = true;
 
@@ -25,6 +26,7 @@
     sysfsutils
 
     htop
+    gtop
     mc
     file
     zip
@@ -34,7 +36,7 @@
     tree
     curl
 
-    nixfmt-rfc-style
+    nixfmt
   ];
 
 }

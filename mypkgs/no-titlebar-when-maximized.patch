@@ -1,5 +1,5 @@
 diff --git a/extension.js b/extension.js
-index abcdc2b..30233b6 100644
+index ecefc93..47c805b 100644
 --- a/extension.js
 +++ b/extension.js
 @@ -30,9 +30,9 @@ export default class NoTitleBarWhenMaximizedExtension extends Extension {
@@ -12,4 +12,20 @@ index abcdc2b..30233b6 100644
 +    // this._forEachWindow((window) => {
 +    //   this._restore(window);
 +    // });
-
+ 
+     // Reset all state
+     this._xWindows = null;
+diff --git a/metadata.json b/metadata.json
+index 55faa32..0d1c533 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -7,7 +7,8 @@
+     "46",
+     "47",
+     "48",
+-    "49"
++    "49",
++    "50"
+   ],
+   "url": "https://github.com/alecdotninja/no-titlebar-when-maximized",
+   "uuid": "no-titlebar-when-maximized@alec.ninja",

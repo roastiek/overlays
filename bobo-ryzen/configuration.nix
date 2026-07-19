@@ -12,7 +12,7 @@
       ../modules/audio.nix
       ../modules/backup.nix
       ../modules/boot-splash.nix
-      ../modules/channel.nix
+      # ../modules/channel.nix
       ../modules/chrome-gnome-shell.nix
       ../modules/desktop.nix
       ../modules/extensions.nix
@@ -26,6 +26,7 @@
       ../modules/secure-boot.nix
       ../modules/snapshots.nix
       ../modules/system-services.nix
+      ../modules/nix-index.nix
     ];
 
 #  nix = {
@@ -92,6 +93,7 @@
     } )
     vscodium
     git
+    amdgpu_top
   ];
 
   services.resolved.enable = false;

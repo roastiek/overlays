@@ -148,18 +148,18 @@ in rec {
     no-titlebar-when-maximized = no-titlebar-when-maximized.overrideAttrs ( oldAttrs: {
       patches = ( oldAttrs.patches or [] ) ++ [ ./no-titlebar-when-maximized.patch ];
     });
-    resource-monitor = resource-monitor.overrideAttrs ( oldAttrs: {
-      patches = ( oldAttrs.patches or [] ) ++ [
-        ./resource-monitor/disk.patch
-        ./resource-monitor/units.patch
-        ./resource-monitor/autohide.patch
-        ./resource-monitor/thermal.patch
-        ./resource-monitor/freqs.patch
-        ./resource-monitor/no_brackets.patch
-#        ./resource-monitor/fix_unit_scaling.patch
-        ./resource-monitor/box_redraw.patch
-      ];
-    });
+#     resource-monitor = resource-monitor.overrideAttrs ( oldAttrs: {
+#       patches = ( oldAttrs.patches or [] ) ++ [
+#         ./resource-monitor/disk.patch
+#         ./resource-monitor/units.patch
+#         ./resource-monitor/autohide.patch
+#         ./resource-monitor/thermal.patch
+#         ./resource-monitor/freqs.patch
+#         ./resource-monitor/no_brackets.patch
+# #        ./resource-monitor/fix_unit_scaling.patch
+#         ./resource-monitor/box_redraw.patch
+#       ];
+#     });
     # vertical-workspaces = vertical-workspaces.overrideAttrs ( oldAttrs:
     # let
     #   uuid = "vertical-workspaces@G-dH.github.com";
