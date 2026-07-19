@@ -1,9 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   virtualisation.podman.enable = true;
 
   virtualisation.docker = {
     enable = true;
+    package = pkgs.docker_29;
     autoPrune.enable = true;
     autoPrune.flags = [ "--volumes" ];
   };
@@ -25,12 +31,15 @@
           "--sysconfdir=/etc"
           (lib.mesonEnable "systemd" false)
           (lib.mesonOption "bashcompdir" "${placeholder "bin"}/share/bash-completion/completions")
-          (lib.mesonOption "trust_paths" (lib.concatStringsSep ":" [
-            "${caBundle}"
-          ]))
+          (lib.mesonOption "trust_paths" (
+            lib.concatStringsSep ":" [
+              "${caBundle}"
+            ]
+          ))
         ];
       });
-    in derivation {
+    in
+    derivation {
       name = "java-cacerts";
       builder = pkgs.writeShellScript "java-cacerts-builder" ''
         ${p11kit.bin}/bin/trust \
@@ -52,11 +61,20 @@
     maven
     vw
 
-    ( vscodium-fhsWithPackages { additionalPkgs = pkgs: [
-      pkgs.go pkgs.gopls pkgs.gotools pkgs.go-tools pkgs.delve pkgs.gotests
-      pkgs.jdk17 ]; profile = ''
-      JAVA_HOME=/usr/lib64/openjdk
-    '';} )
+    (vscodium-fhsWithPackages {
+      additionalPkgs = pkgs: [
+        pkgs.go
+        pkgs.gopls
+        pkgs.gotools
+        pkgs.go-tools
+        pkgs.delve
+        pkgs.gotests
+        pkgs.jdk17
+      ];
+      profile = ''
+        JAVA_HOME=/usr/lib64/openjdk
+      '';
+    })
 
     (wrapHelm kubernetes-helm {
       plugins = with kubernetes-helmPlugins; [

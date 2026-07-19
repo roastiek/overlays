@@ -19,14 +19,15 @@ python3Packages.buildPythonPackage rec {
     hash = "sha256-3/EzbNKE9i/IslcWfUB9iA6LkGXxhJRE1SEzfFYnkhs=";
   };
 
-  patches = [ ./socket-activation.patch ];
+  # patches = [ ./socket-activation.patch ];
 
   build-system = [ python3Packages.hatchling ];
 
   # Upstream pins numpy<2.0 but the code works fine with numpy 2.x
   pythonRelaxDeps = [ "numpy" ];
 
-  dependencies = with python3Packages;
+  dependencies =
+    with python3Packages;
     [
       pydantic
       kuzu

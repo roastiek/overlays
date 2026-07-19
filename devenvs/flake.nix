@@ -44,6 +44,7 @@
           open-vsx
           open-vsx-release
           mnemebrain-lite
+          mnemebrain-mcp
           ;
 
         vscode = vscode-with-extensions.override {
@@ -70,12 +71,14 @@
 
         packages.default = [
           vscode
-          vscode
-          pkgs.bashInteractive
-          pkgs.ripgrep
-          pkgs.openssl
-          pkgs.buildah
-        ];
+        ]
+        ++ (with pkgs; [
+          bashInteractive
+          ripgrep
+          openssl
+          buildah
+          mnemebrain-mcp
+        ]);
 
         packages.go =
           packages.default

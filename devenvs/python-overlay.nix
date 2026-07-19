@@ -29,4 +29,5 @@ self: super: {
     };
 
   mnemebrain-lite = self.callPackage ./pkgs/mnemebrain-lite { };
+  mnemebrain-mcp = self.callPackage ./pkgs/mnemebrain-mcp { };
 }
