@@ -2,7 +2,8 @@ self: super:
 let
   inherit (self) callPackage;
   inherit (super) recurseIntoAttrs buildFHSUserEnv;
-in rec {
+in
+rec {
 
   # freetype_subpixel = super.freetype.overrideDerivation (old: {
   #     postPatch = ''
@@ -10,19 +11,25 @@ in rec {
   #     '';
   #   });
 
-  tango-extras-icon-theme = callPackage ./tango-extras-icon-theme {};
+  tango-extras-icon-theme = callPackage ./tango-extras-icon-theme { };
 
   debootstrap = super.debootstrap.overrideAttrs (oldAttrs: rec {
     buildInputs = [ self.gnupg1 ];
   });
 
-  yed = callPackage ./yed {};
+  yed = callPackage ./yed { };
 
   # goenvtemplator = callPackage ./goenvtemplator {};
 
   firefoxFHS = buildFHSUserEnv {
     name = "firefox";
-    targetPkgs = pkgs: (with pkgs; [ chrome-gnome-shell firefox dbus ]);
+    targetPkgs =
+      pkgs:
+      (with pkgs; [
+        chrome-gnome-shell
+        firefox
+        dbus
+      ]);
     runScript = "firefox";
   };
 
@@ -30,7 +37,7 @@ in rec {
 
   # volume-mixer = callPackage ./volume-mixer {};
 
-  lxc-templates = callPackage ./lxc-templates {};
+  lxc-templates = callPackage ./lxc-templates { };
 
   # vscodium = super.vscodium.overrideAttrs (oldAttrs: {
   #   installPhase = oldAttrs.installPhase + ''
@@ -49,32 +56,40 @@ in rec {
 
   # freetype = freetype29;
 
-  atomicparsley2 = with super; stdenv.mkDerivation {
-    name = "atomicparsley";
+  atomicparsley2 =
+    with super;
+    stdenv.mkDerivation {
+      name = "atomicparsley";
 
-    src = fetchFromGitHub {
-      owner = "wez";
-      repo = "atomicparsley";
-      rev = "20200701.154658.b0d6223";
-      sha256 = "1kym2l5y34nmbrrlkfmxsf1cwrvch64kb34jp0hpa0b89idbhwqh";
+      src = fetchFromGitHub {
+        owner = "wez";
+        repo = "atomicparsley";
+        rev = "20200701.154658.b0d6223";
+        sha256 = "1kym2l5y34nmbrrlkfmxsf1cwrvch64kb34jp0hpa0b89idbhwqh";
+      };
+
+      postPatch = ''
+        substituteInPlace CMakeLists.txt --replace '3.17' '3.16'
+      '';
+
+      buildInputs = [
+        cmake
+        zlib
+      ];
+
+      installPhase = ''
+        ls
+        mkdir -p $out/bin
+        cp AtomicParsley $out/bin
+      '';
     };
-
-    postPatch = ''
-      substituteInPlace CMakeLists.txt --replace '3.17' '3.16'
-    '';
-
-    buildInputs = [ cmake zlib ];
-
-    installPhase = ''
-      ls
-      mkdir -p $out/bin
-      cp AtomicParsley $out/bin
-    '';
-  };
 
   kube-login = self.callPackage ./kube-login { };
 
-  vivaldi = super.vivaldi.override ({ proprietaryCodecs = true; enableWidevine = true; });
+  vivaldi = super.vivaldi.override ({
+    proprietaryCodecs = false;
+    enableWidevine = true;
+  });
 
   # vw = self.stdenv.mkDerivation {
   #   name = "vw";
@@ -96,14 +111,14 @@ in rec {
 
   # boostStatic = self.boost.override { enableShared = false; enableStatic = true; };
 
-    glibcSt = self.runCommand "glibc" {} ''
-      mkdir -p $out/lib
-      ln -s ${self.glibc.static}/lib/libpthread.a $out/lib/
-      ln -s ${self.glibc.static}/lib/libc.a $out/lib/
-      ln -s ${self.glibc.static}/lib/libm.a $out/lib/
-    '';
+  glibcSt = self.runCommand "glibc" { } ''
+    mkdir -p $out/lib
+    ln -s ${self.glibc.static}/lib/libpthread.a $out/lib/
+    ln -s ${self.glibc.static}/lib/libc.a $out/lib/
+    ln -s ${self.glibc.static}/lib/libm.a $out/lib/
+  '';
 
-  vw = self.stdenv.mkDerivation {
+  vw = self.gcc14Stdenv.mkDerivation {
     name = "vw";
 
     src = self.fetchFromGitHub {
@@ -121,7 +136,11 @@ in rec {
     '';
 
     nativeBuildInputs = with self; [ cmake ];
-    buildInputs = with self; [ boost zlib perl ];   #spdlog rapidjson ];
+    buildInputs = with self; [
+      boost
+      zlib
+      perl
+    ]; # spdlog rapidjson ];
     enableParallelBuilding = true;
     cmakeFlags = [
       "-DFMT_SYS_DEP=OFF"
@@ -141,45 +160,33 @@ in rec {
 
   vw-deps = self.symlinkJoin {
     name = "vw-deps";
-    paths = with self; [ vw boost boost.dev zlib ]; #boostStatic boostStatic.dev zlib ];
+    paths = with self; [
+      vw
+      boost
+      boost.dev
+      zlib
+    ]; # boostStatic boostStatic.dev zlib ];
   };
 
-  gnomeExtensions = super.gnomeExtensions // ( with super.gnomeExtensions; {
-    no-titlebar-when-maximized = no-titlebar-when-maximized.overrideAttrs ( oldAttrs: {
-      patches = ( oldAttrs.patches or [] ) ++ [ ./no-titlebar-when-maximized.patch ];
+  gnomeExtensions =
+    super.gnomeExtensions
+    // (with super.gnomeExtensions; {
+      no-titlebar-when-maximized = no-titlebar-when-maximized.overrideAttrs (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ [ ./no-titlebar-when-maximized.patch ];
+      });
+      astra-monitor = astra-monitor.overrideAttrs (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ [
+          ./astra-monitor/fix_width.patch
+          ./astra-monitor/fix_redraw.patch
+        ];
+      });
+      preserve-battery-health = preserve-battery-health.overrideAttrs (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ [
+          ./preserve-battery-health/tint_color.patch
+          ./preserve-battery-health/toggle_order.patch
+        ];
+      });
     });
-#     resource-monitor = resource-monitor.overrideAttrs ( oldAttrs: {
-#       patches = ( oldAttrs.patches or [] ) ++ [
-#         ./resource-monitor/disk.patch
-#         ./resource-monitor/units.patch
-#         ./resource-monitor/autohide.patch
-#         ./resource-monitor/thermal.patch
-#         ./resource-monitor/freqs.patch
-#         ./resource-monitor/no_brackets.patch
-# #        ./resource-monitor/fix_unit_scaling.patch
-#         ./resource-monitor/box_redraw.patch
-#       ];
-#     });
-    # vertical-workspaces = vertical-workspaces.overrideAttrs ( oldAttrs:
-    # let
-    #   uuid = "vertical-workspaces@G-dH.github.com";
-    #   version = "71";
-    #   metadata = "ewogICJfZ2VuZXJhdGVkIjogIkdlbmVyYXRlZCBieSBTd2VldFRvb3RoLCBkbyBub3QgZWRpdCIsCiAgImRlc2NyaXB0aW9uIjogIkN1c3RvbWl6ZSB5b3VyIEdOT01FIFNoZWxsIFVYIHRvIHN1aXQgeW91ciB3b3JrZmxvdywgd2hldGhlciB5b3UgbGlrZSBob3Jpem9udGFsbHkgb3IgdmVydGljYWxseSBzdGFja2VkIHdvcmtzcGFjZXMuIiwKICAiZG9uYXRpb25zIjogewogICAgImJ1eW1lYWNvZmZlZSI6ICJnZW9yZ2RoIgogIH0sCiAgImdldHRleHQtZG9tYWluIjogInZlcnRpY2FsLXdvcmtzcGFjZXMiLAogICJuYW1lIjogIlYtU2hlbGwgKFZlcnRpY2FsIFdvcmtzcGFjZXMpIiwKICAic2Vzc2lvbi1tb2RlcyI6IFsKICAgICJ1bmxvY2stZGlhbG9nIiwKICAgICJ1c2VyIgogIF0sCiAgInNldHRpbmdzLXNjaGVtYSI6ICJvcmcuZ25vbWUuc2hlbGwuZXh0ZW5zaW9ucy52ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAic2hlbGwtdmVyc2lvbiI6IFsKICAgICI0NSIsCiAgICAiNDYiLAogICAgIjQ3IgogIF0sCiAgInVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vRy1kSC92ZXJ0aWNhbC13b3Jrc3BhY2VzIiwKICAidXVpZCI6ICJ2ZXJ0aWNhbC13b3Jrc3BhY2VzQEctZEguZ2l0aHViLmNvbSIsCiAgInZlcnNpb24iOiA3MSwKICAidmVyc2lvbi1uYW1lIjogIjQ3LjEiCn0=";
-    #   sha256 = "sha256-puYXnq+dyLhh//PC/EkWBsKRgPuGxtmpCVh6KNKKayc=";
-    # in {
-    #   inherit version;
-    #   src = super.fetchzip {
-    #     url = "https://extensions.gnome.org/extension-data/${
-    #         builtins.replaceStrings [ "@" ] [ "" ] uuid
-    #       }.v${builtins.toString version}.shell-extension.zip";
-    #     inherit sha256;
-    #     stripRoot = false;
-    #     postFetch = ''
-    #       echo "${metadata}" | base64 --decode > $out/metadata.json
-    #     '';
-    #   };
-    # });
-  });
 
   # thermald = super.thermald.overrideAttrs ( oldAttrs: rec {
   #   version = "2.4.6";
@@ -215,7 +222,10 @@ in rec {
     pname = "thermald";
     version = "2.4.6";
 
-    outputs = [ "out" "devdoc" ];
+    outputs = [
+      "out"
+      "devdoc"
+    ];
 
     src = self.fetchFromGitHub {
       owner = "intel";
@@ -264,16 +274,18 @@ in rec {
       homepage = "https://github.com/intel/thermal_daemon";
       changelog = "https://github.com/intel/thermal_daemon/blob/master/README.txt";
       license = licenses.gpl2Plus;
-      platforms = [ "x86_64-linux" "i686-linux" ];
+      platforms = [
+        "x86_64-linux"
+        "i686-linux"
+      ];
       maintainers = with maintainers; [ abbradar ];
     };
   };
 
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
-
-  mutter = super.mutter.overrideAttrs ( oldAttrs: {
-    patches = ( oldAttrs.patches or [] ) ++ [ ./mutter.patch ];
+  mutter = super.mutter.overrideAttrs (oldAttrs: {
+    patches = (oldAttrs.patches or [ ]) ++ [ ./mutter.patch ];
     postPatch = oldAttrs.postPatch + ''
       sed -i '43i    (2880, 1800),' src/backends/native/gen-default-modes.py
     '';
@@ -283,7 +295,7 @@ in rec {
 
   # binance = self.callPackage ./binance {};
 
-  solaar = super.solaar.overrideAttrs ( oldAttrs: {
+  solaar = super.solaar.overrideAttrs (oldAttrs: {
     postInstall = oldAttrs.postInstall + ''
       substituteInPlace $out/share/applications/solaar.desktop --replace 'Exec=solaar' 'Exec=solaar --window=hide'
     '';
@@ -315,7 +327,7 @@ in rec {
     helm-unittest =
       let
         buildGoModule = self.buildGoModule;
-        fetchFromGitHub = self. fetchFromGitHub;
+        fetchFromGitHub = self.fetchFromGitHub;
         lib = self.lib;
         yq = self.yq-go;
       in
@@ -368,7 +380,6 @@ in rec {
       sed -i '4i StartupWMClass=Clementine' dist/org.clementine_player.Clementine.desktop
     '';
   });
-
 
   # linux-enable-ir-emitter = super.stdenv.mkDerivation {
   #   name = "linux-enable-ir-emitter";

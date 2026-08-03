@@ -9,7 +9,8 @@
 
   virtualisation.docker = {
     enable = true;
-    package = pkgs.docker_29;
+    # package = pkgs.docker_29;
+    extraPackages = [ pkgs.nftables ]; # Docker 29 cleans up nftables rules at startup.
     autoPrune.enable = true;
     autoPrune.flags = [ "--volumes" ];
   };

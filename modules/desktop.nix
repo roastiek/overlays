@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -8,12 +13,13 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
-  services.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gpaste pkgs.mutter pkgs.gnome-settings-daemon ];
-  services.desktopManager.gnome.sessionPath = [ pkgs.gnome-browser-connector ];
+  services.desktopManager.gnome.extraGSettingsOverridePackages = [
+    pkgs.gpaste
+    pkgs.mutter
+    pkgs.gnome-settings-daemon
+  ];
 
   services.displayManager.defaultSession = lib.mkDefault "gnome";
-
-  services.gnome.gnome-browser-connector.enable = true;
 
   programs.gpaste.enable = true;
 

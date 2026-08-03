@@ -1,0 +1,342 @@
+diff --git a/data/ui/preferences.ui b/data/ui/preferences.ui
+index 4b34bd8..63769d1 100644
+--- a/data/ui/preferences.ui
++++ b/data/ui/preferences.ui
+@@ -10,6 +10,58 @@
+                         <property name="subtitle" translatable="yes">Display an icon in the Gnome system tray when "Preserve Battery Health" mode is enabled</property>
+                     </object>
+                 </child>
++                <child>
++                    <object class="AdwActionRow" id="indicator_color_active_row">
++                        <property name="title" translatable="yes">Indicator colour (Preserve Health)</property>
++                        <property name="subtitle" translatable="yes">Colour used to tint the indicator icon when "Preserve Battery Health" mode is enabled. Leave at default to use the system colour.</property>
++                        <child type="suffix">
++                            <object class="GtkButton" id="indicator_color_active_reset">
++                                <property name="valign">center</property>
++                                <property name="icon-name">edit-clear-symbolic</property>
++                                <property name="tooltip-text" translatable="yes">Reset to default colour</property>
++                                <style>
++                                    <class name="flat"/>
++                                </style>
++                            </object>
++                        </child>
++                        <child type="suffix">
++                            <object class="GtkColorDialogButton" id="indicator_color_active">
++                                <property name="valign">center</property>
++                                <property name="dialog">
++                                    <object class="GtkColorDialog">
++                                        <property name="with-alpha">false</property>
++                                    </object>
++                                </property>
++                            </object>
++                        </child>
++                    </object>
++                </child>
++                <child>
++                    <object class="AdwActionRow" id="indicator_color_inactive_row">
++                        <property name="title" translatable="yes">Indicator colour (Maximize Charge)</property>
++                        <property name="subtitle" translatable="yes">Colour used to tint the indicator icon when "Maximize Charge" mode is enabled. Leave at default to use the system colour.</property>
++                        <child type="suffix">
++                            <object class="GtkButton" id="indicator_color_inactive_reset">
++                                <property name="valign">center</property>
++                                <property name="icon-name">edit-clear-symbolic</property>
++                                <property name="tooltip-text" translatable="yes">Reset to default colour</property>
++                                <style>
++                                    <class name="flat"/>
++                                </style>
++                            </object>
++                        </child>
++                        <child type="suffix">
++                            <object class="GtkColorDialogButton" id="indicator_color_inactive">
++                                <property name="valign">center</property>
++                                <property name="dialog">
++                                    <object class="GtkColorDialog">
++                                        <property name="with-alpha">false</property>
++                                    </object>
++                                </property>
++                            </object>
++                        </child>
++                    </object>
++                </child>
+             </object>
+         </child>
+         <child>
+@@ -70,4 +122,4 @@
+             </object>
+         </child>
+     </object>
+-</interface>
+\ No newline at end of file
++</interface>
+diff --git a/extension.js b/extension.js
+index a80ef8d..5a7c716 100644
+--- a/extension.js
++++ b/extension.js
+@@ -20,6 +20,7 @@
+ 
+ import GObject from 'gi://GObject';
+ import Gio from 'gi://Gio';
++import GLib from 'gi://GLib';
+ 
+ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ 
+@@ -27,6 +28,16 @@ import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/
+ import { QuickToggle, SystemIndicator } from 'resource:///org/gnome/shell/ui/quickSettings.js';
+ 
+ const SHOW_INDICATOR_KEY = 'show-indicator';
++const INDICATOR_COLOR_ACTIVE_KEY = 'indicator-color-active';
++const INDICATOR_COLOR_INACTIVE_KEY = 'indicator-color-inactive';
++
++// Tint applied to the built-in system power/battery top bar icon based on
++// whether "Preserve Health" mode is active. Colours are user-configurable via
++// the "indicator-color-active"/"indicator-color-inactive" settings (see
++// prefs.js / preferences.ui); an empty colour means no override for that
++// state. This reaches into private quickSettings internals
++// (`quickSettings._system._indicator`), so it is fragile and may break on
++// future GNOME Shell versions.
+ 
+ const BUS_NAME = 'org.freedesktop.UPower';
+ const UPOWER_OBJECT_PATH = '/org/freedesktop/UPower';
+@@ -73,6 +84,10 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+ 
+             this._devices = {};
+ 
++            // Locate the built-in power/battery top bar icon on load, so it
++            // can be tinted from _sync() based on Preserve Health state.
++            this._findPowerIcon();
++
+             const appIcon = Gio.icon_new_for_string(`${extension.path}/data/icons/app-symbolic.svg`);
+ 
+             this._indicator = this._addIndicator();
+@@ -100,6 +115,12 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+             this._settingsHandlerId = this._settings.connect(
+                 `changed::${SHOW_INDICATOR_KEY}`, () => { this._sync(); }
+             );
++            this._indicatorColorActiveHandlerId = this._settings.connect(
++                `changed::${INDICATOR_COLOR_ACTIVE_KEY}`, () => { this._sync(); }
++            );
++            this._indicatorColorInactiveHandlerId = this._settings.connect(
++                `changed::${INDICATOR_COLOR_INACTIVE_KEY}`, () => { this._sync(); }
++            );
+ 
+             // UPower client
+             this._proxy = new PowerManagerProxy(Gio.DBus.system, BUS_NAME, UPOWER_OBJECT_PATH,
+@@ -135,6 +156,12 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+                 if (this._settingsHandlerId) {
+                     this._settings.disconnect(this._settingsHandlerId);
+                 }
++                if (this._indicatorColorActiveHandlerId) {
++                    this._settings.disconnect(this._indicatorColorActiveHandlerId);
++                }
++                if (this._indicatorColorInactiveHandlerId) {
++                    this._settings.disconnect(this._indicatorColorInactiveHandlerId);
++                }
+                 this._settings = null;
+                 // Disconnect UPower
+                 if (this._addedDeviceHandlerId) {
+@@ -150,10 +177,71 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+                     const devicePath = objectsPaths[idx];
+                     this._removeDevice(devicePath);
+                 }
++                // Revert the built-in power icon tint.
++                this._revertPowerIconTint();
+                 this.logger = null;
+             }, this);
+         }
+ 
++        /**
++         * Locate the built-in system power/battery top bar icon so `_sync()`
++         * can tint it based on state. Only the top bar icon is tinted —
++         * `_system._indicator` — since the quick-settings menu row already
++         * shows the toggle with its own label/subtitle, so tinting its icon
++         * too would just duplicate the same information.
++         * Uses private quickSettings internals, so it is fragile and may
++         * break on GNOME Shell updates. Retries via idle_add until it exists.
++         */
++        _findPowerIcon() {
++            this._powerIconIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
++                const topBarIcon = Main.panel.statusArea.quickSettings?._system?._indicator;
++                if (!topBarIcon) {
++                    return GLib.SOURCE_CONTINUE;
++                }
++                this._powerIconIdleId = null;
++                this._powerTopBarIcon = topBarIcon;
++                this._powerTopBarIconOriginalStyle = topBarIcon.style;
++                this._sync();
++                return GLib.SOURCE_REMOVE;
++            });
++        }
++
++        /**
++         * Apply/remove the tint on the built-in power top bar icon based on
++         * whether "Preserve Health" mode is active, using the
++         * user-configurable "indicator-color-active"/"indicator-color-inactive"
++         * settings. An empty colour means use the system default colour for
++         * that state, i.e. no override, which also acts as the on/off switch
++         * for this feature per-state.
++         *
++         * @param {boolean} active Whether Preserve Health mode is on
++         */
++        _syncPowerIconTint(active) {
++            if (!this._powerTopBarIcon) {
++                return;
++            }
++            const color = this._settings.get_string(
++                active ? INDICATOR_COLOR_ACTIVE_KEY : INDICATOR_COLOR_INACTIVE_KEY
++            );
++            this._powerTopBarIcon.style = color !== ''
++                ? `color: ${color};`
++                : this._powerTopBarIconOriginalStyle ?? null;
++        }
++
++        /**
++         * Undo the tint and stop tracking the top bar icon.
++         */
++        _revertPowerIconTint() {
++            if (this._powerIconIdleId) {
++                GLib.source_remove(this._powerIconIdleId);
++                this._powerIconIdleId = null;
++            }
++            if (this._powerTopBarIcon) {
++                this._powerTopBarIcon.style = this._powerTopBarIconOriginalStyle ?? null;
++                this._powerTopBarIcon = null;
++            }
++        }
++
+         /**
+          * Update extension UI
+          */
+@@ -174,11 +262,13 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+             this._indicator.visible = (
+                 this._settings.get_boolean(SHOW_INDICATOR_KEY) && this._toggle.visible && active
+             );
++            // Tint the built-in power icon while Preserve Health is on.
++            this._syncPowerIconTint(active);
+         }
+ 
+         /**
+          * Add device and connect signals
+-         * 
++         *
+          * @param {string} objectPath UPower object path
+          */
+         _addDevice(objectPath) {
+@@ -187,9 +277,9 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+                     if (error) {
+                         this.logger.error(error);
+                     } else {
+-                        // The conditions for considering the device compatible are the same as 
++                        // The conditions for considering the device compatible are the same as
+                         // in the Gnome settings.
+-                        // 
++                        //
+                         // https://gitlab.gnome.org/GNOME/gnome-control-center/-/blob/gnome-48/panels/power/cc-power-panel.c#L174
+                         // ...
+                         // if (kind == UP_DEVICE_KIND_BATTERY && is_power_supply && is_charge_threshold_supported)
+@@ -216,7 +306,7 @@ const PreserveBatteryHealthIndicator = GObject.registerClass(
+ 
+         /**
+          * Remove device and disconnect signals
+-         * 
++         *
+          * @param {string} objectPath UPower object path
+          */
+         _removeDevice(objectPath) {
+diff --git a/prefs.js b/prefs.js
+index bfdfe86..d6f50ae 100644
+--- a/prefs.js
++++ b/prefs.js
+@@ -20,18 +20,71 @@ export default class Preferences extends ExtensionPreferences {
+ 
+         const builder = Gtk.Builder.new_from_file(`${this.metadata.path}/data/ui/preferences.ui`);
+ 
+-        this.getSettings().bind(
++        const settings = this.getSettings();
++
++        settings.bind(
+             'show-indicator',
+             builder.get_object('show_indicator'),
+             'active',
+             Gio.SettingsBindFlags.DEFAULT
+         );
+ 
++        this._bindIndicatorColor(
++            settings, 'indicator-color-active',
++            builder.get_object('indicator_color_active'),
++            builder.get_object('indicator_color_active_reset')
++        );
++        this._bindIndicatorColor(
++            settings, 'indicator-color-inactive',
++            builder.get_object('indicator_color_inactive'),
++            builder.get_object('indicator_color_inactive_reset')
++        );
++
+         window.add(builder.get_object('general'));
+ 
+         window.search_enabled = true;
+     }
+ 
++    /**
++     * Bind a colour picker to a colour setting (stored as a hex string,
++     * empty meaning "use the system default colour"), converting to/from
++     * Gdk.RGBA. Also wires the reset button to clear the setting back to
++     * its default (empty/system colour).
++     *
++     * @param {Gio.Settings} settings The extension's settings
++     * @param {string} key The settings key to bind (a string/hex colour)
++     * @param {Gtk.ColorDialogButton} colorButton The colour picker button
++     * @param {Gtk.Button} resetButton The reset-to-default button
++     */
++    _bindIndicatorColor(settings, key, colorButton, resetButton) {
++        const FALLBACK_DISPLAY_COLOR = '#ffffff';
++
++        const hexToRgba = (hex) => {
++            const rgba = new Gdk.RGBA();
++            rgba.parse(hex || FALLBACK_DISPLAY_COLOR);
++            return rgba;
++        };
++
++        const rgbaToHex = (rgba) => {
++            const toHex = (value) => Math.round(value * 255).toString(16).padStart(2, '0');
++            return `#${toHex(rgba.red)}${toHex(rgba.green)}${toHex(rgba.blue)}`;
++        };
++
++        colorButton.set_rgba(hexToRgba(settings.get_string(key)));
++
++        colorButton.connect('notify::rgba', () => {
++            settings.set_string(key, rgbaToHex(colorButton.get_rgba()));
++        });
++
++        resetButton.connect('clicked', () => {
++            settings.reset(key);
++        });
++
++        settings.connect(`changed::${key}`, () => {
++            colorButton.set_rgba(hexToRgba(settings.get_string(key)));
++        });
++    }
++
+     /**
+      * Create preferences actions
+      * 
+diff --git a/schemas/org.gnome.shell.extensions.preserve-battery-health.gschema.xml b/schemas/org.gnome.shell.extensions.preserve-battery-health.gschema.xml
+index 44f5d5c..b5b13f7 100644
+--- a/schemas/org.gnome.shell.extensions.preserve-battery-health.gschema.xml
++++ b/schemas/org.gnome.shell.extensions.preserve-battery-health.gschema.xml
+@@ -5,5 +5,15 @@
+             <default>false</default>
+             <summary>Show system indicator</summary>
+         </key>
++        <key name="indicator-color-active" type="s">
++            <default>""</default>
++            <summary>Indicator colour (Preserve Health)</summary>
++            <description>Colour (hex, e.g. #4e9a06) used to tint the indicator icon when "Preserve Battery Health" mode is enabled. Empty means use the system default colour.</description>
++        </key>
++        <key name="indicator-color-inactive" type="s">
++            <default>""</default>
++            <summary>Indicator colour (Maximize Charge)</summary>
++            <description>Colour (hex, e.g. #e01b24) used to tint the indicator icon when "Maximize Charge" mode is enabled. Empty means use the system default colour.</description>
++        </key>
+     </schema>
+ </schemalist>
+\ No newline at end of file

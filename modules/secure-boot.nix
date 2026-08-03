@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   lanzaboote = import (builtins.fetchGit {
     url = "https://github.com/nix-community/lanzaboote";
@@ -7,9 +12,9 @@ let
 in
 {
 
-  imports =
-    [ lanzaboote.nixosModules.lanzaboote
-    ];
+  imports = [
+    lanzaboote.nixosModules.lanzaboote
+  ];
 
   environment.systemPackages = with pkgs; [
     sbctl
@@ -26,7 +31,11 @@ in
     pkiBundle = "/var/lib/sbctl";
     measuredBoot = {
       enable = true;
-      pcrs = [ 0 4 7 ];
+      pcrs = [
+        0
+        4
+        7
+      ];
     };
   };
 

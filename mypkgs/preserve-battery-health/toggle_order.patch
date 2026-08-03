@@ -1,0 +1,31 @@
+diff --git a/extension.js b/extension.js
+index 5a7c716..960ce6e 100644
+--- a/extension.js
++++ b/extension.js
+@@ -324,7 +324,25 @@ export default class QuickSettingsExampleExtension extends Extension {
+ 
+     enable() {
+         this._indicator = new PreserveBatteryHealthIndicator(this);
+-        Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
++
++        const quickSettings = Main.panel.statusArea.quickSettings;
++
++        // Add the top bar icon in the same place `addExternalIndicator()`
++        // would (just before the brightness indicator).
++        quickSettings._indicators.insert_child_below(this._indicator, quickSettings._brightness ?? null);
++
++        // Place our toggle right after the "Power Mode" toggle instead of
++        // `addExternalIndicator()`'s default placement (just before
++        // background apps). Uses private quickSettings internals, so it may
++        // break on future GNOME Shell versions.
++        const [toggle] = this._indicator.quickSettingsItems;
++        const powerModeItems = quickSettings._powerProfiles?.quickSettingsItems ?? [];
++        const sibling = powerModeItems.at(-1)?.get_next_sibling() ?? null;
++        if (sibling) {
++            quickSettings.menu.insertItemBefore(toggle, sibling);
++        } else {
++            quickSettings.menu.addItem(toggle);
++        }
+     }
+ 
+     disable() {

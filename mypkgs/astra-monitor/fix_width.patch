@@ -1,0 +1,131 @@
+diff --git a/src/network/networkHeader.js b/src/network/networkHeader.js
+index 2005256..d561b3d 100644
+--- a/src/network/networkHeader.js
++++ b/src/network/networkHeader.js
+@@ -84,7 +84,7 @@ export default GObject.registerClass(class NetworkHeader extends Header {
+         }
+     }
+     resetMaxWidths() {
+-        this.maxWidths = [];
++        this.maxSpeedWidth = null;
+         if (!Config.get_boolean('network-header-io'))
+             return;
+         if (!this.speed.get_stage())
+@@ -245,26 +245,33 @@ export default GObject.registerClass(class NetworkHeader extends Header {
+             this.speed.style = style;
+             this.speed.queue_relayout();
+             this.speedContainer.queue_relayout();
++            this.maxSpeedWidth = null;
+         }
+-        const speedWidth = this.speed.get_preferred_width(-1);
+-        const width = speedWidth ? speedWidth[1] : 0;
+-        this.maxWidths.push(width);
+-        if (this.maxWidths.length > Utils.networkMonitor.updateFrequency * 30)
+-            this.maxWidths.shift();
+-        let max = Math.max(...this.maxWidths);
+-        if (max === this.speedContainer.width)
++        if (this.maxSpeedWidth === null || this.maxSpeedWidth === undefined)
++            this.maxSpeedWidth = this.computeMaxSpeedWidth();
++        if (this.maxSpeedWidth === this.speedContainer.width)
+             return;
+-        if (max <= 0)
+-            max = 1;
+-        this.speedContainer.set_width(max);
++        this.speedContainer.set_width(this.maxSpeedWidth);
++    }
++    computeMaxSpeedWidth() {
++        const unit = Config.get_string('network-io-unit');
++        let maxFigures = Config.get_int('network-header-io-figures');
++        maxFigures = Math.max(1, Math.min(4, maxFigures));
++        const worstCase = Utils.formatBytesPerSecMaxLength(unit, maxFigures);
++        const text = this.ioLayout === 'horizontal' ? `${worstCase} | ${worstCase}` : worstCase;
++        const previousText = this.speed.text;
++        this.speed.text = text;
++        const preferredWidth = this.speed.get_preferred_width(-1);
++        this.speed.text = previousText;
++        return preferredWidth && preferredWidth[1] > 0 ? preferredWidth[1] : 1;
+     }
+     update() {
+-        this.maxWidths = [];
++        this.maxSpeedWidth = null;
+         this.updateGraph();
+         this.updateSpeed();
+     }
+     redraw() {
+-        this.maxWidths = [];
++        this.maxSpeedWidth = null;
+         this.fixSpeedContainerStyle();
+     }
+     createTooltip() {
+diff --git a/src/storage/storageHeader.js b/src/storage/storageHeader.js
+index 9f3cd7a..95373b0 100644
+--- a/src/storage/storageHeader.js
++++ b/src/storage/storageHeader.js
+@@ -101,7 +101,7 @@ export default GObject.registerClass(class StorageHeader extends Header {
+         }
+     }
+     resetMaxWidths() {
+-        this.maxWidths = [];
++        this.maxSpeedWidth = null;
+         if (!Config.get_boolean('storage-header-io'))
+             return;
+         if (!this.speed.get_stage())
+@@ -404,21 +404,28 @@ export default GObject.registerClass(class StorageHeader extends Header {
+             this.speed.style = style;
+             this.speed.queue_relayout();
+             this.speedContainer.queue_relayout();
++            this.maxSpeedWidth = null;
+         }
+-        const speedWidth = this.speed.get_preferred_width(-1);
+-        const width = speedWidth ? speedWidth[1] : 0;
+-        this.maxWidths.push(width);
+-        if (this.maxWidths.length > Utils.storageMonitor.updateFrequency * 30)
+-            this.maxWidths.shift();
+-        let max = Math.max(...this.maxWidths);
+-        if (max === this.speedContainer.width)
++        if (this.maxSpeedWidth === null || this.maxSpeedWidth === undefined)
++            this.maxSpeedWidth = this.computeMaxSpeedWidth();
++        if (this.maxSpeedWidth === this.speedContainer.width)
+             return;
+-        if (max <= 0)
+-            max = 1;
+-        this.speedContainer.set_width(max);
++        this.speedContainer.set_width(this.maxSpeedWidth);
++    }
++    computeMaxSpeedWidth() {
++        const unit = Config.get_string('storage-io-unit');
++        let maxFigures = Config.get_int('storage-header-io-figures');
++        maxFigures = Math.max(1, Math.min(4, maxFigures));
++        const worstCase = Utils.formatBytesPerSecMaxLength(unit, maxFigures);
++        const text = this.ioLayout === 'horizontal' ? `${worstCase} | ${worstCase}` : worstCase;
++        const previousText = this.speed.text;
++        this.speed.text = text;
++        const preferredWidth = this.speed.get_preferred_width(-1);
++        this.speed.text = previousText;
++        return preferredWidth && preferredWidth[1] > 0 ? preferredWidth[1] : 1;
+     }
+     update() {
+-        this.maxWidths = [];
++        this.maxSpeedWidth = null;
+         this.updateBars();
+         this.updatePercentage();
+         this.updateValue();
+diff --git a/src/utils/utils.js b/src/utils/utils.js
+index 5662312..8b19269 100644
+--- a/src/utils/utils.js
++++ b/src/utils/utils.js
+@@ -545,6 +545,14 @@ class Utils {
+         }
+         return `${result} ${Utils.unitMap[unit].labels[unitIndex]}`;
+     }
++    static formatBytesPerSecMaxLength(unit, maxNumbers = 2) {
++        if (!Object.prototype.hasOwnProperty.call(Utils.unitMap, unit))
++            unit = 'kB/s';
++        maxNumbers = Math.max(1, maxNumbers);
++        const numberPart = maxNumbers === 1 ? '9' : '9.' + '9'.repeat(maxNumbers - 1);
++        const megaLabel = Utils.unitMap[unit].labels[2];
++        return `${numberPart} ${megaLabel}`;
++    }
+     static formatBytes(bytes, unit = 'kB-KB', maxNumbers = 2) {
+         if (!Object.prototype.hasOwnProperty.call(Utils.unit2Map, unit))
+             unit = 'kB-KB';

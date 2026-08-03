@@ -49,7 +49,8 @@
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/BE97-EF72";
       fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
+      # FAT has no per-file POSIX permissions; mask access to the systemd-boot seed.
+      options = [ "fmask=0077" "dmask=0077" ];
     };
 
   fileSystems."/tmp" =

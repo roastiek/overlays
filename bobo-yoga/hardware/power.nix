@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # services.power-profiles-daemon.enable = false;
 
@@ -15,6 +20,7 @@
 
       DISK_DEVICES = "nvme0n1";
 
+      TLP_DISABLE_DEFAULTS = 1;
       USB_AUTOSUSPEND = 1;
 
       DISK_APM_LEVEL_ON_BAT = "254";

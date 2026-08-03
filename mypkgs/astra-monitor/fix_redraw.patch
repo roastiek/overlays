@@ -1,0 +1,140 @@
+diff --git a/src/network/networkHeader.js b/src/network/networkHeader.js
+index d561b3d..1e7c0cb 100644
+--- a/src/network/networkHeader.js
++++ b/src/network/networkHeader.js
+@@ -224,29 +224,55 @@ export default GObject.registerClass(class NetworkHeader extends Header {
+             return;
+         if (!this.speed.get_parent())
+             return;
++        const fitStyle = (candidateStyle, superHeight) => {
++            if (!(superHeight > 0))
++                return candidateStyle;
++            const previousStyle = this.speed.style;
++            this.speed.style = candidateStyle;
++            const natural = this.speed.get_preferred_height(-1);
++            const naturalHeight = natural ? natural[1] : 0;
++            this.speed.style = previousStyle;
++            if (naturalHeight <= superHeight || naturalHeight <= 0)
++                return candidateStyle;
++            const match = candidateStyle.match(/font-size:([\d.]+)px;/);
++            if (!match)
++                return candidateStyle;
++            const currentPx = parseFloat(match[1]);
++            const scale = superHeight / naturalHeight;
++            const fittedPx = Math.max(1, Math.floor(currentPx * scale));
++            return `font-size:${fittedPx}px;`;
++        };
+         const calculateStyle = () => {
+-            let defaultStyle = 'font-size:0.65em;';
+             const fontSize = Config.get_int('headers-font-size');
+-            if (fontSize)
+-                defaultStyle = `font-size:${fontSize}px;`;
+             if (this.ioLayout === 'horizontal')
+-                return fontSize ? defaultStyle : 'font-size:1em';
++                return fontSize ? `font-size:${fontSize}px;` : 'font-size:1em;';
+             const superHeight = this.speedContainer.get_parent()?.get_allocation_box()?.get_height() ?? 0;
++            if (fontSize)
++                return fitStyle(`font-size:${fontSize}px;`, superHeight);
+             let scaledHeight = superHeight / this.scaleFactor;
+             if (scaledHeight <= 20)
+-                return defaultStyle;
++                return fitStyle('font-size:0.65em;', superHeight);
+             scaledHeight = Math.round(scaledHeight / 3);
+-            if (fontSize && fontSize < scaledHeight)
+-                return defaultStyle;
+-            return `font-size:${scaledHeight}px;`;
++            return fitStyle(`font-size:${scaledHeight}px;`, superHeight);
+         };
+         const style = calculateStyle();
+         if (this.speed.style !== style) {
+             this.speed.style = style;
+-            this.speed.queue_relayout();
+-            this.speedContainer.queue_relayout();
+             this.maxSpeedWidth = null;
+         }
++        // Workaround for an apparent St/Clutter repaint bug: the speed label can
++        // occasionally get stuck with a stale paint (visually clipped) even when
++        // nothing we control changed. Force a redraw/relayout on every tick,
++        // regardless of whether the style string above actually changed.
++        this.speed.queue_relayout();
++        this.speed.queue_redraw();
++        this.speedContainer.queue_relayout();
++        this.speedContainer.queue_redraw();
++        if (this.box) {
++            this.box.queue_relayout();
++            this.box.queue_redraw();
++        }
++        this.queue_redraw();
+         if (this.maxSpeedWidth === null || this.maxSpeedWidth === undefined)
+             this.maxSpeedWidth = this.computeMaxSpeedWidth();
+         if (this.maxSpeedWidth === this.speedContainer.width)
+diff --git a/src/storage/storageHeader.js b/src/storage/storageHeader.js
+index 95373b0..b0e2f33 100644
+--- a/src/storage/storageHeader.js
++++ b/src/storage/storageHeader.js
+@@ -383,29 +383,55 @@ export default GObject.registerClass(class StorageHeader extends Header {
+             return;
+         if (!this.speed.get_parent())
+             return;
++        const fitStyle = (candidateStyle, superHeight) => {
++            if (!(superHeight > 0))
++                return candidateStyle;
++            const previousStyle = this.speed.style;
++            this.speed.style = candidateStyle;
++            const natural = this.speed.get_preferred_height(-1);
++            const naturalHeight = natural ? natural[1] : 0;
++            this.speed.style = previousStyle;
++            if (naturalHeight <= superHeight || naturalHeight <= 0)
++                return candidateStyle;
++            const match = candidateStyle.match(/font-size:([\d.]+)px;/);
++            if (!match)
++                return candidateStyle;
++            const currentPx = parseFloat(match[1]);
++            const scale = superHeight / naturalHeight;
++            const fittedPx = Math.max(1, Math.floor(currentPx * scale));
++            return `font-size:${fittedPx}px;`;
++        };
+         const calculateStyle = () => {
+-            let defaultStyle = 'font-size:0.65em;';
+             const fontSize = Config.get_int('headers-font-size');
+-            if (fontSize)
+-                defaultStyle = `font-size:${fontSize}px;`;
+             if (this.ioLayout === 'horizontal')
+-                return fontSize ? defaultStyle : 'font-size:1em';
++                return fontSize ? `font-size:${fontSize}px;` : 'font-size:1em;';
+             const superHeight = this.speedContainer.get_parent()?.get_allocation_box()?.get_height() ?? 0;
++            if (fontSize)
++                return fitStyle(`font-size:${fontSize}px;`, superHeight);
+             let scaledHeight = superHeight / this.scaleFactor;
+             if (scaledHeight <= 20)
+-                return defaultStyle;
++                return fitStyle('font-size:0.65em;', superHeight);
+             scaledHeight = Math.round(scaledHeight / 3);
+-            if (fontSize && fontSize < scaledHeight)
+-                return defaultStyle;
+-            return `font-size:${scaledHeight}px;`;
++            return fitStyle(`font-size:${scaledHeight}px;`, superHeight);
+         };
+         const style = calculateStyle();
+         if (this.speed.style !== style) {
+             this.speed.style = style;
+-            this.speed.queue_relayout();
+-            this.speedContainer.queue_relayout();
+             this.maxSpeedWidth = null;
+         }
++        // Workaround for an apparent St/Clutter repaint bug: the speed label can
++        // occasionally get stuck with a stale paint (visually clipped) even when
++        // nothing we control changed. Force a redraw/relayout on every tick,
++        // regardless of whether the style string above actually changed.
++        this.speed.queue_relayout();
++        this.speed.queue_redraw();
++        this.speedContainer.queue_relayout();
++        this.speedContainer.queue_redraw();
++        if (this.box) {
++            this.box.queue_relayout();
++            this.box.queue_redraw();
++        }
++        this.queue_redraw();
+         if (this.maxSpeedWidth === null || this.maxSpeedWidth === undefined)
+             this.maxSpeedWidth = this.computeMaxSpeedWidth();
+         if (this.maxSpeedWidth === this.speedContainer.width)
