@@ -174,10 +174,24 @@ rec {
       no-titlebar-when-maximized = no-titlebar-when-maximized.overrideAttrs (oldAttrs: {
         patches = (oldAttrs.patches or [ ]) ++ [ ./no-titlebar-when-maximized.patch ];
       });
+      # The appindicator extension spawns `gjs` (via Gio.Subprocess) to scan the
+      # session bus for StatusNotifierItems. It relies on `gjs` being on the
+      # gnome-shell session PATH, which it isn't by default, so tray-icon lookup
+      # fails with `Failed to execute child process "gjs"`. Hard-code the
+      # absolute store path instead of leaking gjs into the whole session PATH.
+      appindicator = appindicator.overrideAttrs (oldAttrs: {
+        postPatch = (oldAttrs.postPatch or "") + ''
+          substituteInPlace statusNotifierWatcher.js \
+            --replace-fail "['gjs', '-m', busAnalyzer]" \
+              "['${self.gjs}/bin/gjs', '-m', busAnalyzer]"
+        '';
+      });
       astra-monitor = astra-monitor.overrideAttrs (oldAttrs: {
         patches = (oldAttrs.patches or [ ]) ++ [
           ./astra-monitor/fix_width.patch
           ./astra-monitor/fix_redraw.patch
+          ./astra-monitor/remove_lighter.patch
+          ./astra-monitor/zero_delay.patch
         ];
       });
       preserve-battery-health = preserve-battery-health.overrideAttrs (oldAttrs: {

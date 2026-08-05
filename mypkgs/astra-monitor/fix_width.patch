@@ -57,6 +57,61 @@ index 2005256..d561b3d 100644
          this.fixSpeedContainerStyle();
      }
      createTooltip() {
+diff --git a/src/processor/processorHeader.js b/src/processor/processorHeader.js
+index 4f4c691..81a8eef 100644
+--- a/src/processor/processorHeader.js
++++ b/src/processor/processorHeader.js
+@@ -275,11 +275,19 @@ export default GObject.registerClass(class ProcessorHeader extends Header {
+         }
+     }
+     buildFrequency() {
++        this.maxFrequencyWidth = null;
+         this.frequency = new St.Label({
+             text: '- GHz',
+             styleClass: 'astra-monitor-header-frequency',
+             yAlign: Clutter.ActorAlign.CENTER,
++            xAlign: Clutter.ActorAlign.END,
+         });
++        const resetMaxFrequencyWidth = () => {
++            this.maxFrequencyWidth = null;
++        };
++        Config.connect(this.frequency, 'changed::processor-header-frequency-figures', resetMaxFrequencyWidth.bind(this));
++        Config.connect(this.frequency, 'changed::headers-font-family', resetMaxFrequencyWidth.bind(this));
++        Config.connect(this.frequency, 'changed::headers-font-size', resetMaxFrequencyWidth.bind(this));
+         const updateFrequencyMode = () => {
+             let frequencyMode = Config.get_string('processor-header-frequency-mode');
+             if (frequencyMode && !['average', 'max'].includes(frequencyMode)) {
+@@ -326,6 +334,30 @@ export default GObject.registerClass(class ProcessorHeader extends Header {
+         else if (this.frequencyMode === 'max') {
+             this.frequency.text = Utils.formatFrequency(Math.max(...activeFrequencies) / 1000, 'GHz', figures, true);
+         }
++        this.fixFrequencyWidth();
++    }
++    computeMaxFrequencyWidth() {
++        let figures = Config.get_int('processor-header-frequency-figures');
++        figures = Math.max(2, Math.min(4, figures));
++        // Worst case: '0' is the widest digit in most fonts, and the decimal
++        // point is always present (forceDecimals), e.g. '0.00 GHz' for 3 figures.
++        const worstCase = `0.${'0'.repeat(figures - 1)} GHz`;
++        const previousText = this.frequency.text;
++        this.frequency.text = worstCase;
++        const preferredWidth = this.frequency.get_preferred_width(-1);
++        this.frequency.text = previousText;
++        return preferredWidth && preferredWidth[1] > 0 ? preferredWidth[1] : null;
++    }
++    fixFrequencyWidth() {
++        if (!this.frequency.get_stage())
++            return;
++        if (this.maxFrequencyWidth === null || this.maxFrequencyWidth === undefined)
++            this.maxFrequencyWidth = this.computeMaxFrequencyWidth();
++        if (this.maxFrequencyWidth === null || this.maxFrequencyWidth === undefined)
++            return;
++        if (this.maxFrequencyWidth === this.frequency.width)
++            return;
++        this.frequency.set_width(this.maxFrequencyWidth);
+     }
+     update() {
+         const perCoreBars = Config.get_boolean('processor-header-bars-core');
 diff --git a/src/storage/storageHeader.js b/src/storage/storageHeader.js
 index 9f3cd7a..95373b0 100644
 --- a/src/storage/storageHeader.js

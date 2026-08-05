@@ -7,12 +7,24 @@
 {
   virtualisation.podman.enable = true;
 
+  # Podman (like Docker) strips loopback nameservers from the host resolv.conf
+  # when building a container's resolv.conf, then falls back to public DNS that
+  # can't resolve internal split-horizon domains. Point it at the dnsmasq
+  # listener on dns0 (169.254.53.53), a non-loopback address that survives.
+  virtualisation.containers.containersConf.settings.containers.dns_servers = [ "169.254.53.53" ];
+
   virtualisation.docker = {
     enable = true;
     # package = pkgs.docker_29;
     extraPackages = [ pkgs.nftables ]; # Docker 29 cleans up nftables rules at startup.
     autoPrune.enable = true;
     autoPrune.flags = [ "--volumes" ];
+    # Point containers at the NetworkManager/dnsmasq listener on dns0
+    # (169.254.53.53). Docker strips loopback (127.0.0.1) nameservers inherited
+    # from the host resolv.conf and would otherwise fall back to public 8.8.8.8,
+    # which cannot resolve internal split-horizon domains. dns0 is a non-loopback
+    # address so it survives into the container's resolv.conf.
+    daemon.settings.dns = [ "169.254.53.53" ];
   };
   systemd.services.docker-prune.before = [ "nix-gc.service" ];
 

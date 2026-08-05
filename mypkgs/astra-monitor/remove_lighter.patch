@@ -1,0 +1,18 @@
+diff --git a/stylesheet.css b/stylesheet.css
+index d412dbe..cbe9756 100644
+--- a/stylesheet.css
++++ b/stylesheet.css
+@@ -56,13 +56,11 @@
+ }
+ 
+ .astra-monitor-header-speed-label {
+-    font-weight: lighter;
+     text-align: right;
+     margin-right: 0.3em;
+ }
+ 
+ .astra-monitor-header-sensors-values-label {
+-    font-weight: lighter;
+     text-align: right;
+     margin-right: 0.3em;
+ }

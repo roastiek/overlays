@@ -25,5 +25,8 @@
       restart-to
     ];
 
-  services.desktopManager.gnome.sessionPath = with pkgs; [ libgtop ];
+  services.desktopManager.gnome.sessionPath = with pkgs; [
+    libgtop
+    iotop
+  ];
 }

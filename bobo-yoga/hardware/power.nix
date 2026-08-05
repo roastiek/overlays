@@ -31,8 +31,8 @@
       RESTORE_DEVICE_STATE_ON_STARTUP = 0;
       DEVICES_TO_ENABLE_ON_STARTUP = "bluetooth";
 
-      START_CHARGE_THRESH_BAT0 = 0;
-      STOP_CHARGE_THRESH_BAT0 = 1;
+      # START_CHARGE_THRESH_BAT0 = 0;
+      # STOP_CHARGE_THRESH_BAT0 = 1;
 
       # TLP_DEBUG="arg bat disk lock nm path pm ps rf run sysfs udev usb";
     };

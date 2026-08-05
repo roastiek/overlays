@@ -1,0 +1,39 @@
+diff --git a/schemas/org.gnome.shell.extensions.astra-monitor.gschema.xml b/schemas/org.gnome.shell.extensions.astra-monitor.gschema.xml
+index 1cb0dfc..4356e7e 100644
+--- a/schemas/org.gnome.shell.extensions.astra-monitor.gschema.xml
++++ b/schemas/org.gnome.shell.extensions.astra-monitor.gschema.xml
+@@ -113,7 +113,7 @@
+       <default>2</default>
+       <summary>Startup Delay</summary>
+       <description>Seconds to wait before placing the headers</description>
+-      <range min="1" max="10"/>
++      <range min="0" max="10"/>
+     </key>
+     <key name="panel-box" enum="org.gnome.shell.extensions.astra-monitor.enum.panel-box">
+       <default>'right'</default>
+diff --git a/src/prefs/visualization.js b/src/prefs/visualization.js
+index c68556e..a918dad 100644
+--- a/src/prefs/visualization.js
++++ b/src/prefs/visualization.js
+@@ -126,7 +126,7 @@ export default class Visualization {
+             subtitle: _('Increase if the extension is not properly formatted on startup.'),
+             iconName: 'am-dialog-warning-symbolic',
+             tabs: 1,
+-        }, 'startup-delay', headersSection, { min: 1, max: 10, digits: 1, step: 0.5, page: 1 }, true, 2);
++        }, 'startup-delay', headersSection, { min: 0, max: 10, digits: 1, step: 0.5, page: 1 }, true, 2);
+         PrefsUtils.addSpinRow({
+             title: _('Headers Height'),
+             subtitle: _('Experimental feature: may require to disable/enable the extension.') +
+diff --git a/src/utils/utils.js b/src/utils/utils.js
+index 8b19269..b18deb4 100644
+--- a/src/utils/utils.js
++++ b/src/utils/utils.js
+@@ -223,7 +223,7 @@ class Utils {
+     }
+     static get startupDelay() {
+         const delay = Config.get_double('startup-delay');
+-        if (Number.isNaN(delay) || delay < 1 || delay > 10)
++        if (Number.isNaN(delay) || delay < 0 || delay > 10)
+             return 2;
+         return delay;
+     }
