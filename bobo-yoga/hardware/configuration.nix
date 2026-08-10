@@ -18,6 +18,7 @@
     ./fix-ish-firmware.nix
     ./key-remap.nix
     ./power.nix
+    ./usb-dock-quirks.nix
     # ./usbguard.nix
   ];
 
