@@ -299,7 +299,10 @@ rec {
   thermal-monitor = self.libsForQt5.callPackage ./tm { };
 
   mutter = super.mutter.overrideAttrs (oldAttrs: {
-    patches = (oldAttrs.patches or [ ]) ++ [ ./mutter.patch ];
+    patches = (oldAttrs.patches or [ ]) ++ [
+      ./mutter.patch
+      ./clutter-text-paint-volume.patch
+    ];
     postPatch = oldAttrs.postPatch + ''
       sed -i '43i    (2880, 1800),' src/backends/native/gen-default-modes.py
     '';

@@ -1,0 +1,84 @@
+diff --git a/clutter/clutter/pango/clutter-text.c b/clutter/clutter/pango/clutter-text.c
+index 1261d53..2278ddd 100644
+--- a/clutter/clutter/pango/clutter-text.c
++++ b/clutter/clutter/pango/clutter-text.c
+@@ -323,6 +323,56 @@ pango_to_logical_pixels (float size,
+   return pango_to_pixels (size / scale);
+ }
+ 
++/*
++ * pango_extents_to_logical_pixels:
++ * @inclusive: (nullable): rectangle to convert using expand rounding,
++ *   or %NULL
++ * @nearest: (nullable): rectangle to convert using nearest rounding,
++ *   or %NULL
++ * @scale: the resource scale of the actor
++ *
++ * Like pango_extents_to_pixels(), but divides by @scale first to
++ * produce logical pixel values.  The @inclusive rectangle floors the
++ * origin and ceils the far edges so the result always fully contains
++ * the input; @nearest rounds each edge to the nearest pixel.
++ *
++ * This must be used instead of pango_to_logical_pixels() when
++ * converting rectangles whose origin can be negative (e.g. ink
++ * extents), because pango_to_logical_pixels() uses ceilf() which
++ * rounds negative origins toward zero, shrinking the covered area.
++ */
++static void
++pango_extents_to_logical_pixels (PangoRectangle *inclusive,
++                                 PangoRectangle *nearest,
++                                 float           scale)
++{
++  if (inclusive)
++    {
++      float orig_x = (float) inclusive->x / scale;
++      float orig_y = (float) inclusive->y / scale;
++      float end_x = (float) (inclusive->x + inclusive->width) / scale;
++      float end_y = (float) (inclusive->y + inclusive->height) / scale;
++
++      inclusive->x = (int) floorf (orig_x / (float) PANGO_SCALE);
++      inclusive->y = (int) floorf (orig_y / (float) PANGO_SCALE);
++      inclusive->width = (int) ceilf (end_x / (float) PANGO_SCALE) - inclusive->x;
++      inclusive->height = (int) ceilf (end_y / (float) PANGO_SCALE) - inclusive->y;
++    }
++
++  if (nearest)
++    {
++      float orig_x = (float) nearest->x / scale;
++      float orig_y = (float) nearest->y / scale;
++      float end_x = (float) (nearest->x + nearest->width) / scale;
++      float end_y = (float) (nearest->y + nearest->height) / scale;
++
++      nearest->x = (int) roundf (orig_x / (float) PANGO_SCALE);
++      nearest->y = (int) roundf (orig_y / (float) PANGO_SCALE);
++      nearest->width = (int) roundf (end_x / (float) PANGO_SCALE) - nearest->x;
++      nearest->height = (int) roundf (end_y / (float) PANGO_SCALE) - nearest->y;
++    }
++}
++
+ static void
+ clutter_text_input_focus_request_surrounding (ClutterInputFocus *focus)
+ {
+@@ -2857,16 +2907,14 @@ clutter_text_get_paint_volume (ClutterActor       *self,
+   layout = clutter_text_get_layout (text);
+   pango_layout_get_extents (layout, &ink_rect, NULL);
+ 
+-  origin.x = pango_to_logical_pixels (ink_rect.x, resource_scale);
+-  origin.y = pango_to_logical_pixels (ink_rect.y, resource_scale);
++  pango_extents_to_logical_pixels (&ink_rect, NULL, resource_scale);
++
++  origin.x = ink_rect.x;
++  origin.y = ink_rect.y;
+   origin.z = 0;
+   clutter_paint_volume_set_origin (volume, &origin);
+-  clutter_paint_volume_set_width (volume,
+-                                  pango_to_logical_pixels (ink_rect.width,
+-                                                           resource_scale));
+-  clutter_paint_volume_set_height (volume,
+-                                   pango_to_logical_pixels (ink_rect.height,
+-                                                            resource_scale));
++  clutter_paint_volume_set_width (volume, ink_rect.width);
++  clutter_paint_volume_set_height (volume, ink_rect.height);
+ 
+   /* If the cursor is visible then that will likely be drawn
+      outside of the ink rectangle so we should merge that in */
