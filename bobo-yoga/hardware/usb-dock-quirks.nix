@@ -1,6 +1,13 @@
-# USB quirks for the Lenovo ThinkPad Thunderbolt 3 Dock chain.
+# USB quirks for the Lenovo ThinkPad Thunderbolt 3 Dock chain, plus a log of
+# a second, unrelated dock/hub with a similar-looking symptom.
 #
-# STATUS: unverified working hypothesis. See "Open questions" at the bottom.
+# STATUS: INCIDENT 1's kernel quirk is an unverified working hypothesis (see
+# "Open questions" at the bottom of that section). INCIDENT 2 is log-only so
+# far - no fix applied, see reasoning at the end of that section for why.
+#
+# ---------------------------------------------------------------------------
+# INCIDENT 1 - Lenovo TBT3 dock: Realtek RTS5411 hub / Logitech receiver
+# ---------------------------------------------------------------------------
 # Written 2026-08-08 from /home/bobo/nixos/overlays/usb.log (journal dump of a
 # suspend -> resume -> dock connect -> disconnect -> reconnect cycle).
 #
@@ -175,6 +182,115 @@
 # - Consider whether the dock hubs want NO_LPM (letter k) like the upstream
 #   17ef:a387/a391/a392 entries, if link-power-management turns out to be
 #   involved rather than raw timing.
+#
+# ---------------------------------------------------------------------------
+# INCIDENT 2 - a DIFFERENT dock/hub: GenesysLogic hub pair, keyboard missing
+# ---------------------------------------------------------------------------
+# Logged 2026-08-12 from /home/bobo/nixos/overlays/recent.log (s2idle
+# suspend/resume). CONFIRMED with the user this is a different physical dock
+# and different peripherals than Incident 1 above - different vendor IDs
+# (GenesysLogic 05e3:xxxx, not Realtek 0bda:5411), different xhci bus numbers
+# (usb2/usb3, not usb5/usb6), no PCIe-switch/TBT3 hop in the topology seen.
+# Do not merge these two incidents or assume one fix covers both.
+#
+# ---------------------------------------------------------------------------
+# SYMPTOM
+# ---------------------------------------------------------------------------
+# After s2idle resume, the USB keyboard (and mouse) behind this dock is not
+# recognized. Unplugging and replugging the keyboard/dock fixes it.
+#
+# ---------------------------------------------------------------------------
+# TOPOLOGY (as seen this boot - port numbers may differ next time)
+# ---------------------------------------------------------------------------
+#   xhci_hcd (bus 2, SS)
+#     -> 2-1        05e3:0625   GenesysLogic "USB3.2 Hub", 5 ports
+#       -> 2-1.5    0bda:8153   Realtek USB 10/100/1000 LAN (dock Ethernet)
+#   xhci_hcd (bus 3, HS)
+#     -> 3-3        05e3:0610   GenesysLogic "USB2.1 Hub", 6 ports
+#       -> 3-3.1    04d9:a09e   E-Signal/A-One USB Gaming Mouse (+ kbd iface)
+#       -> 3-3.2    045e:0750   Microsoft Wired Keyboard 600        <-- victim
+#
+# ---------------------------------------------------------------------------
+# EVIDENCE - hub-level enumeration failure, not descriptor corruption
+# ---------------------------------------------------------------------------
+# recent.log, from "PM: suspend exit" at 07:41:39:
+#
+#   07:41:40  usb 2-1: Device not responding to setup address.  (x2)
+#   07:41:40  usb 2-1: device not accepting address 2, error -71
+#   07:41:41  usb 2-1: new SuperSpeed Plus Gen 2x1 USB device number 3 ...  <- recovered
+#   07:41:40  usb 3-3: new high-speed USB device number 4 using xhci_hcd
+#             <-- and then NOTHING for device 4. No children, no error either.
+#   07:42:01  usb 2-1: USB disconnect, device number 3
+#             r8152-cfgselector 2-1.5: USB disconnect, device number 4
+#   07:42:05  usb 3-3: new high-speed USB device number 5 using xhci_hcd
+#   07:42:05  usb 2-1: Device not responding to setup address.  (x2)
+#   07:42:05  usb 2-1: device not accepting address 5, error -71
+#   07:42:06  usb 3-3: new high-speed USB device number 6 using xhci_hcd
+#   07:42:06  usb 2-1: new SuperSpeed Plus Gen 2x1 USB device number 6 ...
+#   07:42:06  hub 3-3:1.0: USB hub found, 6 ports detected            <- recovered
+#   07:42:08  usb 3-3.1: new full-speed USB device number 7 (mouse+kbd combo)
+#   07:42:08  usb 3-3.2: new low-speed USB device number 8 (Wired Keyboard 600)
+#   07:42:09  input: Microsoft Wired Keyboard 600 ... (clean, both interfaces)
+#
+# Unlike Incident 1, neither downstream device (3-3.1, 3-3.2) ever showed a
+# short/corrupt config descriptor once the parent hub (3-3) was up - both
+# enumerated cleanly on their first attempt. The failure here is entirely at
+# the HUB's own address-setup stage (error -71 = EPROTO on SET_ADDRESS/
+# GET_DESCRIPTOR), ~29s of retries between resume and the keyboard working.
+#
+# The full disconnect of hub 2-1 at 07:42:01 (all descendants gone, not just
+# a reset) is consistent with a physical unplug, matching what the user
+# reported ("plug out/plug in again solved it") rather than a pure in-kernel
+# retry loop.
+#
+# ---------------------------------------------------------------------------
+# WHY NO KERNEL QUIRK WAS ADDED (yet)
+# ---------------------------------------------------------------------------
+# The Incident 1 quirk letters target specific in-tree code paths:
+#   g (DELAY_INIT)      - pads the CONFIG descriptor fetch and port_connect
+#   n (DELAY_CTRL_MSG)  - pads between control messages
+#   o (HUB_SLOW_RESET)  - pads hub_port_reset() recovery time for children
+#
+# None of these visibly execute during plain SET_ADDRESS/GET_DESCRIPTOR
+# failures at initial enumeration (error -71 before a config is even read) -
+# that path is usb_new_device() -> hub_port_init(), which already retries
+# internally (SET_ADDRESS retried up to 4 times, see hub_port_init() in
+# drivers/usb/core/hub.c). Adding g/n/o here would be guessing at a mechanism
+# that doesn't match this failure signature. Needs a repro with
+# `dmesg -w | grep -E '2-1|3-3|error -71'` across a few more suspend/resume
+# cycles (ideally without a manual replug) before picking a quirk, per the
+# "don't add quirks without confirming the mechanism" rule from Incident 1.
+#
+# ---------------------------------------------------------------------------
+# HEALTHY BASELINE (lsusb -t / lsusb, captured 2026-08-12 post-recovery)
+# ---------------------------------------------------------------------------
+#   Bus 002 Dev 001 root_hub xhci_hcd/3p, 20000M/x2
+#     |__ Port 001 Dev 006  05e3:0625  GenesysLogic USB3.2 Hub, 5 ports, 10000M
+#         |__ Port 005 Dev 007  0bda:8153  Realtek RTL8153 GbE (r8152), 5000M
+#   Bus 003 Dev 001 root_hub xhci_hcd/8p, 480M
+#     |__ Port 003 Dev 006  05e3:0610  GenesysLogic Hub, 6 ports, 480M
+#         |__ Port 001 Dev 007  04d9:a09e  Holtek "USB Gaming Mouse" (usbhid x2)
+#         |__ Port 002 Dev 008  045e:0750  Microsoft Wired Keyboard 600 (usbhid x2)
+#
+# Confirms 05e3:0625 (bus 2, SuperSpeed) and 05e3:0610 (bus 3, high-speed) are
+# genuinely separate hub instances/PIDs, not two faces of one chip reporting
+# differently - typical of a combo SS+HS dock hub design, each with its own
+# downstream ports. Also: the 3-3.1 device's vendor string is "Holtek
+# Semiconductor" here, not "E-Signal/A-One" as logged during the incident -
+# same 04d9:a09e mouse, just an inconsistent iManufacturer string across
+# enumerations (seen before with cheap Holtek-based peripherals, harmless).
+#
+# ---------------------------------------------------------------------------
+# OPEN QUESTIONS / TODO
+# ---------------------------------------------------------------------------
+# - Does this reproduce WITHOUT a manual unplug (i.e. does the kernel's own
+#   hub_port_init() retry eventually win on its own if left alone longer)?
+#   If yes, this may just be a slow-to-power-up dock after s2idle and not
+#   need a quirk at all - only patience.
+# - If it keeps happening, capture whether error -71 always lands on 2-1
+#   (the SS hub) specifically, or moves around - that decides whether a
+#   HUB_SLOW_RESET-style quirk on 05e3:0625 would even be structurally
+#   plausible (it only helps children, not the hub's own enumeration).
 {
   config,
   lib,
@@ -183,7 +299,9 @@
 }:
 {
   boot.kernelParams = [
-    # See the long comment above before changing this.
+    # See "INCIDENT 1" in the long comment above before changing this.
+    # Only covers the TBT3 dock's RTS5411 hub / Logitech receiver - Incident 2
+    # (GenesysLogic 05e3:0625/0610 dock, Microsoft keyboard) has no quirk yet.
     #   046d:c52b -> g = DELAY_INIT, n = DELAY_CTRL_MSG   (Logitech Unifying receiver)
     #   0bda:5411 -> o = HUB_SLOW_RESET                   (its parent RTS5411 hub)
     "usbcore.quirks=046d:c52b:gn,0bda:5411:o"
