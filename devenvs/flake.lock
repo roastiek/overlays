@@ -56,7 +56,29 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nix-vscode-extensions": "nix-vscode-extensions",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "rust-overlay": "rust-overlay",
+        "tree-sitter": "tree-sitter"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786680812,
+        "narHash": "sha256-5lDFwethgqSULdupYl3Eu5n80jfcbb85gSJX/jb58GQ=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "f1dcc7e4ea4fdb6d8f276face22f353832b161e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "systems": {
@@ -71,6 +93,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tree-sitter": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786781618,
+        "narHash": "sha256-T/UolSqdjvnyyUyDOlJ+PQG8TP0oT37CH+8t4IISwLA=",
+        "owner": "tree-sitter",
+        "repo": "tree-sitter",
+        "rev": "dff1fd868c750dbbae179fcd5c43ce987e4e0528",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tree-sitter",
+        "repo": "tree-sitter",
         "type": "github"
       }
     }

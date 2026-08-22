@@ -11,8 +11,12 @@
     url = "github:numtide/flake-utils";
     #inputs.systems.follows = "systems";
   };
-  #inputs.rust-overlay.url = "github:oxalica/rust-overlay";
-  #inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+  inputs.rust-overlay.url = "github:oxalica/rust-overlay";
+  inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+  inputs.tree-sitter.url = "github:tree-sitter/tree-sitter";
+  inputs.tree-sitter.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs =
     {
@@ -20,7 +24,8 @@
       nix-vscode-extensions,
       nixpkgs,
       flake-utils,
-      # rust-overlay,
+      rust-overlay,
+      tree-sitter,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -33,7 +38,8 @@
             nix-vscode-extensions.overlays.default
             (import ./golang-overlay.nix)
             (import ./python-overlay.nix)
-            # (import rust-overlay)
+            (import ./rust-overlay.nix)
+            rust-overlay.overlays.default
           ];
         };
 
@@ -65,6 +71,11 @@
               miguelsolorio.symbols
               vscode-marketplace-release.golang.go
               vscode-marketplace-release.casualjim.gotemplate
+
+              # rust
+              # rust-lang.rust-analyzer
+              # fill-labs.dependi
+              # tamasfe.even-better-toml
             ]
           );
         };
@@ -78,6 +89,8 @@
           openssl
           buildah
           mnemebrain-mcp
+          ast-grep
+          python314Packages.grep-ast
         ]);
 
         packages.go =
@@ -96,8 +109,20 @@
           ++ (with pkgs; [
             python313
             uv-fhs
+          ]);
 
-            #rust-bin.stable.latest.default
+        packages.rust =
+          packages.default
+          ++ (with pkgs; [
+            (rust-bin.stable.latest.default.override {
+              extensions = [ "rust-src" ];
+            })
+            rust-analyzer
+            cargo-watch
+            cargo-audit
+            pkg-config
+            nodejs_22
+            tree-sitter.packages.${system}.default
           ]);
 
         packages.gopython = packages.go ++ packages.python;
